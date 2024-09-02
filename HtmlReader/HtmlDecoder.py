@@ -1,5 +1,5 @@
 from html.parser import HTMLParser
-from WebScaraper.DomReader import HtmlComponent, DomComponent
+from HtmlReader.DomReader import HtmlComponent, DomComponent
 
 class HtmlDecoder(HTMLParser):
     def SetHtml(self, domHtml):
