@@ -1,7 +1,7 @@
 import urllib.request as request
 import os
 
-import MyLogger
+import Infrastructure.MyLogger as MyLogger
 
 
 class FileDownloader:

@@ -1,7 +1,7 @@
 # Includes
 from WebReaders.EWebReader import EWebScraper
 from FileManager.FileDownloader import FileDownloader
-import MyLogger as MyLogger
+import Infrastructure.MyLogger as MyLogger
 import urllib
 __logger = MyLogger.GetLogger(__name__)
 

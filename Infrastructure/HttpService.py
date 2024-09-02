@@ -1,6 +1,6 @@
 import urllib.request
 
-import MyLogger
+import Infrastructure.MyLogger as MyLogger
 __logger = MyLogger.GetLogger(__name__)
 
 __headers__ = {'User-Agent': 'Mozilla/5.0'}

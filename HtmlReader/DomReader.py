@@ -1,5 +1,5 @@
-from STATICS import CommonAttr
-import MyLogger
+from Utils.STATICS import CommonAttr
+import Infrastructure.MyLogger as MyLogger
 
 class DomComponent:
     def __init__(self, components):
