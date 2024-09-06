@@ -7,7 +7,8 @@ class HtmlElement:
   '''
   Structure for any Html Element
   '''
-  def __init__(self, tag:str, attrs:list[tuple[str, str | None]], parent:Self = None):
+  def __init__(
+      self, tag:str, attrs:list[tuple[str, str | None]], parent:Self = None):
     self.tag = tag
     self.attrs = attrs
     self.parent = parent
