@@ -42,10 +42,12 @@ def RunMangaDownloaderAsync(page_html_component, folder, manga_name):
       if current_page.isLastPage():
         __logger.info("Download of [%s] complete", manga_name)
         break
-      current_page = current_page.GetNextPageAsync()
+      current_page = current_page.get()
     except Exception as ex:
       errors.append(current_page.getImageNumber())
-      __logger.error("Page: %s", current_page.getImageNumber(), exc_info=True)
+      __logger.error(
+        "Page: %s, Error= %r", current_page.getImageNumber(), ex, exc_info=True)
       current_page = current_page.GetNextPageAsync()
 
     return errors
+
