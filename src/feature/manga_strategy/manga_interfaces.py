@@ -35,8 +35,8 @@ class IMangaIndex(ABC):
   @abstractmethod
   def get_manga_page_count(self) -> str:
     pass
-  @abstractmethod
   @staticmethod
+  @abstractmethod
   def get_max_pages_in_index() -> int:
     pass
   @abstractmethod

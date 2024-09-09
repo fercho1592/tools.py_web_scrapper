@@ -3,7 +3,7 @@
 import urllib.request
 
 import infrastructure.my_logger as my_logger
-__logger = my_logger.GetLogger(__name__)
+__logger = my_logger.get_logger(__name__)
 
 __headers__ = {"User-Agent": "Mozilla/5.0"}
 

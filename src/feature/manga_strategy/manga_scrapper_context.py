@@ -1,5 +1,5 @@
 '''Strategi context'''
-from manga_interfaces import IMangaStrategy
+from feature.manga_strategy.manga_interfaces import IMangaStrategy
 from infrastructure.file_downloader import FileDownloader
 import infrastructure.my_logger as MyLogger
 __logger = MyLogger.get_logger(__name__)

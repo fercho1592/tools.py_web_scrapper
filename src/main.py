@@ -5,7 +5,6 @@ from feature.manga_strategy.manga_scrapper_context import MangaScraper
 
 if __name__ == "__main__":
   downloadQueue = [
-
   ]
 
   error_list = {}
@@ -16,7 +15,7 @@ if __name__ == "__main__":
 
     strategy = MangaFactory.get_manga_strategy(item[0])
     scrapper = MangaScraper(strategy)
-    error_by_manga = scrapper.run_manga_download_async(folder_manager, item[3])
+    error_by_manga = scrapper.run_manga_download_async(folder_manager, item[2])
 
     error_list[item[1]] = error_by_manga
 

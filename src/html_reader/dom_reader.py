@@ -1,6 +1,6 @@
 '''Structure to read, move and get information about HTML'''
 
-from enums.common_tags import CommonAttr
+import enums.common_attrs as CommonAttr
 from typing import Self
 
 class HtmlElement:

@@ -1,6 +1,6 @@
 '''Module for implementation for e-hentai pages'''
 from typing import Self
-from manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
+from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 import infrastructure.my_logger as my_logger
 import infrastructure.http_service as http_service
 from html_reader.html_decoder import HtmlDecoder
@@ -28,7 +28,7 @@ class EMangaStrategy(IMangaStrategy):
     self._web_page = web_page
 
   def get_first_page(self, page_number: int) -> IMangaPage:
-    dom_element = self._get_dom_component(self._web_page)
+    dom_element = self.get_dom_component(self._web_page)
     # Identify if is a page or index
     is_index_page = len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) == 0
 
@@ -50,7 +50,7 @@ class EMangaStrategy(IMangaStrategy):
     DefaultViewTimer()
     return EMangaPage(self, dom_reader, url)
 
-  def _get_dom_component(self, url: str):
+  def get_dom_component(self, url: str):
     html = http_service.get_html_from_url(url)
     decoder = HtmlDecoder()
     decoder.set_html(html)
