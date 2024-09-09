@@ -12,7 +12,7 @@ class HtmlElement:
     self.tag = tag
     self.attrs = attrs
     self.parent = parent
-    self.children = []
+    self.children:list[Self] = []
     self.value = None
 
   def set_value(self, value:str):

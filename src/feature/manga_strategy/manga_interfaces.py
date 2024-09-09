@@ -23,6 +23,9 @@ class IMangaPage(ABC):
   @abstractmethod
   def _get_next_image_url(self) -> str:
     pass
+  @abstractmethod
+  def get_manga_name(self) -> str:
+    pass
 
 class IMangaIndex(ABC):
   '''Interface that represent index page'''
@@ -33,7 +36,8 @@ class IMangaIndex(ABC):
   def get_manga_page_count(self) -> str:
     pass
   @abstractmethod
-  def get_max_pages_in_index(self) -> int:
+  @staticmethod
+  def get_max_pages_in_index() -> int:
     pass
   @abstractmethod
   def get_manga_name(self) -> str:
@@ -52,11 +56,9 @@ class IMangaStrategy(ABC):
   def is_from_domain(url:str) -> bool:
     pass
   @abstractmethod
-  def get_first_page(self, page_number: int) -> IMangaPage:
+  def get_first_page(
+    self, page_number: int = 0, index_page: int = 0) -> IMangaPage:
     pass
   @abstractmethod
-  def get_index_page_async(self, index_page = 0) -> IMangaIndex:
-    pass
-  @abstractmethod
-  def get_page_async(self) -> IMangaPage:
+  def get_page_from_url_async(self, url: str) -> IMangaPage:
     pass

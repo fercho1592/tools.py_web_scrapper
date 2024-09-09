@@ -1,3 +1,4 @@
+'''Factory to select wich manga implementation will be used'''
 from manga_implementations import MANGA_IMPLEMENTATIONS
 from manga_interfaces import IMangaStrategy
 

@@ -1,53 +1,37 @@
 '''Strategi context'''
-
-from WebReaders.e_web_reader import EWebScraper
+from manga_interfaces import IMangaStrategy
 from infrastructure.file_downloader import FileDownloader
 import infrastructure.my_logger as MyLogger
 __logger = MyLogger.get_logger(__name__)
 
-def GetMangaFromIndex(url, manga_name, page= 1):
-  __logger.info("Start getting manga from index [%s]", manga_name)
-  folder = FileDownloader(manga_name)
-  folder.create_folder_if_not_exist()
+class MangaScraper:
+  '''process to download mangas'''
+  def __init__(self, strategy: IMangaStrategy) -> None:
+    self.strategy = strategy
 
-  web_scrapper = EWebScraper(url)
-  index = web_scrapper.getIndexPageAsync()
-  page_count = index.getMangaPageCount()
-  __logger.info("Manga [%s] contains %s", manga_name, page_count)
-  page_html_component = index.getMangaPageAsync(page)
-  errors = RunMangaDownloaderAsync(page_html_component, folder, manga_name)
-  return (manga_name, errors)
+  def run_manga_download_async(
+      self, folder: FileDownloader, manga_page:int = 0, index_page: int = 0):
+    errors = []
+    current_page = self.strategy.get_first_page(manga_page, index_page)
 
-def GetMangaFromPage(url, manga_name):
-  __logger.info("Start getting manga from page [%s]", manga_name)
-  folder = FileDownloader(manga_name)
-  folder.create_folder_if_not_exist()
+    while True:
+      try:
+        image_url = current_page.get_img_url()
+        image_name = current_page.get_image_name()
+        image_number = current_page.get_image_number()
 
-  web_scrapper = EWebScraper(url)
-  page_html_component = web_scrapper.getPageAsync()
-  errors = RunMangaDownloaderAsync(page_html_component, folder, manga_name)
-  return (manga_name, errors)
-
-def RunMangaDownloaderAsync(page_html_component, folder, manga_name):
-  errors = []
-  current_page = page_html_component
-  while True:
-    try:
-      image_url = current_page.GetImgUrl()
-      image_name = current_page.getImageName()
-      image_number = current_page.getImageNumber()
-
-      __logger.info("Trying to get page [%s: %s]", image_name, image_number)
-      folder.downloadImage(image_url, image_name)
-      if current_page.isLastPage():
-        __logger.info("Download of [%s] complete", manga_name)
-        break
-      current_page = current_page.get()
-    except Exception as ex:
-      errors.append(current_page.getImageNumber())
-      __logger.error(
-        "Page: %s, Error= %r", current_page.getImageNumber(), ex, exc_info=True)
-      current_page = current_page.GetNextPageAsync()
+        __logger.info("Trying to get page [%s: %s]", image_name, image_number)
+        folder.downloadImage(image_url, image_name)
+        if current_page.is_last_page():
+          __logger.info(
+            "Download of [%s] complete", current_page.get_manga_name())
+          break
+        current_page = current_page.get_next_page_async()
+      except Exception as ex:
+        errors.append(current_page.get_image_name())
+        __logger.error(
+          "Page: %s, Error= %r",
+          current_page.get_image_number(), ex, exc_info=True)
+        current_page = current_page.get_next_page_async()
 
     return errors
-
