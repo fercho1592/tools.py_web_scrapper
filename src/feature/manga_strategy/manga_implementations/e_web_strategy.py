@@ -21,7 +21,7 @@ class EMangaStrategy(IMangaStrategy):
   '''Implementation for e-hentai page'''
   @staticmethod
   def is_from_domain(url:str) -> bool:
-    config = config_manager.read_config
+    config = config_manager.read_config()
     return url.startswith(config["e_manga_domain"])
 
   @staticmethod
