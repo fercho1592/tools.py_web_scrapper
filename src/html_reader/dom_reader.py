@@ -53,10 +53,10 @@ class HtmlElement:
       if(child.tag == tag_name and attr is None):
         result.append(child)
       elif (child.tag == tag_name and
-            (attr is not None and child.HasAttr(attr, value))):
+            (attr is not None and child.has_attr(attr, value))):
         result.append(child)
 
-      result.extend(child.GetChildrenByTag(tag_name, attr, value))
+      result.extend(child.get_children_by_tag(tag_name, attr, value))
 
     return result
 
@@ -65,11 +65,11 @@ class DomElement:
   Structure for Dom element
   '''
 
-  def __init__(self, components):
+  def __init__(self, components:list[HtmlElement]):
     self.__components = components
 
   def get_by_tag_name(self, tag_name:str) -> list[HtmlElement]:
     return [comp for comp in self.__components if tag_name == comp.tag]
 
   def get_by_attrs(self, attr, valule = None) -> list[HtmlElement]:
-    return [comp for comp in self.__components if comp.HasAttr(attr, valule)]
+    return [comp for comp in self.__components if comp.has_attr(attr, valule)]

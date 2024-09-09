@@ -1,19 +1,37 @@
 '''Service to get html info from an url'''
-
+import ssl
 import urllib.request
+import requests
+
+
 
 import infrastructure.my_logger as my_logger
 __logger = my_logger.get_logger(__name__)
 
-__headers__ = {"User-Agent": "Mozilla/5.0"}
-
 def get_html_from_url(web_page):
-  req = urllib.request.Request(url=web_page, headers=__headers__)
+  try:
+    response = requests.get(web_page)
+    response.raise_for_status()  # Lanza una excepción si la solicitud no fue exitosa
+    return response.text
+  except requests.exceptions.RequestException as e:
+    print(f"Error al obtener el cuerpo: {e}")
+    return None
 
-  __logger.debug("Getting info from %s", web_page )
-  response = urllib.request.urlopen(req)
-  __logger.debug("result %s from  [%s] ", response.status, web_page)
 
-  result = str(response.read())
+def download_image_from_url(url: str, to_folder: str):
+  try:
+    # Realiza una solicitud GET a la URL de la imagen
+    response = requests.get(url, stream=True)
 
-  return result
+    # Verifica si la solicitud fue exitosa (código de estado 200)
+    response.raise_for_status()
+
+    # Abre un archivo en modo escritura binaria para guardar la imagen
+    with open(to_folder, 'wb') as out_file:
+      for chunk in response.iter_content(1024):
+        out_file.write(chunk)
+
+    __logger.debug("Imagen descargada correctamente a: %s", to_folder)
+
+  except requests.exceptions.RequestException as e:
+    __logger.error("Error al descargar la imagen: %r", e)

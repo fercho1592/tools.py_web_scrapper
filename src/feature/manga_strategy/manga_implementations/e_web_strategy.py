@@ -22,20 +22,25 @@ class EMangaStrategy(IMangaStrategy):
   def is_from_domain(url:str) -> bool:
     # get from settings
     return url.startswith("https://e-hentai.org")
+  @staticmethod
+  def create_strategy(url:str) -> IMangaStrategy:
+    return EMangaStrategy(url)
 
   def __init__(self, web_page: str):
-    #self.__logger = my_logger.get_logger(__name__)
+    self._logger = my_logger.get_logger(__name__)
     self._web_page = web_page
 
   def get_first_page(self, page_number: int) -> IMangaPage:
-    dom_element = self.get_dom_component(self._web_page)
+    dom_element = self._get_dom_component(self._web_page)
     # Identify if is a page or index
     is_index_page = len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) == 0
 
-    if is_index_page is False:
+    if is_index_page is True:
+      self._logger.debug("Creating an object Page for [%s]", self._web_page)
       return EMangaPage(self, dom_element, self._web_page)
 
     # create index page
+    self._logger.debug("Creating an object Index for [%s]", self._web_page)
     index_page = EMangaIndex(self, dom_element)
     return index_page.get_manga_page_async(page_number)
 
@@ -50,7 +55,7 @@ class EMangaStrategy(IMangaStrategy):
     DefaultViewTimer()
     return EMangaPage(self, dom_reader, url)
 
-  def get_dom_component(self, url: str):
+  def _get_dom_component(self, url: str):
     html = http_service.get_html_from_url(url)
     decoder = HtmlDecoder()
     decoder.set_html(html)
@@ -144,7 +149,7 @@ class EMangaPage(IMangaPage):
     if self.image_number is not None:
       return self.image_number
     div = self.reader.get_by_attrs(COMMON_ATTRS.ID, "i2")[0]
-    img_details_ele = div.get_children_by_tag(COMMON_TAGS.SPAM)
+    img_details_ele = div.get_children_by_tag(COMMON_TAGS.SPAN)
 
     self.image_number = (
        img_details_ele[0].get_value().strip(),

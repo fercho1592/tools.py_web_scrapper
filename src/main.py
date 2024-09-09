@@ -12,6 +12,7 @@ if __name__ == "__main__":
   for item in downloadQueue:
     print("*************************************************")
     folder_manager = FileDownloader(f"../{item[1]}")
+    folder_manager.create_folder_if_not_exist()
 
     strategy = MangaFactory.get_manga_strategy(item[0])
     scrapper = MangaScraper(strategy)
