@@ -55,6 +55,10 @@ class IMangaStrategy(ABC):
   @abstractmethod
   def is_from_domain(url:str) -> bool:
     pass
+  @staticmethod
+  @abstractmethod
+  def create_strategy(url:str) -> Self:
+    pass
   @abstractmethod
   def get_first_page(
     self, page_number: int = 0, index_page: int = 0) -> IMangaPage:

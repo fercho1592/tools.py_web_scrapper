@@ -7,6 +7,6 @@ class MangaFactory:
   def get_manga_strategy(url:str) -> IMangaStrategy:
     for manga_strategy in MANGA_IMPLEMENTATIONS:
       if manga_strategy.is_from_domain(url):
-        return manga_strategy
+        return manga_strategy.create_strategy(url)
 
     raise NotImplementedError()
