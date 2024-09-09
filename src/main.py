@@ -1,18 +1,25 @@
 '''Main code'''
-import feature.manga_scrapper_context as manga_scrapper_context
+from infrastructure.file_downloader import FileDownloader
+from feature.manga_strategy.manga_factory import MangaFactory
+from feature.manga_strategy.manga_scrapper_context import MangaScraper
 
 if __name__ == "__main__":
-  downloadQueue = []
+  downloadQueue = [
+
+  ]
+
+  error_list = {}
 
   for item in downloadQueue:
     print("*************************************************")
-    if item[2]:
-      errorList = manga_scrapper_context.GetMangaFromIndex(
-        item[0], manga_name= item[1], page = item[3])
-    else:
-      errorList = manga_scrapper_context.GetMangaFromPage(
-        item[0], manga_name= item[1])
+    folder_manager = FileDownloader(f"../{item[1]}")
 
-    if len(errorList[1]) > 0:
-      print(f"Error in these images from [{errorList[0]}]", errorList[1])
+    strategy = MangaFactory.get_manga_strategy(item[0])
+    scrapper = MangaScraper(strategy)
+    error_by_manga = scrapper.run_manga_download_async(folder_manager, item[3])
+
+    error_list[item[1]] = error_by_manga
+
+    if len(error_by_manga[1]) > 0:
+      print(f"Error in these images from [{error_by_manga[0]}]", error_by_manga[1])
       print("*************************************************")

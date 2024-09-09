@@ -7,9 +7,9 @@ import infrastructure.my_logger as my_logger
 
 class FileDownloader:
   '''Class to save images from http uri'''
-  def __init__(self, folder):
+  def __init__(self, folder: str):
     self.__folder = folder
-    self.__logger = my_logger.GetLogger(__name__)
+    self.__logger = my_logger.get_logger(__name__)
 
   def create_folder_if_not_exist(self):
     if not os.path.exists(self.__folder):
