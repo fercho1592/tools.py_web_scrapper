@@ -1,10 +1,5 @@
 '''Service to get html info from an url'''
-import ssl
-import urllib.request
 import requests
-
-
-
 import infrastructure.my_logger as my_logger
 __logger = my_logger.get_logger(__name__)
 
@@ -35,3 +30,4 @@ def download_image_from_url(url: str, to_folder: str):
 
   except requests.exceptions.RequestException as e:
     __logger.error("Error al descargar la imagen: %r", e)
+    raise e
