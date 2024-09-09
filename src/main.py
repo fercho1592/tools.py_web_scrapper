@@ -20,6 +20,7 @@ if __name__ == "__main__":
 
     error_list[item[1]] = error_by_manga
 
-    if len(error_by_manga[1]) > 0:
-      print(f"Error in these images from [{error_by_manga[0]}]", error_by_manga[1])
-      print("*************************************************")
+    if len(error_by_manga) > 0:
+      print(f"Error in these images from [{item[0]}]", error_by_manga[1])
+
+  print(error_list)

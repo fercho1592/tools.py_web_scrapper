@@ -3,6 +3,7 @@ from typing import Self
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 import infrastructure.my_logger as my_logger
 import infrastructure.http_service as http_service
+import infrastructure.config_manager as config_manager
 from html_reader.html_decoder import HtmlDecoder
 from html_reader.dom_reader import DomElement
 import enums.common_attrs as COMMON_ATTRS
@@ -20,8 +21,9 @@ class EMangaStrategy(IMangaStrategy):
   '''Implementation for e-hentai page'''
   @staticmethod
   def is_from_domain(url:str) -> bool:
-    # get from settings
-    return url.startswith("https://e-hentai.org")
+    config = config_manager.read_config
+    return url.startswith(config["e_manga_domain"])
+
   @staticmethod
   def create_strategy(url:str) -> IMangaStrategy:
     return EMangaStrategy(url)
