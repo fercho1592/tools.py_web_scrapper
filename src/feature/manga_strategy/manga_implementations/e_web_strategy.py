@@ -71,24 +71,6 @@ class EMangaIndex(IMangaIndex):
     self.dom_reader = dom_reader
     self._logger = my_logger.get_logger(__name__)
 
-  def get_index_page_cout(self) -> str:
-    index_table = self.dom_reader.get_by_attrs(COMMON_ATTRS.CLASS,"ptt")
-    page_ancors = index_table[0].get_children_by_tag(
-      COMMON_TAGS.ANCHOR, COMMON_ATTRS.HREF
-      )
-    page_ancors_count = len(page_ancors)
-    if page_ancors_count == 1:
-      return 1
-
-    return page_ancors[page_ancors_count-2].value
-
-  def get_manga_page_count(self) -> str:
-    manga_detail_elements = self.dom_reader.get_by_attrs(
-      COMMON_ATTRS.ID, "gdd")[0].get_children_by_tag(COMMON_TAGS.TR)
-    for ele in manga_detail_elements:
-      if ele.children[0].get_value() == "Length:":
-        return ele.children[1].get_value()
-
   @staticmethod
   def get_max_pages_in_index() -> int:
     return 40

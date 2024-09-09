@@ -29,12 +29,6 @@ class IMangaPage(ABC):
 
 class IMangaIndex(ABC):
   '''Interface that represent index page'''
-  @abstractmethod
-  def get_index_page_cout(self) -> str:
-    pass
-  @abstractmethod
-  def get_manga_page_count(self) -> str:
-    pass
   @staticmethod
   @abstractmethod
   def get_max_pages_in_index() -> int:
