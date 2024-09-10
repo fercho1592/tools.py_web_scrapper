@@ -10,7 +10,7 @@ class MangaScraper:
     self._logger = MyLogger.get_logger(__name__)
 
   def run_manga_download_async(
-      self, folder: FileDownloader, 
+      self, folder: FileDownloader,
       manga_page:int = 0, index_page: int = 0) -> list:
     del index_page
     errors = []

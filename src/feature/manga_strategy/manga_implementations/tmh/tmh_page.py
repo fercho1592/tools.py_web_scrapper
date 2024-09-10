@@ -1,16 +1,11 @@
-from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaStrategy
+'''File for tmh page class'''
+from feature.manga_strategy.manga_interfaces import IMangaPage
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
 import enums.common_attrs as COMMON_ATTRS
 import enums.common_tags as COMMON_TAGS
-from html_reader.dom_reader import DomElement
 
 class TmhMangaPage(BaseMangaPage,IMangaPage):
-  def __init__(
-      self,
-      web_scrapper: IMangaStrategy,
-      dom_reader: DomElement,
-      url: str):
-    super().__init__(web_scrapper, dom_reader, url)
+  '''Define a page object for tmh web page'''
 
   def get_img_url(self) -> str:
     image_eles = self.reader.get_by_attrs(
@@ -53,4 +48,3 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
     header_name = self.reader.get_by_attrs(
       COMMON_ATTRS.CLASS, "reader-title")[0]
     return header_name.get_value()
- 

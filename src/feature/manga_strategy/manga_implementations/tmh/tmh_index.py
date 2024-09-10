@@ -1,12 +1,11 @@
-from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaPage, IMangaIndex
+'''Module for tmh index pages'''
+from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
 import enums.common_attrs as COMMON_ATTRS
 import enums.common_tags as COMMON_TAGS
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
-  def __init__(self, strategy: IMangaStrategy, dom_reader) -> None:
-    super().__init__(strategy, dom_reader)
-
+  '''Class for tmh manga index'''
   @staticmethod
   def get_max_pages_in_index() -> int:
     return 100
@@ -29,5 +28,6 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
       return None
     anchors_eles = image_divs[0].get_children_by_tag(COMMON_TAGS.ANCHOR)
     sel_page = anchors_eles[page - 1]
-    return self.strategy.get_page_from_url_async(sel_page.get_attr_value(COMMON_ATTRS.HREF))
+    return self.strategy.get_page_from_url_async(
+      sel_page.get_attr_value(COMMON_ATTRS.HREF))
 

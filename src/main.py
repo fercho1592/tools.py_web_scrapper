@@ -4,11 +4,11 @@ from feature.manga_strategy.manga_factory import MangaFactory
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 
 def main():
-  downloadQueue = []
+  download_queue = []
 
   error_list = {}
 
-  for item in downloadQueue:
+  for item in download_queue:
     print("*************************************************")
     folder_manager = FileDownloader(f"../{item[1]}")
     folder_manager.create_folder_if_not_exist()
