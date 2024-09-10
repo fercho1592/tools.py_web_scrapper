@@ -67,7 +67,7 @@ class EMangaIndex(IMangaIndex):
   '''Class that represent index page'''
   def __init__(self, strategy: IMangaStrategy,dom_reader: DomElement) -> None:
     super().__init__()
-    self.strategy = strategy
+    self.strategy: IMangaStrategy = strategy
     self.dom_reader = dom_reader
     self._logger = my_logger.get_logger(__name__)
 

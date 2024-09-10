@@ -3,9 +3,8 @@ from infrastructure.file_downloader import FileDownloader
 from feature.manga_strategy.manga_factory import MangaFactory
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 
-if __name__ == "__main__":
-  downloadQueue = [
-  ]
+def main():
+  downloadQueue = []
 
   error_list = {}
 
@@ -24,3 +23,7 @@ if __name__ == "__main__":
       print(f"Error in these images from [{item[0]}]", error_by_manga[1])
 
   print(error_list)
+
+
+if __name__ == "__main__":
+  main()

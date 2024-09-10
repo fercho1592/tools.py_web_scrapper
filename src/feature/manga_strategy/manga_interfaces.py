@@ -21,9 +21,6 @@ class IMangaPage(ABC):
   def is_last_page(self) -> bool:
     pass
   @abstractmethod
-  def _get_next_image_url(self) -> str:
-    pass
-  @abstractmethod
   def get_manga_name(self) -> str:
     pass
 
