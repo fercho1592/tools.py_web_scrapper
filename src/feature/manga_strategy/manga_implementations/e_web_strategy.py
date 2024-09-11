@@ -111,12 +111,12 @@ class EMangaPage(IMangaPage):
     self.image_number:int = None
     self._logger = my_logger.get_logger(__name__)
 
-  def get_img_url(self) -> str:
+  def get_img_url(self) -> tuple[str, dict[str,str]]:
     self._logger.debug("Getting image url from [%s]", self.url)
     imgs = self.reader.get_by_attrs(COMMON_ATTRS.ID, "img")
     img = imgs[0]
 
-    return img.get_attr_value(COMMON_ATTRS.SRC)
+    return img.get_attr_value(COMMON_ATTRS.SRC), {}
 
   def get_image_name(self) -> str:
     if self.image_name is not None:
