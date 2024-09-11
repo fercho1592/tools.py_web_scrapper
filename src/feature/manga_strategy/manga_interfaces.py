@@ -6,7 +6,7 @@ from typing import Self
 class IMangaPage(ABC):
   '''Interface of a Manga Page'''
   @abstractmethod
-  def get_img_url(self) -> str:
+  def get_img_url(self) -> tuple[str, dict[str, str]]:
     pass
   @abstractmethod
   def get_image_name(self) -> str:

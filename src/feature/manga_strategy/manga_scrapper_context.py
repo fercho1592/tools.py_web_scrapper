@@ -18,13 +18,13 @@ class MangaScraper:
 
     while True:
       try:
-        image_url = current_page.get_img_url()
+        (image_url, headers) = current_page.get_img_url()
         image_name = current_page.get_image_name()
         image_number = current_page.get_image_number()
 
         self._logger.info("Trying to get page [%s: %s]",
                            image_name, image_number)
-        folder.download_image(image_url, image_name)
+        folder.download_image(image_url, image_name, headers)
         if current_page.is_last_page():
           self._logger.info(
             "Download of [%s] complete", current_page.get_manga_name())

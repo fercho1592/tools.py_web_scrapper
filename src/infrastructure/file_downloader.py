@@ -18,12 +18,12 @@ class FileDownloader:
       return
     self.__logger.debug("Folder [%s] exist", self._folder)
 
-  def download_image(self, url, image_name):
+  def download_image(self, url, image_name, headers):
     path = f'{self._folder}/{image_name}'
     if os.path.exists(path):
       self.__logger.info("Duplicated image [%s]", image_name)
       return
 
-    http_service.download_image_from_url(url, path)
+    http_service.download_image_from_url(url, path, headers)
 
     self.__logger.info("Get image [%s]", image_name)
