@@ -11,11 +11,13 @@ def read_config():
   # Access values from the configuration file
   log_level = config.get('General', 'log_level')
   e_manga_strategy = config.get('MangaStrategy', 'e_manga_domain')
+  tmh_manga_domain = config.get('MangaStrategy', 'tmh_manga_domain')
 
   # Return a dictionary with the retrieved values
   config_values = {
     'log_level': log_level,
     'e_manga_domain': e_manga_strategy,
+    'tmh_manga_domain': tmh_manga_domain,
   }
 
   return config_values
