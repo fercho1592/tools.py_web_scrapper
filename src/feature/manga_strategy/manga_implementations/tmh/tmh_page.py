@@ -7,13 +7,13 @@ import enums.common_tags as COMMON_TAGS
 class TmhMangaPage(BaseMangaPage,IMangaPage):
   '''Define a page object for tmh web page'''
 
-  def get_img_url(self) -> str:
-    image_eles = self.reader.get_by_attrs(
+  def get_img_url(self) -> tuple[str, dict[str,str]]:
+    image_eles = self.reader.get_by_tag_name(COMMON_TAGS.IMG,
       COMMON_ATTRS.CLASS, "content-image lazy")
     if len(image_eles) == 0:
       raise NotImplementedError("Image not found")
-    url = image_eles[0].get_attr_value(COMMON_ATTRS.SRC)
-    return url
+    url = image_eles[0].get_attr_value(COMMON_ATTRS.DATA_ORIGINAL)
+    return url, { "referer": self.url }
 
   def get_image_name(self) -> str:
     image_eles = self.reader.get_by_attrs(
