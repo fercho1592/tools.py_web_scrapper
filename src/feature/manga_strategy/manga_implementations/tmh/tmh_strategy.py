@@ -23,15 +23,15 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
     dom_element = self._get_dom_component(self._web_page)
     # Identify if is a page or index
     is_index_page = len(
-      dom_element.get_by_attrs(COMMON_ATTRS.ID, "content-images")) != 0
+      dom_element.get_by_attrs(COMMON_ATTRS.ID, "content-images")) == 0
 
-    if is_index_page is True:
+    if is_index_page is False:
       self._logger.debug("Creating an object Page for [%s]", self._web_page)
-      return TmhMangaIndex(self, dom_element)
+      return TmhMangaPage(self, dom_element, self._web_page)
 
     # create index page
     self._logger.debug("Creating an object Index for [%s]", self._web_page)
-    index_page = TmhMangaPage(self, dom_element, self._web_page)
+    index_page = TmhMangaIndex(self, dom_element)
     return index_page.get_manga_page_async(page_number)
 
   def get_index_page_async(self, index_page = 0) -> IMangaIndex:
