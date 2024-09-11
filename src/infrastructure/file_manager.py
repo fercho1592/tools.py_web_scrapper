@@ -9,7 +9,7 @@ def read_queue() -> list[list[str, str, str]]:
       tupla = (
           elementos[0].strip(),
           elementos[1].strip(),
-          elementos[2].strip()
+          int(elementos[2].strip())
         )
       tuplas.append(tupla)
   return tuplas
