@@ -1,7 +1,7 @@
 ''' Class for html decodification '''
 
 from html.parser import HTMLParser
-from html_reader.dom_reader import HtmlElement, DomElement
+from feature.html_reader.dom_reader import HtmlElement, DomElement
 
 class HtmlDecoder(HTMLParser):
   '''

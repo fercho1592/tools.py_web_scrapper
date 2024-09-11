@@ -1,11 +1,11 @@
 '''Module for implementation for e-hentai pages'''
 from typing import Self
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
+from feature.html_reader.html_decoder import HtmlDecoder
+from feature.html_reader.dom_reader import DomElement
 import infrastructure.my_logger as my_logger
 import infrastructure.http_service as http_service
 import infrastructure.config_manager as config_manager
-from html_reader.html_decoder import HtmlDecoder
-from html_reader.dom_reader import DomElement
 import enums.common_attrs as COMMON_ATTRS
 import enums.common_tags as COMMON_TAGS
 import re
