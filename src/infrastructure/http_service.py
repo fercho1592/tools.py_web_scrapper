@@ -2,21 +2,23 @@
 import requests
 import infrastructure.my_logger as my_logger
 __logger = my_logger.get_logger(__name__)
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+
 
 def get_html_from_url(web_page):
   try:
-    response = requests.get(web_page, timeout= 10)
+    response = requests.get(web_page, headers= headers, timeout= 10)
     response.raise_for_status()
     return response.text
   except requests.exceptions.RequestException as e:
     print(f"Error al obtener el cuerpo: {e}")
-    return None
+    raise e
 
 
 def download_image_from_url(url: str, to_folder: str):
   try:
     # Realiza una solicitud GET a la URL de la imagen
-    response = requests.get(url, stream=True, timeout= 10)
+    response = requests.get(url, stream=True, headers= headers, timeout= 10)
 
     # Verifica si la solicitud fue exitosa (código de estado 200)
     response.raise_for_status()
