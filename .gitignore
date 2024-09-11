@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 src/download-queue.txt
 config.ini
+download-queue.txt
