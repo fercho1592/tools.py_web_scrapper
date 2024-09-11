@@ -5,3 +5,4 @@ TR = 'tr'
 SPAN = 'span'
 H3 = 'h3'
 OPTION = 'option'
+IMG = "img"
