@@ -129,7 +129,7 @@ class EMangaPage(IMangaPage):
     self.image_name = det_array[0].strip()
     return self.image_name
 
-  def get_image_number(self) -> str:
+  def get_image_number(self) -> tuple[str,str]:
     if self.image_number is not None:
       return self.image_number
     div = self.reader.get_by_attrs(COMMON_ATTRS.ID, "i2")[0]

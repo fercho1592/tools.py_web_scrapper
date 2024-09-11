@@ -23,11 +23,13 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
     image_name = image_eles[0].get_attr_value(COMMON_ATTRS.DATA_ORIGINAL)
     return image_name.split("/")[-1]
 
-  def get_image_number(self) -> str:
+  def get_image_number(self) -> tuple[str,str]:
     page_selector = self.reader.get_by_attrs(COMMON_ATTRS.ID, "select-page")[0]
     selected = page_selector.get_children_by_tag(
       COMMON_TAGS.OPTION, COMMON_ATTRS.SELECTED, "selected")[0]
-    return selected.get_value()
+    selected = page_selector.get_children_by_tag(
+      COMMON_TAGS.OPTION)[-1]
+    return (selected.get_value(), selected.get_value())
 
   def get_next_page_async(self) -> IMangaPage:
     image_eles = self.reader.get_by_attrs(

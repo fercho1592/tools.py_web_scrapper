@@ -12,7 +12,7 @@ class IMangaPage(ABC):
   def get_image_name(self) -> str:
     pass
   @abstractmethod
-  def get_image_number(self) -> str:
+  def get_image_number(self) -> tuple[str,str]:
     pass
   @abstractmethod
   def get_next_page_async(self) -> Self:
