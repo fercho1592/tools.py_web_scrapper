@@ -1,5 +1,5 @@
 '''Module for tmh strategy'''
-import enums.common_attrs as COMMON_ATTRS
+import feature.html_reader.common_attrs as COMMON_ATTRS
 
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
 from feature.manga_strategy.manga_implementations.tmh.tmh_index import TmhMangaIndex

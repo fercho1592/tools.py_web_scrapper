@@ -14,8 +14,8 @@ def main():
   for item in download_queue:
     manga_url = item[0]
     folder_name = item[1]
-    page_number = int(item[2] if len(item) >= 3 else 0)
-    pdf_name = item[3] if len(item) >= 4 else None
+    page_number = item[2]
+    pdf_name = item[3]
     print("*************************************************")
     strategy = MangaFactory.get_manga_strategy(manga_url)
     scrapper = MangaScraper(strategy)
