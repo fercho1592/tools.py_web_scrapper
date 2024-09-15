@@ -27,3 +27,7 @@ class FileDownloader:
     http_service.download_image_from_url(url, path, headers)
 
     self.__logger.info("Get image [%s]", image_name)
+
+  def get_images_in_folder(self) -> list[str]:
+    elementos = os.listdir(self._folder)
+    return elementos
