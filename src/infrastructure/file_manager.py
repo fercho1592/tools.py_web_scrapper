@@ -6,12 +6,14 @@ def read_queue() -> list[list[str, str, str]]:
     for linea in archivo:
       if linea.startswith("#") or linea.rstrip() == "":
         continue
-      elementos:list[str] = linea.strip().split("|")
+      item:list[str] = linea.strip().split("|")
 
       tupla = (
-          elementos[0].strip(),
-          elementos[1].strip(),
-          int(elementos[2].strip())
+          item[0].strip(),
+          item[1].strip(),
+          int(item[2] if len(item) >= 3 else 0),
+          item[3] if len(item) >= 4 else None
+
         )
       tuplas.append(tupla)
   return tuplas
