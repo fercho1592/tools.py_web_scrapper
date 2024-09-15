@@ -1,8 +1,12 @@
 '''Service to get html info from an url'''
 import requests
 import infrastructure.my_logger as my_logger
+from exceptions.http_service_exception import HttpServiceException
+
 __logger = my_logger.get_logger(__name__)
-default_headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+default_headers = {
+  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+}
 
 
 def get_html_from_url(web_page):
@@ -11,11 +15,12 @@ def get_html_from_url(web_page):
     response.raise_for_status()
     return response.text
   except requests.exceptions.RequestException as e:
-    print(f"Error al obtener el cuerpo: {e}")
-    raise e
+    raise HttpServiceException(f"Error al obtener la url {web_page}") from e
 
-
-def download_image_from_url(url: str, to_folder: str, headers: dict[str, str] = None):
+def download_image_from_url(
+    url: str,
+    to_folder: str,
+    headers: dict[str, str] = None):
   try:
     if headers is None:
       headers = default_headers
@@ -34,5 +39,4 @@ def download_image_from_url(url: str, to_folder: str, headers: dict[str, str] = 
     __logger.debug("Imagen descargada correctamente a: %s", to_folder)
 
   except requests.exceptions.RequestException as e:
-    __logger.error("Error al descargar la imagen: %r", e)
-    raise e
+    raise HttpServiceException(f"Error al descargar la imagen: {url}") from e
