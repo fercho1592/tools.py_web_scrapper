@@ -20,11 +20,11 @@ class MangaScraper:
       try:
         (image_url, headers) = current_page.get_img_url()
         image_name = current_page.get_image_name()
-        image_number = current_page.get_image_number()
+        (image_number, last_number) = current_page.get_image_number()
 
-        self._logger.info("Trying to get page [%s: %s]",
-                           image_name, image_number)
-        folder.download_image(image_url, image_name, headers)
+        self._logger.info("Trying to get page [%s: %s-%s]",
+                           image_name, image_number, last_number)
+        folder.download_image(image_url, f"{image_number}_{image_name}", headers)
 
       except Exception as ex:
         errors.append(current_page.get_image_name())
