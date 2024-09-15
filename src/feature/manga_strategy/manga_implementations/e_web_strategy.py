@@ -3,11 +3,11 @@ from typing import Self
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 from feature.html_reader.html_decoder import HtmlDecoder
 from feature.html_reader.dom_reader import DomElement
+import feature.html_reader.common_attrs as COMMON_ATTRS
+import feature.html_reader.common_tags as COMMON_TAGS
 import infrastructure.my_logger as my_logger
 import infrastructure.http_service as http_service
 import infrastructure.config_manager as config_manager
-import enums.common_attrs as COMMON_ATTRS
-import enums.common_tags as COMMON_TAGS
 import re
 import time
 

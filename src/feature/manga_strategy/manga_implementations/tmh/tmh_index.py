@@ -1,8 +1,8 @@
 '''Module for tmh index pages'''
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
-import enums.common_attrs as COMMON_ATTRS
-import enums.common_tags as COMMON_TAGS
+import feature.html_reader.common_attrs as COMMON_ATTRS
+import feature.html_reader.common_tags as COMMON_TAGS
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
   '''Class for tmh manga index'''
