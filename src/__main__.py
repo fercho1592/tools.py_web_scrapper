@@ -32,10 +32,10 @@ def main():
         manga_url,
         page_number)
 
-    convert_images(folder_manager)
+    converted_folder = convert_images(folder_manager)
 
     if pdf_name is not None:
-      create_pdf(folder_manager, pdf_name)
+      create_pdf(converted_folder, pdf_name)
 
   return
 
@@ -56,18 +56,29 @@ def run_manga_downloader(
   _logger.info("End manga download for [%s]", folder_name)
 
 def create_pdf(folder_manager: FileDownloader, pdf_name:str):
+  _logger.info("Start create PDF")
   pdf_creator = PdfCreator(folder_manager, pdf_name)
   pdf_creator.create_pdf()
-  pass
+  _logger.info("End Create Pdf")
+  return
 
-def convert_images(folder_manager: FileDownloader):
+def convert_images(folder_manager: FileDownloader) -> FileDownloader:
+  _logger.info("Start Convert Images")
   image_converter = PillowImageConverter(folder_manager)
+  dest_folder = "converted_images"
   for image_name in folder_manager.get_images_in_folder():
     splited_name = image_name.split(".")
-    if splited_name[-1].upper in ["PNG", "JPG"]:
-      image_converter.convert_image(image_name, f"{splited_name[0]}.png")
+    if splited_name[-1].upper not in ["PNG", "JPG"]:
+      image_converter.convert_image(
+        image_name,
+        f"{splited_name[0]}.png",
+        dest_folder
+      )
+    else:
+      folder_manager.copy_image_to(image_name, dest_folder)
 
-  return
+  _logger.info("End Convert Images")
+  return FileDownloader(f"{folder_manager.folder_path}/{dest_folder}")
 
 if __name__ == "__main__":
   main()

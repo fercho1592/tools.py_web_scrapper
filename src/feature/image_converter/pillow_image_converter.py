@@ -11,19 +11,24 @@ class PillowImageConverter(image_converter_interfaces.IImageConverter):
 
   def convert_image(
       self,
-      image: str,
+      image_name: str,
       new_image_name,
-      dest_path="./converted_to_jpg"
+      dest_path="converted_to_png"
     ):
     folder_path = self.folder_manager.folder_path
-    old_image_path = f"{folder_path}/{image}"
-    new_image_path = f"{folder_path}/{dest_path}/{new_image_name}"
+    old_image_path = f"{folder_path}/{image_name}"
+    new_folder_path =f"{folder_path}/{dest_path}" 
+    new_image_path = f"{new_folder_path}/{new_image_name}"
+    self.folder_manager.create_folder_if_not_exist(new_folder_path)
+    if self.folder_manager.exist_file(new_image_path):
+      self._logger.info("Image duplicated: %s", new_image_name)
+      return
 
     try:
       img = Image.open(old_image_path)
       img.save(new_image_path, "PNG")
-      self._logger.info("Imagen convertida: %s", new_image_path)
-    except FileNotFoundError:
-      self._logger.error("No se encontró el archivo: %s", old_image_path)
+      self._logger.info("Image converted: %s", new_image_name)
+    except FileNotFoundError as e:
+      self._logger.error("File not found: %s | %r", old_image_path, e)
     except OSError as e:
-      print("Error al convertir la imagen %s | %r",image, e)
+      self._logger.error("Error al convertir la imagen %s | %r", image_name, e)

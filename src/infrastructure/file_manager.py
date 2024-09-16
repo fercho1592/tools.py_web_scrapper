@@ -1,6 +1,7 @@
 '''Service to save images'''
 
 import os
+import shutil
 import infrastructure.http_service as http_service
 
 import configs.my_logger as my_logger
@@ -11,12 +12,16 @@ class FileDownloader:
     self.folder_path = folder
     self.__logger = my_logger.get_logger(__name__)
 
-  def create_folder_if_not_exist(self):
-    if not os.path.exists(self. folder_path):
-      self.__logger.debug("Creating [%s]", self. folder_path)
-      os.makedirs(self. folder_path)
+  def create_folder_if_not_exist(self, folder_path = None):
+    folder_path = self.folder_path if folder_path is None else folder_path
+    if not os.path.exists(folder_path):
+      self.__logger.debug("Creating [%s]", folder_path)
+      os.makedirs(folder_path)
       return
-    self.__logger.debug("Folder [%s] exist", self. folder_path)
+    self.__logger.debug("Folder [%s] exist", folder_path)
+
+  def exist_file(self, file_path):
+    return not os.path.exists(file_path)
 
   def get_image_from_url(self, url, image_name, headers):
     path = f'{self. folder_path}/{image_name}'
@@ -30,4 +35,16 @@ class FileDownloader:
 
   def get_images_in_folder(self) -> list[str]:
     elementos = os.listdir(self. folder_path)
-    return elementos
+    return [ele for ele in elementos if ele.split(".")[-1].upper() in ["PNG","JPG"]]
+
+  def copy_image_to(self, file, folder):
+    image_full_path = f"{self.folder_path}/{file}"
+    folder_full_path = f"{self.folder_path}/{folder}"
+    try:
+      self.create_folder_if_not_exist(folder_full_path)
+      if os.path.exists(f"{folder_full_path}/{file}"):
+        self.__logger.info("Duplicated file [%s]", file)
+        return
+      shutil.copy2(image_full_path, folder_full_path)
+    except shutil.Error as e:
+      self .__logger.error("Error al copiar el archivo: %r",e)
