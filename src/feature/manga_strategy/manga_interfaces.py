@@ -23,6 +23,9 @@ class IMangaPage(ABC):
   @abstractmethod
   def get_manga_name(self) -> str:
     pass
+  @abstractmethod
+  def get_image_type(self) -> str:
+    pass
 
 class IMangaIndex(ABC):
   '''Interface that represent index page'''

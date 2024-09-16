@@ -99,3 +99,8 @@ class BaseMangaPage(IMangaPage):
   @abstractmethod
   def get_manga_name(self) ->str:
     pass
+
+  def get_image_type(self) -> str:
+    name = self.get_image_name()
+    image_type = name.split(".")[-1]
+    return image_type
