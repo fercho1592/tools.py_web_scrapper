@@ -12,18 +12,18 @@ def main():
   download_queue = read_queue()
 
   for item in download_queue:
-    manga_url = item[0]
+    manga_url = item[0].strip()
     folder_name = item[1]
     page_number = item[2]
     pdf_name = item[3]
     print("*************************************************")
-    strategy = MangaFactory.get_manga_strategy(manga_url)
-    scrapper = MangaScraper(strategy)
 
     folder_manager = FileDownloader(f"../{folder_name}")
     folder_manager.create_folder_if_not_exist()
 
-    if manga_url is not None:
+    if manga_url is not None and manga_url:
+      strategy = MangaFactory.get_manga_strategy(manga_url)
+      scrapper = MangaScraper(strategy)
       run_manga_downloader(
         scrapper,
         folder_manager,
@@ -42,7 +42,7 @@ def run_manga_downloader(
     folder_name: str,
     url: str,
     page_number:int):
-  
+
   _logger.info("Start manga download for [%s]", folder_name)
   error_by_manga = scrapper.run_manga_download_async(
     folder_manager, page_number)
@@ -59,4 +59,5 @@ def create_pdf(folder_manager: FileDownloader, pdf_name:str):
   
 
 if __name__ == "__main__":
+
   main()
