@@ -1,6 +1,6 @@
 from fpdf import FPDF
 from infrastructure.file_manager import FileDownloader
-from infrastructure.my_logger import get_logger
+from configs.my_logger import get_logger
 
 class PdfCreator:
   def __init__(self, folder:FileDownloader, pdf_name:str) -> None:

@@ -3,7 +3,7 @@ from typing import Self
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 from feature.html_reader.html_decoder import HtmlDecoder
 from feature.html_reader.dom_reader import DomElement
-import infrastructure.my_logger as my_logger
+import configs.my_logger as my_logger
 import infrastructure.http_service as http_service
 import time
 

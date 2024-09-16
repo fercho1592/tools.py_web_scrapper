@@ -2,7 +2,7 @@
 from exceptions.http_service_exception import HttpServiceException
 from feature.manga_strategy.manga_interfaces import IMangaStrategy
 from infrastructure.file_manager import FileDownloader
-import infrastructure.my_logger as MyLogger
+import configs.my_logger as MyLogger
 
 class MangaScraper:
   '''process to download mangas'''

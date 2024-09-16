@@ -3,7 +3,7 @@
 import os
 import infrastructure.http_service as http_service
 
-import infrastructure.my_logger as my_logger
+import configs.my_logger as my_logger
 
 class FileDownloader:
   '''Class to save images from http uri'''

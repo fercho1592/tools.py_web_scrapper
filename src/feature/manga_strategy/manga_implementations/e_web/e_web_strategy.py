@@ -1,6 +1,6 @@
 '''Module for implementation for e-hentai pages'''
 import feature.html_reader.common_attrs as COMMON_ATTRS
-import infrastructure.config_manager as config_manager
+import configs.config_manager as config_manager
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 from feature.manga_strategy.manga_implementations.e_web.e_web_index import EMangaIndex

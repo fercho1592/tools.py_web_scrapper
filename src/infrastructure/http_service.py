@@ -1,6 +1,6 @@
 '''Service to get html info from an url'''
 import requests
-import infrastructure.my_logger as my_logger
+import configs.my_logger as my_logger
 from exceptions.http_service_exception import HttpServiceException
 
 __logger = my_logger.get_logger(__name__)

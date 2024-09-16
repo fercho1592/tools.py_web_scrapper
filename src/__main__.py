@@ -1,8 +1,8 @@
 '''Main code'''
 from infrastructure.file_manager import FileDownloader
 from infrastructure.pdf_generator import PdfCreator
-from infrastructure.queue_reader import read_queue
-from infrastructure.my_logger import get_logger
+from configs.queue_reader import read_queue
+from configs.my_logger import get_logger
 from feature.manga_strategy.manga_factory import MangaFactory
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 
