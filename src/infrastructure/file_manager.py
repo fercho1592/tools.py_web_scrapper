@@ -1,20 +1,33 @@
-'''Code to read download queue file'''
+'''Service to save images'''
 
-def read_queue() -> list[list[str, str, str]]:
-  tuplas = []
-  with open("download-queue.txt", "r", encoding="utf-8") as archivo:
-    for linea in archivo:
-      if linea.startswith("#") or linea.rstrip() == "":
-        continue
-      item:list[str] = linea.strip().split("|")
+import os
+import infrastructure.http_service as http_service
 
-      tupla = (
-          item[0].strip(),
-          item[1].strip(),
-          int(item[2] if len(item) >= 3 else 0),
-          item[3] if len(item) >= 4 else None
+import infrastructure.my_logger as my_logger
 
-        )
-      tuplas.append(tupla)
-  return tuplas
+class FileDownloader:
+  '''Class to save images from http uri'''
+  def __init__(self, folder: str):
+    self.folder_path = folder
+    self.__logger = my_logger.get_logger(__name__)
 
+  def create_folder_if_not_exist(self):
+    if not os.path.exists(self. folder_path):
+      self.__logger.debug("Creating [%s]", self. folder_path)
+      os.makedirs(self. folder_path)
+      return
+    self.__logger.debug("Folder [%s] exist", self. folder_path)
+
+  def get_image_from_url(self, url, image_name, headers):
+    path = f'{self. folder_path}/{image_name}'
+    if os.path.exists(path):
+      self.__logger.info("Duplicated image [%s]", image_name)
+      return
+
+    http_service.download_image_from_url(url, path, headers)
+
+    self.__logger.info("Get image [%s]", image_name)
+
+  def get_images_in_folder(self) -> list[str]:
+    elementos = os.listdir(self. folder_path)
+    return elementos

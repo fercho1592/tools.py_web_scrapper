@@ -1,7 +1,7 @@
 '''Main code'''
-from infrastructure.file_downloader import FileDownloader
+from infrastructure.file_manager import FileDownloader
 from infrastructure.pdf_generator import PdfCreator
-from infrastructure.file_manager import read_queue
+from infrastructure.queue_reader import read_queue
 from infrastructure.my_logger import get_logger
 from feature.manga_strategy.manga_factory import MangaFactory
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
@@ -56,7 +56,7 @@ def create_pdf(folder_manager: FileDownloader, pdf_name:str):
   pdf_creator = PdfCreator(folder_manager, pdf_name)
   pdf_creator.create_pdf()
   pass
-  
+
 
 if __name__ == "__main__":
 

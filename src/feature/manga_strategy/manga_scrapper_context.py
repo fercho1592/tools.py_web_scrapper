@@ -1,7 +1,7 @@
 '''Strategi context'''
 from exceptions.http_service_exception import HttpServiceException
 from feature.manga_strategy.manga_interfaces import IMangaStrategy
-from infrastructure.file_downloader import FileDownloader
+from infrastructure.file_manager import FileDownloader
 import infrastructure.my_logger as MyLogger
 
 class MangaScraper:
@@ -25,7 +25,7 @@ class MangaScraper:
 
         self._logger.info("Trying to get page [%s: %s-%s]",
                            image_name, image_number, last_number)
-        folder.download_image(image_url, f"{image_number}_{image_name}", headers)
+        folder.get_image_from_url(image_url, f"{image_number}_{image_name}", headers)
 
       except HttpServiceException as ex:
         errors.append(current_page.get_image_name())

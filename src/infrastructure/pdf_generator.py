@@ -1,5 +1,5 @@
 from fpdf import FPDF
-from infrastructure.file_downloader import FileDownloader
+from infrastructure.file_manager import FileDownloader
 from infrastructure.my_logger import get_logger
 
 class PdfCreator:
