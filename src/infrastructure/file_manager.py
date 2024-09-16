@@ -39,7 +39,7 @@ class FileDownloader:
 
   def copy_image_to(self, file, folder):
     image_full_path = f"{self.folder_path}/{file}"
-    folder_full_path = f"{self.folder_path}/{folder}"
+    folder_full_path = folder
     try:
       self.create_folder_if_not_exist(folder_full_path)
       if os.path.exists(f"{folder_full_path}/{file}"):
@@ -48,3 +48,11 @@ class FileDownloader:
       shutil.copy2(image_full_path, folder_full_path)
     except shutil.Error as e:
       self .__logger.error("Error al copiar el archivo: %r",e)
+  
+  def delete_all(self):
+    shutil.rmtree(self.folder_path)
+    # for root, dirs, files in os.walk(self.folder_path):
+    #   for file in files:
+    #     os.remove(os.path.join(root, file))
+    #   for dir in dirs:
+    #     shutil.rmtree(os.path.join(root, dir))

@@ -32,10 +32,12 @@ def main():
         manga_url,
         page_number)
 
-    converted_folder = convert_images(folder_manager)
-
     if pdf_name is not None:
+      converted_folder = convert_images(folder_manager)
       create_pdf(converted_folder, pdf_name)
+      _logger.info("Cleaning conver folders")
+      converted_folder.copy_image_to(pdf_name, folder_manager.folder_path)
+      converted_folder.delete_all()
 
   return
 
@@ -65,6 +67,7 @@ def create_pdf(folder_manager: FileDownloader, pdf_name:str):
 def convert_images(folder_manager: FileDownloader) -> FileDownloader:
   _logger.info("Start Convert Images")
   dest_folder = "converted_images"
+  full_dest_path = f"{folder_manager.folder_path}/{dest_folder}"
   for image_name in folder_manager.get_images_in_folder():
     splited_name = image_name.split(".")
     if splited_name[-1].upper not in ["PNG", "JPG"]:
@@ -75,7 +78,7 @@ def convert_images(folder_manager: FileDownloader) -> FileDownloader:
         dest_folder
       )
     else:
-      folder_manager.copy_image_to(image_name, dest_folder)
+      folder_manager.copy_image_to(image_name, full_dest_path)
 
   _logger.info("End Convert Images")
   return FileDownloader(f"{folder_manager.folder_path}/{dest_folder}")

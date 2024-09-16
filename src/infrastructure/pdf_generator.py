@@ -18,4 +18,5 @@ class PdfCreator:
       pdf.add_page("P", self.image_editor.get_image_size(self.folder, image), False)
       pdf.image(image_path, x=0, y=0)
     pdf.output(f"{self.folder.folder_path}/{self.pdf_name}")
+    self._logger.info("PDF created [%s]", self.pdf_name)
     return
