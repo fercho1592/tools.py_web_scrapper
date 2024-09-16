@@ -1,4 +1,4 @@
-from imagekitio import ImageKit
+from fpdf import FPDF
 from infrastructure.file_downloader import FileDownloader
 from infrastructure.my_logger import get_logger
 
@@ -10,8 +10,8 @@ class PdfCreator:
 
   def create_pdf(self):
     self._logger.debug("Start process to create %s pdf", self.pdf_name)
-    images = self.folder.get_images_in_folder()
-    # Crear un objeto ImageKit
-    ik = ImageKit()
-    # Convertir las imágenes a PDF
-    ik.pdf_from_images(images, output_file=f"{self.folder}/{self.pdf_name}")
+    pdf = FPDF()
+    for image in self.folder.get_images_in_folder():
+      pdf.add_page()
+      pdf.image(f"{self.folder.folder_path}/{image}", x=0, y=0)
+    pdf.output(f"{self.folder.folder_path}/{self.pdf_name}", )
