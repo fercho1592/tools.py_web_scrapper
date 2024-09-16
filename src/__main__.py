@@ -5,6 +5,7 @@ from configs.queue_reader import read_queue
 from configs.my_logger import get_logger
 from feature.manga_strategy.manga_factory import MangaFactory
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
+from feature.image_converter.pillow_image_converter import PillowImageConverter
 
 _logger = get_logger(__name__)
 
@@ -30,6 +31,8 @@ def main():
         folder_name,
         manga_url,
         page_number)
+
+    convert_images(folder_manager)
 
     if pdf_name is not None:
       create_pdf(folder_manager, pdf_name)
@@ -57,7 +60,14 @@ def create_pdf(folder_manager: FileDownloader, pdf_name:str):
   pdf_creator.create_pdf()
   pass
 
+def convert_images(folder_manager: FileDownloader):
+  image_converter = PillowImageConverter(folder_manager)
+  for image_name in folder_manager.get_images_in_folder():
+    splited_name = image_name.split(".")
+    if splited_name[-1].upper in ["PNG", "JPG"]:
+      image_converter.convert_image(image_name, f"{splited_name[0]}.png")
+
+  return
 
 if __name__ == "__main__":
-
   main()
