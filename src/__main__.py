@@ -6,17 +6,17 @@ from configs.my_logger import get_logger
 from feature.manga_strategy.manga_factory import MangaFactory
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.image_converter.pillow_image_converter import PillowImageConverter
+from feature.image_converter.image_converter_interfaces import IImageEditorService
 
 _logger = get_logger(__name__)
+image_converter: IImageEditorService = PillowImageConverter()
 
 def main():
-  download_queue = read_queue()
-
-  for item in download_queue:
+  for item in read_queue():
     manga_url = item[0].strip()
     folder_name = item[1]
     page_number = item[2]
-    pdf_name = item[3]
+    pdf_name = item[3] if item[3] is not None else f"{item[1].split("/")[-1]}.pdf"
     print("*************************************************")
 
     folder_manager = FileDownloader(f"../{folder_name}")
@@ -57,19 +57,19 @@ def run_manga_downloader(
 
 def create_pdf(folder_manager: FileDownloader, pdf_name:str):
   _logger.info("Start create PDF")
-  pdf_creator = PdfCreator(folder_manager, pdf_name)
+  pdf_creator = PdfCreator(folder_manager, pdf_name, image_converter)
   pdf_creator.create_pdf()
   _logger.info("End Create Pdf")
   return
 
 def convert_images(folder_manager: FileDownloader) -> FileDownloader:
   _logger.info("Start Convert Images")
-  image_converter = PillowImageConverter(folder_manager)
   dest_folder = "converted_images"
   for image_name in folder_manager.get_images_in_folder():
     splited_name = image_name.split(".")
     if splited_name[-1].upper not in ["PNG", "JPG"]:
       image_converter.convert_image(
+        folder_manager,
         image_name,
         f"{splited_name[0]}.png",
         dest_folder

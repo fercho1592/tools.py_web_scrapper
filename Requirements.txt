@@ -1,7 +1,8 @@
-pylint == 3.2.7
-requests == 2.32.3
 pip-system-certs==4.0
 certifi==2024.8.30
+
+pylint == 3.2.7
+requests == 2.32.3
 configparser == 7.1.0
-fpdf == 1.7.2
+fpdf2 == 2.7.9
 Pillow == 10.4.0

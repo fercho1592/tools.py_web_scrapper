@@ -24,7 +24,7 @@ class MangaScraper:
       try:
         (image_url, headers) = current_page.get_img_url()
         (image_number, last_number) = current_page.get_image_number()
-        image_name = f"{image_number}_{current_page.get_image_name()}"
+        image_name = current_page.get_image_name()
 
         self._logger.info("Trying to get page [%s: %s-%s]",
                            image_name, image_number, last_number)

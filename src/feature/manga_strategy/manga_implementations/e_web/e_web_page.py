@@ -13,7 +13,7 @@ class EMangaPage(BaseMangaPage,IMangaPage):
 
     return img.get_attr_value(COMMON_ATTRS.SRC), {}
 
-  def get_image_name(self) -> str:
+  def _get_image_name(self) -> str:
     divs = self.reader.get_by_attrs(COMMON_ATTRS.ID, "i2")
     img_details_ele = divs[0].children[1]
     details = img_details_ele.get_value()

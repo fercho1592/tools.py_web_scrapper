@@ -21,7 +21,7 @@ class FileDownloader:
     self.__logger.debug("Folder [%s] exist", folder_path)
 
   def exist_file(self, file_path):
-    return not os.path.exists(file_path)
+    return os.path.exists(file_path)
 
   def get_image_from_url(self, url, image_name, headers):
     path = f'{self. folder_path}/{image_name}'
@@ -34,8 +34,8 @@ class FileDownloader:
     self.__logger.info("Get image [%s]", image_name)
 
   def get_images_in_folder(self) -> list[str]:
-    elementos = os.listdir(self. folder_path)
-    return [ele for ele in elementos if ele.split(".")[-1].upper() in ["PNG","JPG"]]
+    elementos = os.listdir(self.folder_path)
+    return [ele for ele in elementos if ele.split(".")[-1].upper() in ["PNG","JPG", "WEBP"]]
 
   def copy_image_to(self, file, folder):
     image_full_path = f"{self.folder_path}/{file}"

@@ -89,7 +89,7 @@ class BaseMangaPage(IMangaPage):
     pass
 
   @abstractmethod
-  def get_image_name(self) -> str:
+  def _get_image_name(self) -> str:
     pass
 
   @abstractmethod
@@ -99,6 +99,15 @@ class BaseMangaPage(IMangaPage):
   @abstractmethod
   def get_manga_name(self) ->str:
     pass
+
+  def get_image_name(self) -> str:
+    default_image_name = self._get_image_name()
+    (image_number, max_image_count) = self.get_image_number()
+    zero_array = ["0" for i in range(len(str(max_image_count))-len(str(image_number)))]
+    zero_array.append(image_number)
+    zero_array.append("_")
+    zero_array.append(default_image_name)
+    return "".join(zero_array)
 
   def get_image_type(self) -> str:
     name = self.get_image_name()

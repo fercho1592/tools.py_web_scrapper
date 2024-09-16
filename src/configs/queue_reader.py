@@ -11,7 +11,7 @@ def read_queue() -> list[list[str, str, str]]:
       tupla = (
           item[0].strip(),
           item[1].strip(),
-          int(item[2] if len(item) >= 3 else 0),
+          int(item[2] if len(item) >= 3 and item[2] else 0),
           item[3] if len(item) >= 4 else None
 
         )

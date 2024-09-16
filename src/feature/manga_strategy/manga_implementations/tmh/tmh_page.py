@@ -15,7 +15,7 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
     url = image_eles[0].get_attr_value(COMMON_ATTRS.DATA_ORIGINAL)
     return url, { "referer": self.url }
 
-  def get_image_name(self) -> str:
+  def _get_image_name(self) -> str:
     image_eles = self.reader.get_by_attrs(
       COMMON_ATTRS.CLASS, "content-image lazy")
     if len(image_eles) == 0:
