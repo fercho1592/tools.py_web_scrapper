@@ -6,7 +6,10 @@ import configs.my_logger as MyLogger
 
 class MangaScraper:
   '''process to download mangas'''
-  def __init__(self, strategy: IMangaStrategy) -> None:
+  def __init__(
+      self, 
+      strategy: IMangaStrategy
+  ) -> None:
     self.strategy = strategy
     self._logger = MyLogger.get_logger(__name__)
 
@@ -20,12 +23,12 @@ class MangaScraper:
     while True:
       try:
         (image_url, headers) = current_page.get_img_url()
-        image_name = current_page.get_image_name()
         (image_number, last_number) = current_page.get_image_number()
+        image_name = f"{image_number}_{current_page.get_image_name()}"
 
         self._logger.info("Trying to get page [%s: %s-%s]",
                            image_name, image_number, last_number)
-        folder.get_image_from_url(image_url, f"{image_number}_{image_name}", headers)
+        folder.get_image_from_url(image_url, image_name, headers)
 
       except HttpServiceException as ex:
         errors.append(current_page.get_image_name())
