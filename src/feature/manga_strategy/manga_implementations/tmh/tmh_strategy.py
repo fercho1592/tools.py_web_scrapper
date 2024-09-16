@@ -1,12 +1,10 @@
 '''Module for tmh strategy'''
 import feature.html_reader.common_attrs as COMMON_ATTRS
-
+import infrastructure.config_manager as config_manager
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
 from feature.manga_strategy.manga_implementations.tmh.tmh_index import TmhMangaIndex
 from feature.manga_strategy.manga_implementations.tmh.tmh_page import TmhMangaPage
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaPage, IMangaIndex
-
-import infrastructure.config_manager as config_manager
 
 class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
   '''Define a page object for tmh strategy'''
