@@ -75,3 +75,6 @@ class IMangaStrategy(ABC):
   @abstractmethod
   def get_index_page(self, url:str) -> IMangaIndex:
     pass
+  @abstractmethod
+  def get_url(self) -> str:
+    pass

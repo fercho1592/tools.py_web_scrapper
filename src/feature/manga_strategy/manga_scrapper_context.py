@@ -45,8 +45,8 @@ class MangaScraper:
     return errors
 
   def get_manga_data(self) -> dict[str,str]:
-    index:IMangaIndex = self.strategy.get_index_page()
-    name = "|".join(index.get_manga_name())
+    index:IMangaIndex = self.strategy.get_index_page(self.strategy.get_url())
+    name = index.get_manga_name()
     artist = "|".join(index.get_manga_artist())
     groups = "|".join(index.get_manga_group())
     genders = "|".join(index.get_manga_genders())

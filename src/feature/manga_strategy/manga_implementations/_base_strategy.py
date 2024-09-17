@@ -28,7 +28,7 @@ class BaseStrategy(IMangaStrategy):
 
   def __init__(self, web_page: str):
     self._logger = my_logger.get_logger(__name__)
-    self._web_page = web_page
+    self.web_page = web_page
 
   def _get_dom_component(self, url: str):
     html = http_service.get_html_from_url(url)
@@ -47,6 +47,9 @@ class BaseStrategy(IMangaStrategy):
   @abstractmethod
   def get_index_page_async(self, index_page = 0) -> IMangaIndex:
     pass
+
+  def get_url(self) -> str:
+    return self.web_page
 
 class BaseMangaIndex(IMangaIndex):
   '''Class that represent index page'''
@@ -76,8 +79,8 @@ class BaseMangaIndex(IMangaIndex):
 class BaseMangaPage(IMangaPage):
   '''Structure in case of a EManga Page'''
   def __init__(
-      self, web_scrapper:IMangaStrategy, dom_reader:DomElement, url: str):
-    self.web_scrapper = web_scrapper
+      self, strategy:IMangaStrategy, dom_reader:DomElement, url: str):
+    self.strategy = strategy
     self.reader = dom_reader
     self.url:str = url
     self.image_name:str = None
@@ -111,5 +114,5 @@ class BaseMangaPage(IMangaPage):
 
   def get_image_type(self) -> str:
     name = self.get_image_name()
-    image_type = name.split(".")[-1]
+    image_type = name.rsplit(".")[-1]
     return image_type

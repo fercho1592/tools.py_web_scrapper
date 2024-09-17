@@ -41,19 +41,21 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
     return parent.get_children_by_tag(COMMON_TAGS.UL)
 
   def get_manga_genders(self) -> list[str]:
+    result = []
     data_elements = self._get_manga_data_elements()
     for ele in data_elements:
       li_elements = ele.get_children_by_tag(COMMON_TAGS.LI)
-      if li_elements[0].children[0].get_value() == "Genders":
-        return [ele.children[0].value for ele in li_elements[1:]]
-    return []
+      if li_elements[0].children[0].get_value() in ["Genders", "Tags"]:
+        result.extend([ele.children[0].value for ele in li_elements[1:]])
+    return result
 
   def get_manga_artist(self) -> list[str]:
     data_elements = self._get_manga_data_elements()
     for ele in data_elements:
       li_elements = ele.get_children_by_tag(COMMON_TAGS.LI)
       if li_elements[0].children[0].get_value() == "Artists and Artists Groups":
-        return [ele.children[0].value for ele in li_elements[1:]]
+        anchors = li_elements[1].get_children_by_tag(COMMON_TAGS.ANCHOR)
+        return [ele.get_value() for ele in anchors]
     return []
 
   def get_manga_group(self) -> list[str]:

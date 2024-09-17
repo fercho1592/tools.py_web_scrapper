@@ -1,6 +1,5 @@
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
-from feature.manga_strategy.manga_implementations.e_web.e_web_strategy import EMangaStrategy
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
 
@@ -35,7 +34,7 @@ class EMangaPage(BaseMangaPage,IMangaPage):
 
   def get_next_page_async(self) -> IMangaPage:
     next_page_url = self._get_next_image_url()
-    new_page = self.web_scrapper.get_page_from_url_async(next_page_url)
+    new_page = self.strategy.get_page_from_url_async(next_page_url)
 
     return new_page
 
@@ -58,4 +57,4 @@ class EMangaPage(BaseMangaPage,IMangaPage):
     index_arrow = manga_arrows[0].get_children_by_tag(COMMON_TAGS.ANCHOR)[0]
     href = index_arrow.get_attr_value(COMMON_ATTRS.HREF)
 
-    return EMangaStrategy(href).get_index_page(href)
+    return self.strategy.get_index_page(href)

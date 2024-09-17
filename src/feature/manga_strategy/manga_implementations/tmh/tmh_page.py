@@ -1,6 +1,5 @@
 '''File for tmh page class'''
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
-from feature.manga_strategy.manga_implementations.tmh.tmh_strategy import TmhMangaStrategy
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
@@ -38,7 +37,7 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
     if len(image_eles) == 0:
       raise NotImplementedError("Image not found")
     url = image_eles[0].parent.get_attr_value(COMMON_ATTRS.HREF)
-    return self.web_scrapper.get_page_from_url_async(url)
+    return self.strategy.get_page_from_url_async(url)
 
   def is_last_page(self) -> bool:
     image_eles = self.reader.get_by_tag_name(COMMON_TAGS.I,
@@ -56,4 +55,4 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
     index_arrow = manga_arrows[0].parent
     href = index_arrow.get_attr_value(COMMON_ATTRS.HREF)
 
-    return TmhMangaStrategy(href).get_index_page(href)
+    return self.strategy.get_index_page(href)
