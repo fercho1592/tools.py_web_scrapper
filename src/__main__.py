@@ -17,14 +17,16 @@ def main():
     folder_name = item[1]
     page_number = item[2]
     pdf_name = item[3] if item[3] is not None else f"{item[1].split("/")[-1]}.pdf"
+    pdf_only = item[4]
     print("*************************************************")
 
     folder_manager = FileDownloader(f"../{folder_name}")
     folder_manager.create_folder_if_not_exist()
 
-    if manga_url is not None and manga_url:
-      strategy = MangaFactory.get_manga_strategy(manga_url)
-      scrapper = MangaScraper(strategy)
+    strategy = MangaFactory.get_manga_strategy(manga_url)
+    scrapper = MangaScraper(strategy)
+
+    if pdf_only is False:
       run_manga_downloader(
         scrapper,
         folder_manager,
@@ -37,7 +39,7 @@ def main():
       converted_folder = convert_images(folder_manager)
       create_pdf(converted_folder, pdf_name, manga_data)
       _logger.info("Cleaning conver folders")
-      converted_folder.copy_image_to(pdf_name, folder_manager.folder_path)
+      converted_folder.copy_image_to(pdf_name, f"{folder_manager.folder_path}/..")
       converted_folder.delete_all()
 
   return
