@@ -33,8 +33,9 @@ def main():
         page_number)
 
     if pdf_name is not None:
+      manga_data = scrapper.get_manga_data()
       converted_folder = convert_images(folder_manager)
-      create_pdf(converted_folder, pdf_name)
+      create_pdf(converted_folder, pdf_name, manga_data)
       _logger.info("Cleaning conver folders")
       converted_folder.copy_image_to(pdf_name, folder_manager.folder_path)
       converted_folder.delete_all()
@@ -46,7 +47,7 @@ def run_manga_downloader(
     folder_manager: FileDownloader,
     folder_name: str,
     url: str,
-    page_number:int):
+    page_number:int) -> dict[str, str]:
 
   _logger.info("Start manga download for [%s]", folder_name)
   error_by_manga = scrapper.run_manga_download_async(
@@ -57,10 +58,14 @@ def run_manga_downloader(
 
   _logger.info("End manga download for [%s]", folder_name)
 
-def create_pdf(folder_manager: FileDownloader, pdf_name:str):
+def create_pdf(
+    folder_manager: FileDownloader,
+    pdf_name:str,
+    manga_data:dict[str,str]
+  ) -> None:
   _logger.info("Start create PDF")
   pdf_creator = PdfCreator(folder_manager, pdf_name, image_converter)
-  pdf_creator.create_pdf()
+  pdf_creator.create_pdf(manga_data)
   _logger.info("End Create Pdf")
   return
 
