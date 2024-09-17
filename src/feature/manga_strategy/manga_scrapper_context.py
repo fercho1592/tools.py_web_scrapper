@@ -1,6 +1,6 @@
 '''Strategi context'''
 from exceptions.http_service_exception import HttpServiceException
-from feature.manga_strategy.manga_interfaces import IMangaStrategy
+from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaIndex
 from infrastructure.file_manager import FileDownloader
 import configs.my_logger as MyLogger
 
@@ -43,3 +43,18 @@ class MangaScraper:
     self._logger.info(
       "Download of [%s] complete", current_page.get_manga_name())
     return errors
+
+  def get_manga_data(self) -> dict[str,str]:
+    index:IMangaIndex = self.strategy.get_index_page()
+    name = "|".join(index.get_manga_name())
+    artist = "|".join(index.get_manga_artist())
+    groups = "|".join(index.get_manga_group())
+    genders = "|".join(index.get_manga_genders())
+
+    return {
+      "name": name,
+      "artist": artist,
+      "groups": groups,
+      "genders": genders,
+    }
+
