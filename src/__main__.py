@@ -19,8 +19,9 @@ def main():
     pdf_name = item[3] if item[3] is not None else f"{item[1].split("/")[-1]}.pdf"
     pdf_only = item[4]
     print("*************************************************")
+    _logger.info("Start process for [%s | %s]", folder_name, manga_url)
 
-    folder_manager = FileDownloader(f"../{folder_name}")
+    folder_manager = FileDownloader(folder_name)
     folder_manager.create_folder_if_not_exist()
 
     strategy = MangaFactory.get_manga_strategy(manga_url)
@@ -88,7 +89,7 @@ def convert_images(folder_manager: FileDownloader) -> FileDownloader:
       folder_manager.copy_image_to(image_name, full_dest_path)
 
   _logger.info("End Convert Images")
-  return FileDownloader(f"{folder_manager.folder_path}/{dest_folder}")
+  return FileDownloader(full_dest_path)
 
 if __name__ == "__main__":
   main()
