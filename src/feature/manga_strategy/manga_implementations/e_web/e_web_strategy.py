@@ -1,5 +1,6 @@
 '''Module for implementation for e-hentai pages'''
 import feature.html_reader.common_attrs as COMMON_ATTRS
+from feature.html_reader.dom_reader import DomElement
 import configs.config_manager as config_manager
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
@@ -19,10 +20,8 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
 
   def get_first_page(self, page_number: int) -> IMangaPage:
     dom_element = self._get_dom_component(self._web_page)
-    # Identify if is a page or index
-    is_index_page = len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) == 0
 
-    if is_index_page is True:
+    if self._is_index_page(dom_element) is True:
       self._logger.debug("Creating an object Page for [%s]", self._web_page)
       return EMangaPage(self, dom_element, self._web_page)
 
@@ -41,3 +40,15 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
     dom_reader = self._get_dom_component(url)
     DefaultViewTimer()
     return EMangaPage(self, dom_reader, url)
+
+  def _is_index_page(self, dom_element: DomElement) -> bool:
+    return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) == 0
+
+  def get_index_page(self, url:str) -> IMangaIndex:
+    dom_reader = self._get_dom_component(url)
+
+    if self._is_index_page(dom_reader):
+      return EMangaIndex(dom_reader)
+
+    page = EMangaPage(dom_reader)
+    return page.get_index_page()

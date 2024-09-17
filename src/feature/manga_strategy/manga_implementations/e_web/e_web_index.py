@@ -2,6 +2,7 @@ from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
+from feature.html_reader.dom_reader import HtmlElement
 
 class EMangaIndex(BaseMangaIndex,IMangaIndex):
   '''Class that represent index page'''
@@ -32,3 +33,35 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
     new_page = index.strategy.get_page_from_url_async(
       page_children[0].get_attr_value(COMMON_ATTRS.HREF))
     return new_page
+
+  def _get_manga_data_elements(self) -> list[HtmlElement]:
+    taglist = self.dom_reader.get_by_attrs(COMMON_ATTRS.ID, "taglist")[0]
+    children = taglist.get_children_by_tag(COMMON_TAGS.TR)
+    return children
+
+  def get_manga_genders(self) -> list[str]:
+    data_elements = self._get_manga_data_elements()
+    for ele in data_elements:
+      li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
+      if li_elements[0].get_value() == "female:":
+        tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
+        return [ele.value for ele in tags]
+    return []
+
+  def get_manga_artist(self) -> list[str]:
+    data_elements = self._get_manga_data_elements()
+    for ele in data_elements:
+      li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
+      if li_elements[0].get_value() == "artist:":
+        tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
+        return [ele.value for ele in tags]
+    return []
+
+  def get_manga_group(self) -> list[str]:
+    data_elements = self._get_manga_data_elements()
+    for ele in data_elements:
+      li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
+      if li_elements[0].get_value() == "group:":
+        tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
+        return [ele.value for ele in tags]
+    return []

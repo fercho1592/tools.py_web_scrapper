@@ -1,5 +1,6 @@
-from feature.manga_strategy.manga_interfaces import IMangaPage
+from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
+from feature.manga_strategy.manga_implementations.e_web.e_web_strategy import EMangaStrategy
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
 
@@ -49,4 +50,12 @@ class EMangaPage(BaseMangaPage,IMangaPage):
     return next_page_component.get_attr_value(COMMON_ATTRS.HREF)
 
   def get_manga_name(self) ->str:
-    pass
+    manga_name = self.reader.get_by_tag_name(COMMON_TAGS.H1)[0]
+    return manga_name.get_value()
+
+  def get_index_page(self) -> IMangaIndex:
+    manga_arrows = self.reader.get_by_attrs(COMMON_ATTRS.CLASS, "sb")
+    index_arrow = manga_arrows[0].get_children_by_tag(COMMON_TAGS.ANCHOR)[0]
+    href = index_arrow.get_attr_value(COMMON_ATTRS.HREF)
+
+    return EMangaStrategy(href).get_index_page(href)

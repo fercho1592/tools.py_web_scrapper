@@ -1,5 +1,6 @@
 '''Module for tmh strategy'''
 import feature.html_reader.common_attrs as COMMON_ATTRS
+import feature.html_reader.dom_reader as DomElement
 import configs.config_manager as config_manager
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
 from feature.manga_strategy.manga_implementations.tmh.tmh_index import TmhMangaIndex
@@ -20,10 +21,7 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
   def get_first_page(self, page_number: int) -> IMangaPage:
     dom_element = self._get_dom_component(self._web_page)
     # Identify if is a page or index
-    is_index_page = len(
-      dom_element.get_by_attrs(COMMON_ATTRS.ID, "content-images")) == 0
-
-    if is_index_page is False:
+    if self._is_index_page(dom_element) is False:
       self._logger.debug("Creating an object Page for [%s]", self._web_page)
       return TmhMangaPage(self, dom_element, self._web_page)
 
@@ -42,3 +40,15 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
     dom_reader = self._get_dom_component(url)
     DefaultViewTimer()
     return TmhMangaPage(self, dom_reader, url)
+
+  def _is_index_page(self, dom_element:DomElement):
+    return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "content-images")) == 0
+
+  def get_index_page(self, url:str) -> IMangaIndex:
+    dom_reader = self._get_dom_component(url)
+
+    if self._is_index_page(dom_reader):
+      return TmhMangaIndex(dom_reader)
+
+    page = TmhMangaPage(dom_reader)
+    return page.get_index_page()

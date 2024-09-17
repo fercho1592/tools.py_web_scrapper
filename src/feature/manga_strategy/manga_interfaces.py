@@ -1,5 +1,5 @@
 '''Defines interfaces to be used by each strategy depending on the url domain'''
-
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Self
 
@@ -26,6 +26,9 @@ class IMangaPage(ABC):
   @abstractmethod
   def get_image_type(self) -> str:
     pass
+  @abstractmethod
+  def get_index_page(self) -> IMangaIndex:
+    pass
 
 class IMangaIndex(ABC):
   '''Interface that represent index page'''
@@ -41,6 +44,15 @@ class IMangaIndex(ABC):
     pass
   @abstractmethod
   def get_manga_page_async(self, page:int = 0) -> IMangaPage:
+    pass
+  @abstractmethod
+  def get_manga_genders(self) -> list[str]:
+    pass
+  @abstractmethod
+  def get_manga_artist(self) -> list[str]:
+    pass
+  @abstractmethod
+  def get_manga_group(self) -> list[str]:
     pass
 
 class IMangaStrategy(ABC):
@@ -59,4 +71,7 @@ class IMangaStrategy(ABC):
     pass
   @abstractmethod
   def get_page_from_url_async(self, url: str) -> IMangaPage:
+    pass
+  @abstractmethod
+  def get_index_page(self, url:str) -> IMangaIndex:
     pass

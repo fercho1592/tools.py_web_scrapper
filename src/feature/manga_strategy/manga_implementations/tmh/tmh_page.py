@@ -1,5 +1,6 @@
 '''File for tmh page class'''
-from feature.manga_strategy.manga_interfaces import IMangaPage
+from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
+from feature.manga_strategy.manga_implementations.tmh.tmh_strategy import TmhMangaStrategy
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
@@ -48,3 +49,11 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
     header_name = self.reader.get_by_attrs(
       COMMON_ATTRS.CLASS, "reader-title")[0]
     return header_name.get_value()
+
+  def get_index_page(self) -> IMangaIndex:
+    manga_arrows = self.reader.get_by_attrs(
+      COMMON_ATTRS.CLASS, "fa fa-chevron-left")
+    index_arrow = manga_arrows[0].parent
+    href = index_arrow.get_attr_value(COMMON_ATTRS.HREF)
+
+    return TmhMangaStrategy(href).get_index_page(href)
