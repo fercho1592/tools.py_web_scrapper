@@ -21,7 +21,7 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
   def get_first_page(self, page_number: int) -> IMangaPage:
     dom_element = self._get_dom_component(self.web_page)
 
-    if self._is_index_page(dom_element) is True:
+    if self._is_index_page(dom_element) is not True:
       self._logger.debug("Creating an object Page for [%s]", self.web_page)
       return EMangaPage(self, dom_element, self.web_page)
 
@@ -42,14 +42,14 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
     return EMangaPage(self, dom_reader, url)
 
   def _is_index_page(self, dom_element: DomElement) -> bool:
-    return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) == 0
+    return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) != 0
 
   def get_index_page(self, url:str) -> IMangaIndex:
     url = url if url is not None else self.web_page
     dom_reader = self._get_dom_component(url)
 
     if self._is_index_page(dom_reader):
-      return EMangaIndex(dom_reader)
+      return EMangaIndex(self, dom_reader)
 
-    page = EMangaPage(dom_reader)
+    page = EMangaPage(self, dom_reader, url)
     return page.get_index_page()
