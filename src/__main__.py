@@ -26,16 +26,20 @@ def main():
 
     strategy = MangaFactory.get_manga_strategy(manga_url)
     scrapper = MangaScraper(strategy)
+    errors = {}
 
     if pdf_only is False:
-      run_manga_downloader(
+      errors = run_manga_downloader(
         scrapper,
         folder_manager,
         folder_name,
         manga_url,
         page_number)
+      if len(errors) != 0:
+        _logger.info("Download incomplete for [%s]", manga_url)
+        continue
 
-    if pdf_name is not None:
+    if pdf_name is not None: 
       manga_data = scrapper.get_manga_data()
       converted_folder = convert_images(folder_manager)
       create_pdf(converted_folder, pdf_name, manga_data)
@@ -60,6 +64,7 @@ def run_manga_downloader(
     print(f"Error in these images from [{url}]", error_by_manga)
 
   _logger.info("End manga download for [%s]", folder_name)
+  return error_by_manga
 
 def create_pdf(
     folder_manager: FileDownloader,
@@ -78,11 +83,11 @@ def convert_images(folder_manager: FileDownloader) -> FileDownloader:
   full_dest_path = f"{folder_manager.folder_path}/{dest_folder}"
   for image_name in folder_manager.get_images_in_folder():
     splited_name = image_name.split(".")
-    if splited_name[-1].upper not in ["PNG", "JPG"]:
+    if splited_name[-1].upper() not in ["PNG", "JPG"]:
       image_converter.convert_image(
         folder_manager,
         image_name,
-        f"{splited_name[0]}.png",
+        splited_name[0],
         dest_folder
       )
     else:
