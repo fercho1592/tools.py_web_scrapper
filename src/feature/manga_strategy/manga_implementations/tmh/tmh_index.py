@@ -46,7 +46,8 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
     for ele in data_elements:
       li_elements = ele.get_children_by_tag(COMMON_TAGS.LI)
       if li_elements[0].children[0].get_value() in ["Genders", "Tags"]:
-        result.extend([ele.children[0].value for ele in li_elements[1:]])
+        anchors = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
+        result.extend([ele.get_value() for ele in anchors if ele.get_value()])
     return result
 
   def get_manga_artist(self) -> list[str]:
