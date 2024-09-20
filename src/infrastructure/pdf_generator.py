@@ -1,9 +1,11 @@
+'''Module to create PDFs'''
 from fpdf import FPDF
 from infrastructure.file_manager import FileDownloader
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from configs.my_logger import get_logger
 
 class PdfCreator:
+  '''Class to handle pdf creation'''
   def __init__(
       self,
       folder:FileDownloader,
@@ -16,7 +18,10 @@ class PdfCreator:
     self._logger = get_logger(__name__)
 
   def create_pdf(self, manga_data: dict[str,str] | None):
-    self._logger.info("Start process to create [%s] pdf from folder[%s]", self.pdf_name, self.folder.folder_path)
+    self._logger.info(
+      "Start process to create [%s] pdf from folder[%s]", 
+      self.pdf_name,
+      self.folder.folder_path)
     pdf = FPDF(unit= "pt")
     for image in self.folder.get_images_in_folder():
       self._logger.info("Add page of image %s", image)

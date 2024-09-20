@@ -16,7 +16,9 @@ def main():
     manga_url = item[0].strip()
     folder_name = item[1]
     page_number = item[2]
-    pdf_name = item[3] if item[3] is not None else f"{item[1].split("/")[-1]}.pdf"
+    pdf_name = item[3]\
+      if item[3] is not None\
+      else f"{item[1].split("/")[-1]}.pdf"
     pdf_only = item[4]
     print("*************************************************")
     _logger.info("Start process for [%s | %s]", folder_name, manga_url)
@@ -39,12 +41,13 @@ def main():
         _logger.info("Download incomplete for [%s]", manga_url)
         continue
 
-    if pdf_name is not None: 
+    if pdf_name is not None:
       manga_data = scrapper.get_manga_data()
       converted_folder = convert_images(folder_manager)
       create_pdf(converted_folder, pdf_name, manga_data)
       _logger.info("Cleaning conver folders")
-      converted_folder.copy_image_to(pdf_name, f"{folder_manager.folder_path}/..")
+      converted_folder.copy_image_to(
+        pdf_name, f"{folder_manager.folder_path}/..")
       converted_folder.delete_all()
 
   return

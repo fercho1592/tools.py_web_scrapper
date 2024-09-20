@@ -35,7 +35,10 @@ class FileDownloader:
 
   def get_images_in_folder(self) -> list[str]:
     elementos = os.listdir(self.folder_path)
-    return [ele for ele in elementos if ele.split(".")[-1].upper() in ["PNG","JPG", "JPEG", "WEBP"]]
+    return [
+      ele for ele in elementos\
+        if ele.split(".")[-1].upper() in ["PNG","JPG", "JPEG", "WEBP"]
+    ]
 
   def copy_image_to(self, file, folder):
     image_full_path = f"{self.folder_path}/{file}"
