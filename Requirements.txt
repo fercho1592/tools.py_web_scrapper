@@ -6,3 +6,4 @@ requests == 2.32.3
 configparser == 7.1.0
 fpdf2 == 2.7.9
 Pillow == 10.4.0
+pytest == 8.3.3

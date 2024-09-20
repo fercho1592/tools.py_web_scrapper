@@ -1,7 +1,12 @@
 '''Module to read Html and parse to handled objects'''
 from . import dom_reader
 from . import html_decoder
+from . import enums
 
-# Enums
-from . import common_attrs as COMMON_ATTRS
-from . import common_tags as COMMON_TAGS
+__all__ = [
+    dom_reader.DomElement.__name__,
+    dom_reader.HtmlElement.__name__,
+    html_decoder.HtmlDecoder.__name__,
+    enums.CommonAttrs.__name__,
+    enums.CommonTags.__name__
+]

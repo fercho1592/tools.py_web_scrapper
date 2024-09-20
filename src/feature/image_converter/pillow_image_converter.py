@@ -6,9 +6,9 @@ from PIL import Image
 IMAGE_FORMAT = "JPEG"
 
 class PillowImageConverter(image_converter_interfaces.IImageEditorService):
-  def __init__(self) -> None:
-    self._logger = get_logger(__name__)
-    pass
+    def __init__(self) -> None:
+        self._logger = get_logger(__name__)
+        pass
 
   def convert_image(
       self,
@@ -20,7 +20,7 @@ class PillowImageConverter(image_converter_interfaces.IImageEditorService):
     new_image_name = f"{new_image_name}.{IMAGE_FORMAT.lower()}"
     folder_path = folder_manager.folder_path
     old_image_path = f"{folder_path}/{image_name}"
-    new_folder_path =f"{folder_path}/{dest_path}" 
+    new_folder_path =f"{folder_path}/{dest_path}"
     new_image_path = f"{new_folder_path}/{new_image_name}"
     folder_manager.create_folder_if_not_exist(new_folder_path)
     if folder_manager.exist_file(new_image_path):
