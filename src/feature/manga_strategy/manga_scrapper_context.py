@@ -3,6 +3,7 @@ from exceptions.http_service_exception import HttpServiceException
 from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaIndex
 from infrastructure.file_manager import FileDownloader
 import configs.my_logger as MyLogger
+from tools.string_path_fix import FixStringsTools
 
 class MangaScraper:
   '''process to download mangas'''
@@ -46,8 +47,8 @@ class MangaScraper:
 
   def get_manga_data(self) -> dict[str,str]:
     index:IMangaIndex = self.strategy.get_index_page(self.strategy.get_url())
-    name = index.get_manga_name()
-    artist = "|".join(index.get_manga_artist())
+    name = FixStringsTools.fix_string_for_path(index.get_manga_name())
+    artist =  "|".join(index.get_manga_artist())
     groups = "|".join(index.get_manga_group())
     genders = "|".join(index.get_manga_genders())
 
