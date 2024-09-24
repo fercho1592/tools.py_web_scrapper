@@ -6,56 +6,56 @@ import configs.my_logger as MyLogger
 from tools.string_path_fix import FixStringsTools
 
 class MangaScraper:
-  '''process to download mangas'''
-  def __init__(
-      self, 
-      strategy: IMangaStrategy
-  ) -> None:
-    self.strategy = strategy
-    self._logger = MyLogger.get_logger(__name__)
+    '''process to download mangas'''
+    def __init__(
+        self,
+        strategy: IMangaStrategy
+    ) -> None:
+        self.strategy = strategy
+        self._logger = MyLogger.get_logger(__name__)
 
-  def run_manga_download_async(
-      self, folder: FileDownloader,
-      manga_page:int = 0, index_page: int = 0) -> list:
-    del index_page
-    errors = []
-    current_page = self.strategy.get_first_page(manga_page)
+    def run_manga_download_async(
+        self, folder: FileDownloader,
+        manga_page:int = 0, index_page: int = 0
+    ) -> list:
+        del index_page
+        errors = []
+        current_page = self.strategy.get_first_page(manga_page)
 
-    while True:
-      try:
-        (image_url, headers) = current_page.get_img_url()
-        (image_number, last_number) = current_page.get_image_number()
-        image_name = current_page.get_image_name()
+        while True:
+            try:
+                (image_url, headers) = current_page.get_img_url()
+                (image_number, last_number) = current_page.get_image_number()
+                image_name = current_page.get_image_name()
 
-        self._logger.info("Trying to get page [%s: %s-%s]",
-                           image_name, image_number, last_number)
-        folder.get_image_from_url(image_url, image_name, headers)
+                self._logger.info("Trying to get page [%s: %s-%s]",
+                                    image_name, image_number, last_number)
+                folder.get_image_from_url(image_url, image_name, headers)
 
-      except HttpServiceException as ex:
-        errors.append(current_page.get_image_name())
-        self._logger.error(
-          "Page: %s, Error= %r",
-          current_page.get_image_number(), ex, exc_info=True)
+            except HttpServiceException as ex:
+                errors.append(current_page.get_image_name())
+                self._logger.error(
+                    "Page: %s, Error= %r",
+                    current_page.get_image_number(), ex, exc_info=True)
 
-      if current_page.is_last_page():
-        break
-      current_page = current_page.get_next_page_async()
+            if current_page.is_last_page():
+                break
+            current_page = current_page.get_next_page_async()
 
-    self._logger.info(
-      "Download of [%s] complete", current_page.get_manga_name())
-    return errors
+        self._logger.info(
+            "Download of [%s] complete", current_page.get_manga_name())
+        return errors
 
-  def get_manga_data(self) -> dict[str,str]:
-    index:IMangaIndex = self.strategy.get_index_page(self.strategy.get_url())
-    name = FixStringsTools.fix_string_for_path(index.get_manga_name())
-    artist =  "|".join(index.get_manga_artist())
-    groups = "|".join(index.get_manga_group())
-    genders = "|".join(index.get_manga_genders())
+    def get_manga_data(self) -> dict[str,str]:
+        index:IMangaIndex = self.strategy.get_index_page(self.strategy.get_url())
+        name = FixStringsTools.fix_string_for_path(index.get_manga_name())
+        artist =  "|".join(index.get_manga_artist())
+        groups = "|".join(index.get_manga_group())
+        genders = "|".join(index.get_manga_genders())
 
-    return {
-      "name": name,
-      "artist": artist,
-      "groups": groups,
-      "genders": genders,
-    }
-
+        return {
+            "name": name,
+            "artist": artist,
+            "groups": groups,
+            "genders": genders,
+        }
