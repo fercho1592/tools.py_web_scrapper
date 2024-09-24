@@ -1,3 +1,4 @@
+'''Module to set the implementation for page of E_web'''
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
 import feature.html_reader.common_attrs as COMMON_ATTRS

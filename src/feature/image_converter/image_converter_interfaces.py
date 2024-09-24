@@ -1,5 +1,7 @@
+'''Interfaces for Image editors to be used in the app'''
 from infrastructure.file_manager import FileDownloader
 class IImageEditorService:
+    '''Interface to edit and get information from image'''
     def convert_image(
         self,
         folder_manager: FileDownloader,
