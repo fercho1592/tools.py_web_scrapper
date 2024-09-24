@@ -13,33 +13,33 @@ default_headers = {
 
 
 def get_html_from_url(web_page):
-  try:
-    response = requests.get(web_page, headers= default_headers, timeout= 10)
-    response.raise_for_status()
-    return response.text
-  except requests.exceptions.RequestException as e:
-    raise HttpServiceException(f"Error al obtener la url {web_page}") from e
+    try:
+        response = requests.get(web_page, headers= default_headers, timeout= 10)
+        response.raise_for_status()
+        return response.text
+    except requests.exceptions.RequestException as e:
+        raise HttpServiceException(f"Error al obtener la url {web_page}") from e
 
 def download_image_from_url(
     url: str,
     to_folder: str,
     headers: dict[str, str] = None):
-  try:
-    if headers is None:
-      headers = default_headers
-    headers.update(default_headers)
-    # Realiza una solicitud GET a la URL de la imagen
-    response = requests.get(url, stream=True, headers= headers, timeout= 10)
+    try:
+        if headers is None:
+            headers = default_headers
+        headers.update(default_headers)
+        # Realiza una solicitud GET a la URL de la imagen
+        response = requests.get(url, stream=True, headers= headers, timeout= 10)
 
-    # Verifica si la solicitud fue exitosa (código de estado 200)
-    response.raise_for_status()
+        # Verifica si la solicitud fue exitosa (código de estado 200)
+        response.raise_for_status()
 
-    # Abre un archivo en modo escritura binaria para guardar la imagen
-    with open(to_folder, "wb") as out_file:
-      for chunk in response.iter_content(1024):
-        out_file.write(chunk)
+        # Abre un archivo en modo escritura binaria para guardar la imagen
+        with open(to_folder, "wb") as out_file:
+            for chunk in response.iter_content(1024):
+                out_file.write(chunk)
 
-    __logger.debug("Imagen descargada correctamente a: %s", to_folder)
+        __logger.debug("Imagen descargada correctamente a: %s", to_folder)
 
-  except requests.exceptions.RequestException as e:
-    raise HttpServiceException(f"Error al descargar la imagen: {url}") from e
+    except requests.exceptions.RequestException as e:
+        raise HttpServiceException(f"Error al descargar la imagen: {url}") from e
