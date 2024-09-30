@@ -4,11 +4,19 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+  
     {
-      "name": "Python Debugger: Main",
+      "name": "Python Debugger: From File Queue",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/src/__main__.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python Debugger: From Azure Service Bus Queue",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/azure_service_bus_trigger.py",
       "console": "integratedTerminal"
     }
   ]
