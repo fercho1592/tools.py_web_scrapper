@@ -1,0 +1,18 @@
+((artistName) =>{
+    const contentBody = document.getElementsByClassName("panel-body")[1]
+    const elementDiv = contentBody.getElementsByClassName("col-xs-6 col-sm-3 col-md-3 col-lg-2")
+    
+    let arrayEle = []
+    for (let index = 0; index < elementDiv.length; index++) {
+      arrayEle.push(elementDiv[index]);
+    }
+    
+    result = arrayEle.map((element) => {
+      const anchor = element.getElementsByTagName("a")[0]
+      const result = anchor.getAttribute("href") + " | [" + artistName + "]/" +anchor.getInnerHTML()
+      return result.replace("\n", "").toUpperCase().replace("!","").replace("?","")
+    })
+  
+  
+    console.log(result.join("\n"))
+})("")
