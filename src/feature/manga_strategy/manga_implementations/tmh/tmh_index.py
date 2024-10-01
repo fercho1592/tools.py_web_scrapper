@@ -64,5 +64,11 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
         for ele in data_elements:
             li_elements = ele.get_children_by_tag(COMMON_TAGS.LI)
             if li_elements[0].children[0].get_value() == "Uploaded By":
-                return [ele.children[0].value for ele in li_elements[1:]]
+                result = [ele.children[0].value\
+                        for ele in li_elements[1:]\
+                        if ele.children[0] is not None\
+                            and ele.children[0].value != ""\
+                            and ele.children[0].value is not None
+                ]
+                return result
         return []
