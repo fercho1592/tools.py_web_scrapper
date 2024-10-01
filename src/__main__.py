@@ -13,41 +13,34 @@ image_converter: IImageEditorService = PillowImageConverter()
 
 def main():
     for item in read_queue():
-        manga_url = item[0].strip()
-        folder_name = item[1]
-        page_number = item[2]
-        pdf_name = item[3]\
-          if item[3] is not None\
-          else f"{item[1].split("/")[-1]}.pdf"
-        pdf_only = item[4]
         print("*************************************************")
-        _logger.info("Start process for [%s | %s]", folder_name, manga_url)
+        _logger.info("Start process for [%s | %s]", item.folder_name, item.manga_url)
 
-        folder_manager = FileDownloader(folder_name)
+        folder_manager = FileDownloader(item.folder_name)
         folder_manager.create_folder_if_not_exist()
 
-        strategy = MangaFactory.get_manga_strategy(manga_url)
+        strategy = MangaFactory.get_manga_strategy(item.manga_url)
         scrapper = MangaScraper(strategy)
         errors = {}
 
-        if pdf_only is False:
+        if item.pdf_only is False:
             errors = run_manga_downloader(
               scrapper,
               folder_manager,
-              folder_name,
-              manga_url,
-              page_number)
+              item.folder_name,
+              item.manga_url,
+              item.page_number)
             if len(errors) != 0:
-                _logger.info("Download incomplete for [%s]", manga_url)
+                _logger.info("Download incomplete for [%s]", item.manga_url)
                 continue
 
-        if pdf_name is not None:
+        if item.pdf_name is not None:
             manga_data = scrapper.get_manga_data()
             converted_folder = convert_images(folder_manager)
-            create_pdf(converted_folder, pdf_name, manga_data)
+            create_pdf(converted_folder, item.pdf_name, manga_data)
             _logger.info("Cleaning conver folders")
             converted_folder.copy_image_to(
-              pdf_name, f"{folder_manager.folder_path}/..")
+              item.pdf_name, f"{folder_manager.folder_path}/..")
             converted_folder.delete_all()
 
     return
