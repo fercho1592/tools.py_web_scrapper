@@ -55,9 +55,9 @@ class MangaScraper:
     def get_manga_data(self) -> dict[str,str]:
         index:IMangaIndex = self.strategy.get_index_page(self.strategy.get_url())
         name = FixStringsTools.fix_string_for_path(index.get_manga_name())
-        artist =  "|".join(index.get_manga_artist())
-        groups = "|".join(index.get_manga_group())
-        genders = "|".join(index.get_manga_genders())
+        artist =  " | ".join(index.get_manga_artist())
+        groups = " | ".join(index.get_manga_group())
+        genders = " | ".join(index.get_manga_genders())
 
         return {
             "name": name,
