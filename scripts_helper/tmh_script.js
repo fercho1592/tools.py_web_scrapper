@@ -4,7 +4,7 @@
     const mainFolder = artistName ?? document.getElementsByName("search[searchText]")[0].value
 
     
-    let arrayEle = []
+    const arrayEle = []
     for (let index = 0; index < elementDiv.length; index++) {
       arrayEle.push(elementDiv[index]);
     }
