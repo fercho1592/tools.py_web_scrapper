@@ -3,6 +3,7 @@ from fpdf import FPDF
 from infrastructure.file_manager import FileDownloader
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from configs.my_logger import get_logger
+from tools.string_path_fix import FixStringsTools
 
 class PdfCreator:
     '''Class to handle pdf creation'''
@@ -23,6 +24,8 @@ class PdfCreator:
             self.pdf_name,
             self.folder.folder_path)
         pdf = FPDF(unit= "pt")
+        pdf.add_font("Swansea", "", "Swansea-q3pd.ttf")
+        pdf.set_font("Swansea","", 10)
         for image in self.folder.get_images_in_folder():
             self._logger.info("Add page of image %s", image)
             image_path = f"{self.folder.folder_path}/{image}"
@@ -43,8 +46,8 @@ class PdfCreator:
                 pdf.set_font("Arial", "B", 12)
                 pdf.write(10, key)
                 pdf.ln(10)
-                pdf.set_font("Arial", "", 10)
-                pdf.write(10, data)
+                pdf.set_font("Swansea","", 10)
+                pdf.write(10, FixStringsTools.normalize_string(data),)
 
 
         self._logger.info("Saving PDF %s", self.pdf_name)
