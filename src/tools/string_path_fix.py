@@ -14,3 +14,9 @@ class FixStringsTools:
         path_to_fix = normalize( 'NFC', path_to_fix)
 
         return path_to_fix
+    
+    @staticmethod
+    def normalize_string(text: str) -> str:
+        result = normalize("NFD",text)\
+            .replace("♥","")
+        return result
