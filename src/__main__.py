@@ -41,6 +41,7 @@ def main():
             _logger.info("Cleaning conver folders")
             converted_folder.copy_image_to(
               item.pdf_name, f"{folder_manager.folder_path}/..")
+            folder_manager.delete_all()
             converted_folder.delete_all()
 
     return
