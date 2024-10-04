@@ -1,6 +1,6 @@
 '''Service to save images'''
-
 import os
+import io
 import shutil
 import infrastructure.http_service as http_service
 
@@ -54,3 +54,8 @@ class FileDownloader:
 
     def delete_all(self):
         shutil.rmtree(self.folder_path)
+
+    def write_file(self, file_name: str, lines:list[str]) -> None:
+        with open(f"{self.folder_path}/{file_name}", "w", encoding="utf-8") as file:
+            file.seek(0, io.SEEK_END)
+            file.writelines(lines)
