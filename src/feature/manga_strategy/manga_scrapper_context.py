@@ -15,8 +15,10 @@ class MangaScraper:
         self._logger = MyLogger.get_logger(__name__)
 
     def run_manga_download_async(
-        self, folder: FileDownloader,
-        manga_page:int = 0, index_page: int = 0
+        self,
+        folder: FileDownloader,
+        manga_page:int = 0,
+        index_page: int = 0
     ) -> list:
         del index_page
         errors = []
@@ -34,6 +36,10 @@ class MangaScraper:
 
             except HttpServiceException as ex:
                 errors.append(current_page.get_image_name())
+
+                folder.write_file("errors.txt",[
+                    f"Error in {current_page.get_image_number()}"
+                ])
                 self._logger.error(
                     "Page: %s, Error= %r",
                     current_page.get_image_number(), ex, exc_info=True)
