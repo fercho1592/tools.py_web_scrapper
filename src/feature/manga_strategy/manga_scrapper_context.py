@@ -4,6 +4,7 @@ from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaIndex
 from infrastructure.file_manager import FileDownloader
 import configs.my_logger as MyLogger
 from tools.string_path_fix import FixStringsTools
+from tqdm import tqdm
 
 class MangaScraper:
     '''process to download mangas'''
@@ -23,6 +24,10 @@ class MangaScraper:
         del index_page
         errors = []
         current_page = self.strategy.get_first_page(manga_page)
+        (image_number, last_number) = current_page.get_image_number()
+        int_last_number = int(last_number)
+        print(f"Start download of {self.strategy.get_url()} in [{folder.folder_path}]")
+        progress_bar = tqdm(range(int_last_number), "Downloading images", int_last_number)
 
         while True:
             try:
@@ -33,6 +38,7 @@ class MangaScraper:
                 self._logger.info("Trying to get page [%s: %s-%s]",
                                     image_name, image_number, last_number)
                 folder.get_image_from_url(image_url, image_name, headers)
+                progress_bar.update()
 
             except HttpServiceException as ex:
                 errors.append(current_page.get_image_name())
