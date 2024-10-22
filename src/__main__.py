@@ -45,6 +45,7 @@ def main():
             print(f"PDf created in [{folder_manager.folder_path}/{item.pdf_name}]")
             converted_folder.delete_all()
             folder_manager.delete_all()
+            print("Folder cleaned")
 
     return
 

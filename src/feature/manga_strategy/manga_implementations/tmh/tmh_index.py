@@ -59,6 +59,7 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
                 return [ele.get_value() for ele in anchors]
         return []
 
+    # TODO: Unit Tests
     def get_manga_group(self) -> list[str]:
         data_elements = self._get_manga_data_elements()
         for ele in data_elements:

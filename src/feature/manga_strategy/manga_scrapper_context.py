@@ -26,7 +26,8 @@ class MangaScraper:
         current_page = self.strategy.get_first_page(manga_page)
         (image_number, last_number) = current_page.get_image_number()
         int_last_number = int(last_number)
-        print(f"Start download of {self.strategy.get_url()} in [{folder.folder_path}]")
+        strategy_url = self.strategy.get_url()
+        print(f"Start download of {strategy_url} in [{folder.folder_path}]")
         progress_bar = tqdm(range(int_last_number), "Downloading images", int_last_number)
 
         while True:
@@ -41,6 +42,8 @@ class MangaScraper:
                 progress_bar.update()
 
             except HttpServiceException as ex:
+                if len(errors) == 0:
+                    folder.write_file("errors.txt",[f"{strategy_url} | {folder.folder_path}"])
                 errors.append(current_page.get_image_name())
 
                 folder.write_file("errors.txt",[
