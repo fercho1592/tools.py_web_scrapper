@@ -58,4 +58,5 @@ class FileDownloader:
     def write_file(self, file_name: str, lines:list[str]) -> None:
         with open(f"{self.folder_path}/{file_name}", "a", encoding="utf-8") as file:
             file.seek(0, io.SEEK_END)
-            file.writelines(lines)
+            for line in lines:
+                file.writelines(line + "\n")

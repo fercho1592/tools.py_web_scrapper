@@ -23,12 +23,20 @@ class MangaScraper:
     ) -> list:
         del index_page
         errors = []
-        current_page = self.strategy.get_first_page(manga_page)
-        (image_number, last_number) = current_page.get_image_number()
-        int_last_number = int(last_number)
-        strategy_url = self.strategy.get_url()
-        print(f"Start download of {strategy_url} in [{folder.folder_path}]")
-        progress_bar = tqdm(range(int_last_number), "Downloading images", int_last_number)
+        try:
+            current_page = self.strategy.get_first_page(manga_page)
+            (image_number, last_number) = current_page.get_image_number()
+            int_last_number = int(last_number)
+            strategy_url = self.strategy.get_url()
+            print(f"Start download of {strategy_url} in [{folder.folder_path}]")
+            progress_bar = tqdm(range(int_last_number), "Downloading images", int_last_number)
+            progress_bar.update(manga_page)
+        except Exception as ex:
+            del ex
+            folder.write_file("errors.txt",[f"{self.strategy.get_url()} | {folder.folder_path}",
+                                             "Erron getting data"])
+            errors.append("Error getting data")
+            return errors
 
         while True:
             try:
