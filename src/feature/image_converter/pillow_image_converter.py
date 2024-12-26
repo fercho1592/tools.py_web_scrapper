@@ -1,6 +1,6 @@
 '''Module to implement a '''
 from . import image_converter_interfaces
-from infrastructure.file_manager import FileDownloader
+from infrastructure.file_manager import FileManager
 from configs.my_logger import get_logger
 from PIL import Image
 
@@ -14,7 +14,7 @@ class PillowImageConverter(image_converter_interfaces.IImageEditorService):
 
     def convert_image(
         self,
-        folder_manager: FileDownloader,
+        folder_manager: FileManager,
         image_name: str,
         new_image_name,
         dest_path="converted_to_png"
@@ -41,7 +41,7 @@ class PillowImageConverter(image_converter_interfaces.IImageEditorService):
 
     def get_image_size(
         self,
-        folder_manager:FileDownloader,
+        folder_manager:FileManager,
         image_name: str
     ):
         image_path = f"{folder_manager.folder_path}/{image_name}"

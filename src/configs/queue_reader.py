@@ -9,7 +9,8 @@ class QueueItem:
         self.folder_name = path
         self.page_number = page_number
         self.pdf_name = f"{self.folder_name.split("/")[-1]}.pdf"
-        self.pdf_only = pdf_only
+        self.pdf_only = 1
+        self.download_files = not pdf_only
 
     @staticmethod
     def QueueItemFromFile(line:str) -> Self:

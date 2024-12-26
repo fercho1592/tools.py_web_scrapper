@@ -1,12 +1,11 @@
 '''Service to save images'''
 import os
-import io
 import shutil
 import infrastructure.http_service as http_service
 
 import configs.my_logger as my_logger
 
-class FileDownloader:
+class FileManager:
     '''Class to save images from http uri'''
     def __init__(self, folder: str):
         self.folder_path = folder
@@ -54,9 +53,3 @@ class FileDownloader:
 
     def delete_all(self):
         shutil.rmtree(self.folder_path)
-
-    def write_file(self, file_name: str, lines:list[str]) -> None:
-        with open(f"{self.folder_path}/{file_name}", "a", encoding="utf-8") as file:
-            file.seek(0, io.SEEK_END)
-            for line in lines:
-                file.writelines(line + "\n")

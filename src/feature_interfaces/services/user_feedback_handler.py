@@ -4,14 +4,19 @@ from typing import Self
 
 class IUserFeedbackHandler(ABC):
     @abstractmethod
-    def SetCurrentProcess(self:Self,currentItemNumber:int) -> None:
+    def CreateProgressBar(self, itemsNumber: int, descriptionMessage: str) -> IProgressBar:
         pass
     @abstractmethod
-    def ShowMessage(self: Self, message: str):
+    def ShowMessage(self, message: str):
         pass
     @abstractmethod
-    def ShowErrorMessage(self: Self, message: str) -> None:
+    def ShowErrorMessage(self, message: str) -> None:
+        pass
+
+class IProgressBar(ABC):
+    @abstractmethod
+    def SetCurrentProcess(self,currentItemNumber:int) -> None:
         pass
     @abstractmethod
-    def NextItem(self: Self) -> None:
+    def NextItem(self) -> None:
         pass

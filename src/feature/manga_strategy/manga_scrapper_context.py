@@ -1,7 +1,7 @@
 '''Strategi context'''
 from exceptions.http_service_exception import HttpServiceException
 from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaIndex
-from infrastructure.file_manager import FileDownloader
+from infrastructure.file_manager import FileManager
 import configs.my_logger as MyLogger
 from tools.string_path_fix import FixStringsTools
 from tqdm import tqdm
@@ -17,7 +17,7 @@ class MangaScraper:
 
     def run_manga_download_async(
         self,
-        folder: FileDownloader,
+        folder: FileManager,
         manga_page:int = 0
     ) -> list:
         errors = []

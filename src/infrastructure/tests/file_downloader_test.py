@@ -1,12 +1,12 @@
 import pytest
 import os
-from ..file_manager import FileDownloader
+from ..file_manager import FileManager
 
 
 class Test:
     @staticmethod
-    def get_default() -> FileDownloader:
-        return FileDownloader("./")
+    def get_default() -> FileManager:
+        return FileManager("./")
 
     def test_write_file_has_valid_path_then_write_file(self):
         file_path = "./test_file.txt"
