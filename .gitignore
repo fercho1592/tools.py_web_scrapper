@@ -163,3 +163,4 @@ cython_debug/
 src/download-queue.txt
 config.ini
 download-queue.txt
+.DS_Store

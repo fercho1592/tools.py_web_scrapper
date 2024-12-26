@@ -29,13 +29,6 @@ Install fire base tools its necesary so, in a terminal run this script
 
     npm install -g firebase-tools
 
-After install the last Firebase-tools version you have to move to `./src/firebase_message_sender` folder and deploy current code
-
-    firebase login 
-    firebase init functions
-    firebase deploy
-
-
 
 ## Common errors 
 
