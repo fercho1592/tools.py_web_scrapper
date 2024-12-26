@@ -4,6 +4,7 @@ from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaIndex
 from infrastructure.file_manager import FileDownloader
 import configs.my_logger as MyLogger
 from tools.string_path_fix import FixStringsTools
+from tqdm import tqdm
 
 class MangaScraper:
     '''process to download mangas'''
@@ -22,7 +23,20 @@ class MangaScraper:
     ) -> list:
         del index_page
         errors = []
-        current_page = self.strategy.get_first_page(manga_page)
+        try:
+            current_page = self.strategy.get_first_page(manga_page)
+            (image_number, last_number) = current_page.get_image_number()
+            int_last_number = int(last_number)
+            strategy_url = self.strategy.get_url()
+            print(f"Start download of {strategy_url} in [{folder.folder_path}]")
+            progress_bar = tqdm(range(int_last_number), "Downloading images", int_last_number)
+            progress_bar.update(manga_page)
+        except Exception as ex:
+            del ex
+            folder.write_file("errors.txt",[f"{self.strategy.get_url()} | {folder.folder_path}",
+                                             "Erron getting data"])
+            errors.append("Error getting data")
+            return errors
 
         while True:
             try:
@@ -33,8 +47,11 @@ class MangaScraper:
                 self._logger.info("Trying to get page [%s: %s-%s]",
                                     image_name, image_number, last_number)
                 folder.get_image_from_url(image_url, image_name, headers)
+                progress_bar.update()
 
             except HttpServiceException as ex:
+                if len(errors) == 0:
+                    folder.write_file("errors.txt",[f"{strategy_url} | {folder.folder_path}"])
                 errors.append(current_page.get_image_name())
 
                 folder.write_file("errors.txt",[
@@ -55,9 +72,9 @@ class MangaScraper:
     def get_manga_data(self) -> dict[str,str]:
         index:IMangaIndex = self.strategy.get_index_page(self.strategy.get_url())
         name = FixStringsTools.fix_string_for_path(index.get_manga_name())
-        artist =  "|".join(index.get_manga_artist())
-        groups = "|".join(index.get_manga_group())
-        genders = "|".join(index.get_manga_genders())
+        artist =  " | ".join(index.get_manga_artist())
+        groups = " | ".join(index.get_manga_group())
+        genders = " | ".join(index.get_manga_genders())
 
         return {
             "name": name,

@@ -8,3 +8,4 @@ fpdf2 == 2.7.9
 Pillow == 10.4.0
 pytest == 8.3.3
 azure-servicebus == 7.12.3
+tqdm == 4.66.5

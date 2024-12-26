@@ -35,14 +35,23 @@ def main():
                 continue
 
         if item.pdf_name is not None:
-            manga_data = scrapper.get_manga_data()
-            converted_folder = convert_images(folder_manager)
-            create_pdf(converted_folder, item.pdf_name, manga_data)
-            _logger.info("Cleaning conver folders")
-            converted_folder.copy_image_to(
-              item.pdf_name, f"{folder_manager.folder_path}/..")
-            folder_manager.delete_all()
-            converted_folder.delete_all()
+            try:
+                print("Creating pdf")
+                manga_data = scrapper.get_manga_data()
+                converted_folder = convert_images(folder_manager)
+                create_pdf(converted_folder, item.pdf_name, manga_data)
+                _logger.info("Cleaning conver folders")
+                converted_folder.copy_image_to(
+                item.pdf_name, f"{folder_manager.folder_path}/..")
+                print(f"PDf created in [{folder_manager.folder_path}/{item.pdf_name}]")
+                converted_folder.delete_all()
+                folder_manager.delete_all()
+                print("Folder cleaned")
+            except Exception as ex:
+                del ex
+                folder_manager.write_file("errors.txt",[f"{item.manga_url} | {item.folder_name}",\
+                                             "Erron on PDF convertion"])
+                continue
 
     return
 

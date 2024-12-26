@@ -27,12 +27,13 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         index_page = page // max_page_count
         index = self._get_index_page(index_page) if page > max_page_count else self
         real_page = page - (index_page * max_page_count)
-        pages = index.dom_reader.get_by_attrs(COMMON_ATTRS.CLASS, "gdtm")
+        pages = index.dom_reader.get_by_attrs(COMMON_ATTRS.ID, "gdt")[0]\
+            .get_children_by_tag(COMMON_TAGS.ANCHOR)
         page_to_search = pages[real_page-1]
-        page_children = page_to_search.get_children_by_tag(COMMON_TAGS.ANCHOR)
+        page_children = page_to_search
 
         new_page = index.strategy.get_page_from_url_async(
-        page_children[0].get_attr_value(COMMON_ATTRS.HREF))
+        page_children.get_attr_value(COMMON_ATTRS.HREF))
         return new_page
 
     def _get_manga_data_elements(self) -> list[HtmlElement]:
