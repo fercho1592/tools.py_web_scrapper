@@ -1,11 +1,9 @@
-'''Module to set the implementation for page of E_web'''
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
 
 class EMangaPage(BaseMangaPage,IMangaPage):
-    '''Structure in case of a EManga Page'''
 
     def get_img_url(self) -> tuple[str, dict[str,str]]:
         self._logger.debug("Getting image url from [%s]", self.url)

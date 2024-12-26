@@ -1,4 +1,3 @@
-'''Module for tmh strategy'''
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.dom_reader as DomElement
 import configs.config_manager as config_manager
@@ -8,7 +7,6 @@ from feature.manga_strategy.manga_implementations.tmh.tmh_page import TmhMangaPa
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaPage, IMangaIndex
 
 class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
-    '''Define a page object for tmh strategy'''
     @staticmethod
     def is_from_domain(url:str) -> bool:
         config = config_manager.read_config()

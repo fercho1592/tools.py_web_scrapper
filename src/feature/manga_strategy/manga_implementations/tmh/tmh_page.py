@@ -1,11 +1,9 @@
-'''File for tmh page class'''
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaPage
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
 
 class TmhMangaPage(BaseMangaPage,IMangaPage):
-    '''Define a page object for tmh web page'''
 
     def get_img_url(self) -> tuple[str, dict[str,str]]:
         image_eles = self.reader.get_by_tag_name(COMMON_TAGS.IMG,

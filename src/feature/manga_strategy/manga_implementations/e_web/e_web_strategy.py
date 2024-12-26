@@ -1,4 +1,3 @@
-'''Module for implementation for e-hentai pages'''
 import configs.config_manager as config_manager
 import feature.html_reader.common_attrs as COMMON_ATTRS
 from feature.html_reader.dom_reader import DomElement
@@ -8,7 +7,6 @@ from feature.manga_strategy.manga_implementations._base_strategy import BaseStra
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 
 class EMangaStrategy(BaseStrategy,IMangaStrategy):
-    '''Implementation for e-hentai page'''
     @staticmethod
     def is_from_domain(url:str) -> bool:
         config = config_manager.read_config()

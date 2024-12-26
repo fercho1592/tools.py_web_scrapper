@@ -1,4 +1,3 @@
-'''Module for tmh index pages'''
 from feature.html_reader.dom_reader import HtmlElement
 from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
@@ -6,7 +5,6 @@ import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
-    '''Class for tmh manga index'''
     @staticmethod
     def get_max_pages_in_index() -> int:
         return 100

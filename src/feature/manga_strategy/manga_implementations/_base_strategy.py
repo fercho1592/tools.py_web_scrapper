@@ -1,4 +1,3 @@
-'''Module for implementation for e-hentai pages'''
 from typing import Self
 from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
 from feature.html_reader.html_decoder import HtmlDecoder

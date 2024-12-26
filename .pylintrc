@@ -89,6 +89,8 @@ disable=R,
         map-builtin-not-iterating,
         misplaced-comparison-constant,
         missing-function-docstring,
+        missing-class-docstring,
+        missing-module-docstring,
         metaclass-assignment,
         next-method-called,
         next-method-defined,
@@ -186,7 +188,11 @@ const-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
 attr-rgx=^_{0,2}[a-z][a-z0-9_]*$
 
 # Regular expression matching correct argument names
-argument-rgx=^[a-z][a-z0-9_]*$
+# snake_case
+# argument-rgx=^[a-z][a-z0-9_]*$
+# lowerCamelCase
+argument-rgx=[a-z]+((\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?
+
 
 # Regular expression matching correct class attribute names
 class-attribute-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
