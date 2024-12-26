@@ -18,10 +18,8 @@ class MangaScraper:
     def run_manga_download_async(
         self,
         folder: FileDownloader,
-        manga_page:int = 0,
-        index_page: int = 0
+        manga_page:int = 0
     ) -> list:
-        del index_page
         errors = []
         try:
             current_page = self.strategy.get_first_page(manga_page)

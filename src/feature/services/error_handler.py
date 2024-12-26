@@ -1,4 +1,4 @@
-from feature_interfaces.error_handler import IErrorHandler
+from feature_interfaces.services.error_handler import IErrorHandler
 from infrastructure.file_manager import FileDownloader
 from logging import Logger
 from abc import ABC
