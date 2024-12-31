@@ -1,11 +1,9 @@
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler, IProgressBar
 from feature_interfaces.services.error_handler import IErrorHandler
-from logging import Logger
-from abc import ABC
 from tqdm import tqdm
 
 class UserFeedbackHandler(IUserFeedbackHandler):
-    def __init__(self, elementName: str, itemsNumber:int, errorHandler: IErrorHandler, logger: Logger):
+    def __init__(self, elementName: str, errorHandler: IErrorHandler):
         self._elementName = elementName
         self.ErrorHandler = errorHandler
 
@@ -15,11 +13,11 @@ class UserFeedbackHandler(IUserFeedbackHandler):
     def ShowDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
         print(message)
         self.ErrorHandler.SaveDownloadError(message, item, totalItems, ex)
-    
+
     def ShowMessageError(self, message: str, ex: Exception):
         print(message)
         self.ErrorHandler.SaveMessageError(message)
-    
+
     def CreateProgressBar(self, itemsNumber: int, descriptionMessage: str) -> IProgressBar:
         return ProgressBar(itemsNumber, descriptionMessage)
 

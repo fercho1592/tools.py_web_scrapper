@@ -179,13 +179,19 @@ property-classes=abc.abstractproperty,cached_property.cached_property,cached_pro
 function-rgx=^(?:(?P<exempt>setUp|tearDown|setUpModule|tearDownModule)|(?P<camel_case>_?[A-Z][a-zA-Z0-9]*)|(?P<snake_case>_?[a-z][a-z0-9_]*))$
 
 # Regular expression matching correct variable names
-variable-rgx=^[a-z][a-z0-9_]*$
+# Original Name
+# variable-rgx=^[a-z][a-z0-9_]*$
+variable-rgx=[a-z]+((\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?
 
 # Regular expression matching correct constant names
 const-rgx=^(_?[A-Z][A-Z0-9_]*|__[a-z0-9_]+__|_?[a-z][a-z0-9_]*)$
 
 # Regular expression matching correct attribute names
-attr-rgx=^_{0,2}[a-z][a-z0-9_]*$
+# attr-rgx=^_{0,2}[a-z][a-z0-9_]*$
+# snake_case
+# attr-rgx=^[a-z][a-z0-9_]*$
+# lowerCamelCase
+attr-rgx=[A-Z|_]+((\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?
 
 # Regular expression matching correct argument names
 # snake_case
