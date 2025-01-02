@@ -3,18 +3,16 @@ from feature.manga_strategy.manga_interfaces import IMangaStrategy, IMangaIndex,
 from feature.html_reader.html_decoder import HtmlDecoder
 from feature.html_reader.dom_reader import DomElement
 import configs.my_logger as my_logger
-import infrastructure.http_service as http_service
+import configs.dependency_injection as IOT
 import time
 
 from abc import abstractmethod
 
 def DefaultViewTimer():
     delay_seconds = 5
-    #__logger.debug("Delay of [%s] seconds", delay_seconds)
     time.sleep(delay_seconds)
 
 class BaseStrategy(IMangaStrategy):
-    '''Implementation for e-hentai page'''
     @staticmethod
     @abstractmethod
     def is_from_domain(url:str) -> bool:
@@ -28,9 +26,10 @@ class BaseStrategy(IMangaStrategy):
     def __init__(self, web_page: str):
         self._logger = my_logger.get_logger(__name__)
         self.web_page = web_page
+        self.HttpService = IOT.GetHttpService()
 
     def _get_dom_component(self, url: str):
-        html = http_service.get_html_from_url(url)
+        html = self.HttpService.GetHtmlFromUrl(url)
         decoder = HtmlDecoder()
         decoder.set_html(html)
         return decoder.get_dom_component()

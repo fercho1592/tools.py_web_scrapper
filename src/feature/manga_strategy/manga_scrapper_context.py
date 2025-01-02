@@ -1,74 +1,59 @@
 '''Strategi context'''
 from exceptions.http_service_exception import HttpServiceException
-from feature.manga_strategy.manga_interfaces import IMangaStrategy,IMangaIndex
+from feature.manga_strategy.manga_interfaces import IMangaStrategy
 from feature_interfaces.services.file_manager import IFileManager
-import configs.my_logger as MyLogger
+from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from tools.string_path_fix import FixStringsTools
-from tqdm import tqdm
+import configs.my_logger as MyLogger
+import configs.dependency_injection as IOT
 
 class MangaScraper:
     '''process to download mangas'''
-    def __init__(
-        self,
-        strategy: IMangaStrategy
-    ) -> None:
+    def __init__(self,strategy: IMangaStrategy,uiHandler: IUserFeedbackHandler) -> None:
         self.Strategy = strategy
+        self._uiHandler = uiHandler
         self._logger = MyLogger.get_logger(__name__)
+        self._httpService =  IOT.GetHttpService()
 
-    def run_manga_download_async(
-        self,
-        folder: IFileManager,
-        manga_page:int = 0
-    ) -> list:
+    def run_manga_download_async(self, folder: IFileManager, manga_page:int = 0) -> None:
         errors = []
         try:
-            current_page = self.Strategy.get_first_page(manga_page)
-            (image_number, last_number) = current_page.get_image_number()
-            int_last_number = int(last_number)
-            strategy_url = self.Strategy.get_url()
-            print(f"Start download of {strategy_url} in [{folder.folder_path}]")
-            progress_bar = tqdm(range(int_last_number), "Downloading images", int_last_number)
-            progress_bar.update(manga_page)
+            currentPage = self.Strategy.get_first_page(manga_page)
+            (imageNumber, lastNumber) = currentPage.get_image_number()
+            intLastNumber = int(lastNumber)
+            strategyUrl = self.Strategy.get_url()
+
+            self._uiHandler.ShowMessage(
+                f"Start download of {strategyUrl} in [{folder.GetFolderPath()}]")
+            progressBar = self._uiHandler.CreateProgressBar(intLastNumber, "")
+            progressBar.SetCurrentProcess(manga_page)
         except Exception as ex:
-            del ex
-            folder.write_file("errors.txt",[f"{self.Strategy.get_url()} | {folder.folder_path}",
-                                             "Erron getting data"])
-            errors.append("Error getting data")
-            return errors
+            self._uiHandler.ShowMessageError("Error getting data", ex)
 
         while True:
             try:
-                (image_url, headers) = current_page.get_img_url()
-                (image_number, last_number) = current_page.get_image_number()
-                image_name = current_page.get_image_name()
+                (imageUrl, headers) = currentPage.get_img_url()
+                (imageNumber, lastNumber) = currentPage.get_image_number()
+                imageName = currentPage.get_image_name()
 
-                self._logger.info("Trying to get page [%s: %s-%s]",
-                                    image_name, image_number, last_number)
-                folder.get_image_from_url(image_url, image_name, headers)
-                progress_bar.update()
+                self._logger.info(
+                    "Trying to get page [%s: %s-%s]",imageName, imageNumber, lastNumber)
 
+                self._httpService.SetHeaders(headers)
+                self._httpService.DownloadImageFromUrl(imageUrl, imageName, folder.GetFolderPath())
+                progressBar.NextItem()
             except HttpServiceException as ex:
-                if len(errors) == 0:
-                    folder.write_file("errors.txt",[f"{strategy_url} | {folder.folder_path}"])
-                errors.append(current_page.get_image_name())
+                self._uiHandler.ShowMessageError(f"Error in {currentPage.get_image_number()}", ex)
 
-                folder.write_file("errors.txt",[
-                    f"Error in {current_page.get_image_number()}"
-                ])
-                self._logger.error(
-                    "Page: %s, Error= %r",
-                    current_page.get_image_number(), ex, exc_info=True)
-
-            if current_page.is_last_page():
+            if currentPage.is_last_page():
                 break
-            current_page = current_page.get_next_page_async()
+            currentPage = currentPage.get_next_page_async()
 
-        self._logger.info(
-            "Download of [%s] complete", current_page.get_manga_name())
+        self._logger.info("Download of [%s] complete", currentPage.get_manga_name())
         return errors
 
     def get_manga_data(self) -> dict[str,str]:
-        index:IMangaIndex = self.Strategy.get_index_page(self.Strategy.get_url())
+        index = self.Strategy.get_index_page(self.Strategy.get_url())
         name = FixStringsTools.fix_string_for_path(index.get_manga_name())
         artist =  " | ".join(index.get_manga_artist())
         groups = " | ".join(index.get_manga_group())

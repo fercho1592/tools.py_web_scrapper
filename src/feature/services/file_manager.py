@@ -27,7 +27,7 @@ class FileManager(IFileManager):
     def HasFile(self, fileName: str) -> bool:
         return path.exists(path.join(self.FullPath, fileName))
 
-    def GetContainedElementsList(self) -> list[str]:
+    def GetImagesInFolder(self) -> list[str]:
         elementos = listdir(self.FullPath)
         return [ele for ele in elementos\
             if ele.split(".")[-1].upper() in FileManager.IMAGE_TYPES

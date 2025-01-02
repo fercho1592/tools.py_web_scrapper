@@ -1,16 +1,12 @@
-from infrastructure.pdf_generator import PdfCreator
+import configs.dependency_injection as IOT
 from configs.queue_reader import read_queue, QueueItem
 from configs.my_logger import get_logger
-from configs.dependency_injection import GetErrorHandler, GetUserFeddbackHandler, GetMangaScrapper, GetFileManager
+from infrastructure.pdf_generator import PdfCreator
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
-from feature.manga_strategy.manga_factory import MangaFactory
-from feature.image_converter.pillow_image_converter import PillowImageConverter
-from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.services.file_manager import FileManager, DOWNLOAD_FOLDER
-from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 
 _logger = get_logger(__name__)
-image_converter: IImageEditorService = PillowImageConverter()
+image_converter = IOT.GetImageConverter()
 DEST_FOLDER = "converted_images"
 PROSSESING_FOLDER = "../Processing"
 
@@ -22,15 +18,14 @@ def main():
 
         resultFolder = f"{DOWNLOAD_FOLDER}/{item.folder_name}"
         processingFolder = f"{DOWNLOAD_FOLDER}/{PROSSESING_FOLDER}/{item.folder_name}"
-        strategy = MangaFactory.get_manga_strategy(item.manga_url)
-        errorHandler = GetErrorHandler(item.manga_url, item.folder_name)
-        uiHandler = GetUserFeddbackHandler(item.folder_name, errorHandler)
-        folderManager = GetFileManager(DOWNLOAD_FOLDER, processingFolder)
-        scrapper = GetMangaScrapper(strategy)
+        uiHandler = IOT.GetUserFeddbackHandler(item.folder_name, errorHandler)
+        folderManager = IOT.GetFileManager(DOWNLOAD_FOLDER, processingFolder)
+        errorHandler = IOT.GetErrorHandler(item.manga_url, folderManager)
+        scrapper = IOT.GetMangaScrapper(IOT.GetMangaStrategy(item.manga_url), uiHandler)
         mangaData = scrapper.get_manga_data()
 
         try:
-            run_manga_downloader(scrapper,uiHandler,folderManager,item)
+            run_manga_downloader(scrapper,folderManager,item)
         except:
             _logger.info("Download incomplete for [%s]", item.manga_url)
             continue
@@ -42,11 +37,11 @@ def main():
             _logger.info("Creating PDF")
             create_pdf(converted_folder, item.pdf_name, mangaData)
             _logger.info("Cleaning conver folders")
-            converted_folder.copy_image_to(item.pdf_name, resultFolder)
+            converted_folder.MoveFileTo(item.pdf_name, resultFolder)
             uiHandler.ShowMessage(f"PDf created in [{resultFolder}/{item.pdf_name}]")
             _logger.info("Clean folder")
-            converted_folder.delete_all()
-            folderManager.delete_all()
+            converted_folder.DeleteAll()
+            folderManager.DeleteAll()
             uiHandler.ShowMessage("Folder cleaned")
         except Exception as ex:
             del ex
@@ -58,7 +53,6 @@ def main():
 
 def run_manga_downloader(
         scrapper: MangaScraper,
-        uiHandler: IUserFeedbackHandler, 
         folder_manager: FileManager,
         queueItem: QueueItem):
     
@@ -99,7 +93,7 @@ def convert_images(folder_manager: FileManager) -> FileManager:
             else:
                 folder_manager.MoveFileTo(image_name, full_dest_path)
 
-        return GetFileManager(folder_manager.GetFolderPath(), DEST_FOLDER)
+        return IOT.GetFileManager(folder_manager.GetFolderPath(), DEST_FOLDER)
     finally:
         _logger.info("End Convert Images")
 

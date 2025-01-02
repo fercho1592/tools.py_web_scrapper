@@ -1,14 +1,12 @@
 from feature_interfaces.services.error_handler import IErrorHandler
-from infrastructure.file_manager import FileManager
-from logging import Logger
+from feature_interfaces.services.file_manager import IFileManager
 from io import SEEK_END
-from enum import Enum
 
 class ErrorHandler(IErrorHandler):
-    def __init__(self, urlItem:str, folderPath:str):
+    def __init__(self, urlItem:str, filemanager: IFileManager):
         self._url = urlItem
-        self._folderpath = folderPath
-        self._folderManager = FileManager(folderPath)
+        self._folderpath = filemanager.GetFolderPath()
+        self._folderManager = filemanager
         self._errors = []
 
     def SaveDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
@@ -17,7 +15,7 @@ class ErrorHandler(IErrorHandler):
         self._errors.append(item)
 
         self._WriteTextOnFile("errors.txt",[ f"Error in {item}"])
-    
+
     def SaveMessageError(self, message: str, ex: Exception):
         self._WriteTextOnFile("errors.txt",[f"{self._url} | {self._folderpath}",
                                              "Erron getting data"])

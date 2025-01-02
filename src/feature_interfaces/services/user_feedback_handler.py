@@ -3,13 +3,16 @@ from abc import ABC, abstractmethod
 
 class IUserFeedbackHandler(ABC):
     @abstractmethod
-    def CreateProgressBar(self, itemsNumber: int, descriptionMessage: str) -> IProgressBar:
-        pass
-    @abstractmethod
     def ShowMessage(self, message: str):
         pass
     @abstractmethod
-    def ShowErrorMessage(self, message: str) -> None:
+    def ShowDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
+        pass
+    @abstractmethod
+    def ShowMessageError(self, message: str, ex: Exception):
+        pass
+    @abstractmethod
+    def CreateProgressBar(self, itemsNumber: int, descriptionMessage: str) -> IProgressBar:
         pass
 
 class IProgressBar(ABC):
