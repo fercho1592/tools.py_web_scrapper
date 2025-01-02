@@ -23,6 +23,13 @@ The program use a file `config.ini` for all secrets and setups at root directory
     [AzureServiceBus]
     connection_string = primary_conection_string
 
+## Virtual env
+Action |CMD
+-------|--------
+Create env| `python3 -m venv .venv`
+Activate|`source ./.venv/bin/activate`
+Deactivate|`deactivate`
+
 ## Use Azure Service Bus Implementation
 ### Requirements
 Install fire base tools its necesary so, in a terminal run this script
