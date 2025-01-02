@@ -1,4 +1,3 @@
-'''Strategi context'''
 from exceptions.http_service_exception import HttpServiceException
 from feature.manga_strategy.manga_interfaces import IMangaStrategy
 from feature_interfaces.services.file_manager import IFileManager
@@ -8,14 +7,14 @@ import configs.my_logger as MyLogger
 import configs.dependency_injection as IOT
 
 class MangaScraper:
-    '''process to download mangas'''
-    def __init__(self,strategy: IMangaStrategy,uiHandler: IUserFeedbackHandler) -> None:
+    def __init__(self,strategy: IMangaStrategy, fileManager: IFileManager, uiHandler: IUserFeedbackHandler) -> None:
         self.Strategy = strategy
+        self.FileManager = fileManager
         self._uiHandler = uiHandler
         self._logger = MyLogger.get_logger(__name__)
         self._httpService =  IOT.GetHttpService()
 
-    def run_manga_download_async(self, folder: IFileManager, manga_page:int = 0) -> None:
+    def run_manga_download_async(self, manga_page:int = 0) -> None:
         errors = []
         try:
             currentPage = self.Strategy.get_first_page(manga_page)
@@ -24,7 +23,7 @@ class MangaScraper:
             strategyUrl = self.Strategy.get_url()
 
             self._uiHandler.ShowMessage(
-                f"Start download of {strategyUrl} in [{folder.GetFolderPath()}]")
+                f"Start download of {strategyUrl} in [{self.FileManager.GetFolderPath()}]")
             progressBar = self._uiHandler.CreateProgressBar(intLastNumber, "")
             progressBar.SetCurrentProcess(manga_page)
         except Exception as ex:
@@ -40,7 +39,8 @@ class MangaScraper:
                     "Trying to get page [%s: %s-%s]",imageName, imageNumber, lastNumber)
 
                 self._httpService.SetHeaders(headers)
-                self._httpService.DownloadImageFromUrl(imageUrl, imageName, folder.GetFolderPath())
+                self._httpService.DownloadImageFromUrl(
+                    imageUrl, imageName, self.FileManager.GetFolderPath())
                 progressBar.NextItem()
             except HttpServiceException as ex:
                 self._uiHandler.ShowMessageError(f"Error in {currentPage.get_image_number()}", ex)

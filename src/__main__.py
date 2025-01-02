@@ -21,59 +21,54 @@ def main():
         uiHandler = IOT.GetUserFeddbackHandler(item.folder_name, errorHandler)
         folderManager = IOT.GetFileManager(DOWNLOAD_FOLDER, processingFolder)
         errorHandler = IOT.GetErrorHandler(item.manga_url, folderManager)
-        scrapper = IOT.GetMangaScrapper(IOT.GetMangaStrategy(item.manga_url), uiHandler)
+        strategy = IOT.GetMangaStrategy(item.manga_url)
+        scrapper = IOT.GetMangaScrapper(strategy, uiHandler, folderManager)
         mangaData = scrapper.get_manga_data()
 
         try:
-            run_manga_downloader(scrapper,folderManager,item)
-        except:
+            run_manga_downloader(scrapper,item)
+        except Exception as ex:
+            del ex
             _logger.info("Download incomplete for [%s]", item.manga_url)
             continue
 
         try:
             uiHandler.ShowMessage("Creating Pdf")
-            _logger.info("Converting images")
+
             converted_folder = convert_images(folderManager)
-            _logger.info("Creating PDF")
             create_pdf(converted_folder, item.pdf_name, mangaData)
-            _logger.info("Cleaning conver folders")
             converted_folder.MoveFileTo(item.pdf_name, resultFolder)
+
             uiHandler.ShowMessage(f"PDf created in [{resultFolder}/{item.pdf_name}]")
+
             _logger.info("Clean folder")
             converted_folder.DeleteAll()
             folderManager.DeleteAll()
+
             uiHandler.ShowMessage("Folder cleaned")
         except Exception as ex:
-            del ex
-            folderManager.write_file("errors.txt",[f"{item.manga_url} | {item.folder_name}",\
-                                            "Erron on PDF convertion"])
+            uiHandler.ShowMessageError("Erron on PDF convertion", ex)
             continue
 
     return
 
-def run_manga_downloader(
-        scrapper: MangaScraper,
-        folder_manager: FileManager,
-        queueItem: QueueItem):
-    
+def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
+
     if queueItem.download_files is False:
         _logger.info("Ignore Dowload files")
         return
 
     try:
         _logger.info("Start manga download for [%s]", queueItem.folder_name)
-        scrapper.run_manga_download_async(folder_manager, queueItem.page_number)
+        scrapper.run_manga_download_async(queueItem.page_number)
     finally:
         _logger.info("End manga download for [%s]", queueItem.folder_name)
 
-def create_pdf(
-        folder_manager: FileManager,
-        pdf_name:str,
-        manga_data:dict[str,str]) -> None:
+def create_pdf(folder_manager: FileManager,pdf_name:str,manga_data:dict[str,str]) -> None:
     try:
         _logger.info("Start create PDF")
-        pdf_creator = PdfCreator(folder_manager, pdf_name, image_converter)
-        pdf_creator.create_pdf(manga_data)
+        pdf_creator = PdfCreator(folder_manager, image_converter)
+        pdf_creator.CreatePdf(pdf_name, manga_data)
     finally:
         _logger.info("End Create Pdf")
 

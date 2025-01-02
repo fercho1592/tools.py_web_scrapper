@@ -1,37 +1,35 @@
 '''Module to create PDFs'''
 from fpdf import FPDF
-from infrastructure.file_manager import FileManager
+from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.pdf_creator import IPdfCreator
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from configs.my_logger import get_logger
 from tools.string_path_fix import FixStringsTools
 
-class PdfCreator:
-    '''Class to handle pdf creation'''
+class PdfCreator(IPdfCreator):
     def __init__(
         self,
-        folder:FileManager,
-        pdf_name:str,
-        image_editor: IImageEditorService
+        folder: IFileManager,
+        imageEditor: IImageEditorService
     ) -> None:
-        self.folder = folder
-        self.pdf_name = pdf_name
-        self.image_editor = image_editor
+        self.FileManager = folder
+        self.ImageEditor = imageEditor
         self._logger = get_logger(__name__)
 
-    def create_pdf(self, manga_data: dict[str,str] | None):
+    def CreatePdf(self, pdfName: str, manga_data: dict[str,str] | None):
         self._logger.info(
             "Start process to create [%s] pdf from folder[%s]", 
-            self.pdf_name,
-            self.folder.folder_path)
+            pdfName,
+            self.FileManager.GetFolderPath())
         pdf = FPDF(unit= "pt")
         pdf.add_font("Swansea", "", "Swansea-q3pd.ttf")
         pdf.set_font("Swansea","", 10)
-        for image in self.folder.get_images_in_folder():
+        for image in self.FileManager.GetImagesInFolder():
             self._logger.info("Add page of image %s", image)
-            image_path = f"{self.folder.folder_path}/{image}"
+            image_path = f"{self.FileManager.GetFolderPath()}/{image}"
             pdf.add_page(
                 "P",
-                self.image_editor.get_image_size(self.folder, image),
+                self.ImageEditor.get_image_size(self.FileManager, image),
                 False
             )
             pdf.image(image_path, x=0, y=0)
@@ -50,7 +48,10 @@ class PdfCreator:
                 pdf.write(10, FixStringsTools.normalize_string(data),)
 
 
-        self._logger.info("Saving PDF %s", self.pdf_name)
-        pdf.output(f"{self.folder.folder_path}/{self.pdf_name}")
-        self._logger.info("PDF created [%s]", self.pdf_name)
+        self._logger.info("Saving PDF %s", pdfName)
+        pdf.output(f"{self.FileManager.GetFolderPath()}/{pdfName}")
+        self._logger.info("PDF created [%s]", pdfName)
         return
+
+    def SetFileManager(self, fileManager):
+        self.FileManager = fileManager

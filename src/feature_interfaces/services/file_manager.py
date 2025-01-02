@@ -5,7 +5,7 @@ class IFileManager(ABC):
     @abstractmethod
     def GetFolderPath(self):
         pass
-    
+
     @abstractmethod
     def GetRootPath(self):
         pass
@@ -25,4 +25,3 @@ class IFileManager(ABC):
     @abstractmethod
     def DeleteAll(self):
         pass
-    
