@@ -23,7 +23,8 @@ def GetMangaStrategy(url: str):
 def GetUserFeddbackHandler(folderName:str, errorHandler: IErrorHandler):
     return UserFeedbackHandler(folderName, errorHandler)
 
-def GetMangaScrapper(strategy: IMangaStrategy, uiHandler: IUserFeedbackHandler, fileManager: IFileManager):
+def GetMangaScrapper(
+        strategy: IMangaStrategy, uiHandler: IUserFeedbackHandler, fileManager: IFileManager):
     return MangaScraper(strategy, fileManager, uiHandler)
 
 def GetImageConverter():

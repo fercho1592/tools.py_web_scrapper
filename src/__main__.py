@@ -14,14 +14,14 @@ PROSSESING_FOLDER = "../Processing"
 def main():
     for item in read_queue():
         print("*************************************************")
-        _logger.info("Start process for [%s | %s]", item.folder_name, item.manga_url)
+        _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
-        resultFolder = f"{DOWNLOAD_FOLDER}/{item.folder_name}"
-        processingFolder = f"{DOWNLOAD_FOLDER}/{PROSSESING_FOLDER}/{item.folder_name}"
-        uiHandler = IOT.GetUserFeddbackHandler(item.folder_name, errorHandler)
+        resultFolder = f"{DOWNLOAD_FOLDER}/{item.FolderName}"
+        processingFolder = f"{DOWNLOAD_FOLDER}/{PROSSESING_FOLDER}/{item.FolderName}"
+        uiHandler = IOT.GetUserFeddbackHandler(item.FolderName, errorHandler)
         folderManager = IOT.GetFileManager(DOWNLOAD_FOLDER, processingFolder)
-        errorHandler = IOT.GetErrorHandler(item.manga_url, folderManager)
-        strategy = IOT.GetMangaStrategy(item.manga_url)
+        errorHandler = IOT.GetErrorHandler(item.MangaUrl, folderManager)
+        strategy = IOT.GetMangaStrategy(item.MangaUrl)
         scrapper = IOT.GetMangaScrapper(strategy, uiHandler, folderManager)
         mangaData = scrapper.get_manga_data()
 
@@ -29,17 +29,17 @@ def main():
             run_manga_downloader(scrapper,item)
         except Exception as ex:
             del ex
-            _logger.info("Download incomplete for [%s]", item.manga_url)
+            _logger.info("Download incomplete for [%s]", item.MangaUrl)
             continue
 
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
             converted_folder = convert_images(folderManager)
-            create_pdf(converted_folder, item.pdf_name, mangaData)
-            converted_folder.MoveFileTo(item.pdf_name, resultFolder)
+            create_pdf(converted_folder, item.PdfName, mangaData)
+            converted_folder.MoveFileTo(item.PdfName, resultFolder)
 
-            uiHandler.ShowMessage(f"PDf created in [{resultFolder}/{item.pdf_name}]")
+            uiHandler.ShowMessage(f"PDf created in [{resultFolder}/{item.PdfName}]")
 
             _logger.info("Clean folder")
             converted_folder.DeleteAll()
@@ -54,15 +54,15 @@ def main():
 
 def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
 
-    if queueItem.download_files is False:
+    if queueItem.DownloadFiles is False:
         _logger.info("Ignore Dowload files")
         return
 
     try:
-        _logger.info("Start manga download for [%s]", queueItem.folder_name)
-        scrapper.run_manga_download_async(queueItem.page_number)
+        _logger.info("Start manga download for [%s]", queueItem.FolderName)
+        scrapper.run_manga_download_async(queueItem.PageNumber)
     finally:
-        _logger.info("End manga download for [%s]", queueItem.folder_name)
+        _logger.info("End manga download for [%s]", queueItem.FolderName)
 
 def create_pdf(folder_manager: FileManager,pdf_name:str,manga_data:dict[str,str]) -> None:
     try:

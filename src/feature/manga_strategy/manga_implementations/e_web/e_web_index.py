@@ -10,7 +10,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         return 40
 
     def get_manga_name(self) -> str:
-        name_element = self.dom_reader.get_by_attrs(COMMON_ATTRS.ID, "gn")[0]
+        name_element = self.DomReader.get_by_attrs(COMMON_ATTRS.ID, "gn")[0]
         manga_name = name_element.get_value()
         ## fix Manga name
         return manga_name
@@ -25,7 +25,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         index_page = page // max_page_count
         index = self._get_index_page(index_page) if page > max_page_count else self
         real_page = page - (index_page * max_page_count)
-        pages = index.dom_reader.get_by_attrs(COMMON_ATTRS.ID, "gdt")[0]\
+        pages = index.DomReader.get_by_attrs(COMMON_ATTRS.ID, "gdt")[0]\
             .get_children_by_tag(COMMON_TAGS.ANCHOR)
         page_to_search = pages[real_page-1]
         page_children = page_to_search
@@ -35,7 +35,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         return new_page
 
     def _get_manga_data_elements(self) -> list[HtmlElement]:
-        taglist = self.dom_reader.get_by_attrs(COMMON_ATTRS.ID, "taglist")[0]
+        taglist = self.DomReader.get_by_attrs(COMMON_ATTRS.ID, "taglist")[0]
         children = taglist.get_children_by_tag(COMMON_TAGS.TR)
         return children
 
@@ -45,7 +45,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
             li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
             if li_elements[0].get_value() == "female:":
                 tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
-                return [ele.value for ele in tags]
+                return [ele.Value for ele in tags]
         return []
 
     def get_manga_artist(self) -> list[str]:
@@ -54,7 +54,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
             li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
             if li_elements[0].get_value() == "artist:":
                 tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
-                return [ele.value for ele in tags]
+                return [ele.Value for ele in tags]
         return []
 
     def get_manga_group(self) -> list[str]:
@@ -63,5 +63,5 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
             li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
             if li_elements[0].get_value() == "group:":
                 tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
-                return [ele.value for ele in tags]
+                return [ele.Value for ele in tags]
         return []

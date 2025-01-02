@@ -7,7 +7,10 @@ import configs.my_logger as MyLogger
 import configs.dependency_injection as IOT
 
 class MangaScraper:
-    def __init__(self,strategy: IMangaStrategy, fileManager: IFileManager, uiHandler: IUserFeedbackHandler) -> None:
+    def __init__(self,
+                strategy: IMangaStrategy,
+                fileManager: IFileManager,
+                uiHandler: IUserFeedbackHandler) -> None:
         self.Strategy = strategy
         self.FileManager = fileManager
         self._uiHandler = uiHandler

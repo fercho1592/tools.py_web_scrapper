@@ -1,4 +1,4 @@
-import pytest
+#import pytest
 from ..dom_reader import HtmlElement
 from ..enums import CommonAttrs, CommonTags
 
@@ -30,7 +30,7 @@ class Test:
 
     def test_has_attr_no_has_attr_return_false(self):
         assert Test.EMPTY_ELEMENT.has_attr(CommonAttrs.CLASS.value) is False
-    
+
     def test_get_attr_value_no_has_attr_return_none(self):
         assert Test.EMPTY_ELEMENT.get_attr_value(CommonAttrs.CLASS.value) is None
 

@@ -9,27 +9,27 @@ class HtmlElement:
     '''
     def __init__(
         self, tag:str, attrs:list[tuple[str, str | None]], parent:Self = None):
-        self.tag = tag
-        self.attrs = attrs
-        self.parent = parent
-        self.children:list[Self] = []
-        self.value = None
+        self.Tag = tag
+        self.Attrs = attrs
+        self.Parent = parent
+        self.Children:list[Self] = []
+        self.Value = None
 
     def set_value(self, value:str):
-        self.value = value
+        self.Value = value
 
     def get_value(self):
-        return self.value
+        return self.Value
 
     def get_id(self):
-        id_attr = [attr for attr in self.attrs if attr[0] == CommonAttr.ID]
+        id_attr = [attr for attr in self.Attrs if attr[0] == CommonAttr.ID]
         return id_attr[0][1] if len(id_attr) > 0 else None
 
     def add_children(self, child:Self):
-        self.children.append(child)
+        self.Children.append(child)
 
     def has_attr(self, attr:str, value: str = None):
-        for atribute in self.attrs:
+        for atribute in self.Attrs:
             if atribute[0] != attr:
                 continue
             if value is not None and atribute[1] != value:
@@ -38,7 +38,7 @@ class HtmlElement:
         return False
 
     def get_attr_value(self, attr: str):
-        for atribute in self.attrs:
+        for atribute in self.Attrs:
             if atribute[0] != attr:
                 continue
 
@@ -49,10 +49,10 @@ class HtmlElement:
         self, tag_name:str, attr: str = None, value: str = None
     ) -> list[Self]:
         result = []
-        for child in self.children:
-            if(child.tag == tag_name and attr is None):
+        for child in self.Children:
+            if(child.Tag == tag_name and attr is None):
                 result.append(child)
-            elif (child.tag == tag_name\
+            elif (child.Tag == tag_name\
                    and (attr is not None and child.has_attr(attr, value))):
                 result.append(child)
 
@@ -75,9 +75,9 @@ class DomElement:
     ) -> list[HtmlElement]:
         result = []
         for child in self.__components:
-            if(child.tag == tag_name and attr is None):
+            if(child.Tag == tag_name and attr is None):
                 result.append(child)
-            elif (child.tag == tag_name\
+            elif (child.Tag == tag_name\
                    and (attr is not None and child.has_attr(attr, value))):
                 result.append(child)
 

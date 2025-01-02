@@ -25,7 +25,7 @@ class BaseStrategy(IMangaStrategy):
 
     def __init__(self, web_page: str):
         self._logger = my_logger.get_logger(__name__)
-        self.web_page = web_page
+        self.WebPage = web_page
         self.HttpService = IOT.GetHttpService()
 
     def _get_dom_component(self, url: str):
@@ -47,14 +47,14 @@ class BaseStrategy(IMangaStrategy):
         pass
 
     def get_url(self) -> str:
-        return self.web_page
+        return self.WebPage
 
 class BaseMangaIndex(IMangaIndex):
     '''Class that represent index page'''
     def __init__(self, strategy: IMangaStrategy,dom_reader: DomElement) -> None:
         super().__init__()
-        self.strategy = strategy
-        self.dom_reader = dom_reader
+        self.Strategy = strategy
+        self.DomReader = dom_reader
         self._logger = my_logger.get_logger(__name__)
 
     @staticmethod
@@ -78,11 +78,11 @@ class BaseMangaPage(IMangaPage):
     '''Structure in case of a EManga Page'''
     def __init__(
         self, strategy:IMangaStrategy, dom_reader:DomElement, url: str):
-        self.strategy = strategy
-        self.reader = dom_reader
-        self.url:str = url
-        self.image_name:str = None
-        self.image_number:int = None
+        self.Strategy = strategy
+        self.Reader = dom_reader
+        self.Url:str = url
+        self.ImageName:str = None
+        self.ImageNumber:int = None
         self._logger = my_logger.get_logger(__name__)
 
     @abstractmethod

@@ -17,20 +17,20 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
         return TmhMangaStrategy(url)
 
     def get_first_page(self, page_number: int) -> IMangaPage:
-        dom_element = self._get_dom_component(self.web_page)
+        dom_element = self._get_dom_component(self.WebPage)
         # Identify if is a page or index
         if self._is_index_page(dom_element) is False:
-            self._logger.debug("Creating an object Page for [%s]", self.web_page)
-            return TmhMangaPage(self, dom_element, self.web_page)
+            self._logger.debug("Creating an object Page for [%s]", self.WebPage)
+            return TmhMangaPage(self, dom_element, self.WebPage)
 
         # create index page
-        self._logger.debug("Creating an object Index for [%s]", self.web_page)
+        self._logger.debug("Creating an object Index for [%s]", self.WebPage)
         index_page = TmhMangaIndex(self, dom_element)
         return index_page.get_manga_page_async(page_number)
 
     def get_index_page_async(self, index_page = 0) -> IMangaIndex:
         del index_page
-        dom_reader = self._get_dom_component(self.web_page)
+        dom_reader = self._get_dom_component(self.WebPage)
         DefaultViewTimer()
         return TmhMangaIndex(self, dom_reader)
 
@@ -43,7 +43,7 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
         return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "content-images")) == 0
 
     def get_index_page(self, url:str = None) -> IMangaIndex:
-        url = url if url is not None else self.web_page
+        url = url if url is not None else self.WebPage
         dom_reader = self._get_dom_component(url)
 
         if self._is_index_page(dom_reader):

@@ -1,15 +1,11 @@
-'''Code to read download queue file'''
-from typing import Self
-
 class QueueItem:
-    '''Classs to represent an item to download'''
     def __init__(self, manga_url, path, page_number = None, pdf_only = False) -> None:
-        self.manga_url = manga_url
-        self.folder_name = path
-        self.page_number = page_number
-        self.pdf_name = f"{self.folder_name.split("/")[-1]}.pdf"
-        self.pdf_only = 1
-        self.download_files = not pdf_only
+        self.MangaUrl = manga_url
+        self.FolderName = path
+        self.PageNumber = page_number
+        self.PdfName = f"{self.FolderName.split("/")[-1]}.pdf"
+        self.PdfOnly = 1
+        self.DownloadFiles = not pdf_only
 
     @staticmethod
     def QueueItemFromFile(line:str):
