@@ -1,12 +1,7 @@
-'''Structure to read, move and get information about HTML'''
-
 import feature.html_reader.common_attrs as CommonAttr
 from typing import Self
 
 class HtmlElement:
-    '''
-    Structure for any Html Element
-    '''
     def __init__(
         self, tag:str, attrs:list[tuple[str, str | None]], parent:Self = None):
         self.Tag = tag
@@ -61,10 +56,6 @@ class HtmlElement:
         return result
 
 class DomElement:
-    '''
-    Structure for Dom element
-    '''
-
     def __init__(self, components:list[HtmlElement]):
         self.__components = components
 

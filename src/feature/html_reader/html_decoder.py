@@ -1,13 +1,7 @@
-''' Class for html decodification '''
-
 from html.parser import HTMLParser
 from feature.html_reader.dom_reader import HtmlElement, DomElement
 
 class HtmlDecoder(HTMLParser):
-    '''
-    Implementantion to read all html string and create a list of all components
-    '''
-
     def set_html(self, dom_html:str) -> None:
         self.Components:list[HtmlElement] = []
         self.LastOpen:list[HtmlElement] = []

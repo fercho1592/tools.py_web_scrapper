@@ -5,6 +5,7 @@ from feature.html_reader.dom_reader import DomElement
 import configs.my_logger as my_logger
 import configs.dependency_injection as IOT
 import time
+from abc import ABC
 
 from abc import abstractmethod
 
@@ -12,7 +13,7 @@ def DefaultViewTimer():
     delay_seconds = 5
     time.sleep(delay_seconds)
 
-class BaseStrategy(IMangaStrategy):
+class BaseStrategy(IMangaStrategy, ABC):
     @staticmethod
     @abstractmethod
     def is_from_domain(url:str) -> bool:
@@ -49,8 +50,7 @@ class BaseStrategy(IMangaStrategy):
     def get_url(self) -> str:
         return self.WebPage
 
-class BaseMangaIndex(IMangaIndex):
-    '''Class that represent index page'''
+class BaseMangaIndex(IMangaIndex, ABC):
     def __init__(self, strategy: IMangaStrategy,dom_reader: DomElement) -> None:
         super().__init__()
         self.Strategy = strategy
@@ -74,8 +74,7 @@ class BaseMangaIndex(IMangaIndex):
     def get_manga_page_async(self, page:int = 0) -> IMangaPage:
         pass
 
-class BaseMangaPage(IMangaPage):
-    '''Structure in case of a EManga Page'''
+class BaseMangaPage(IMangaPage, ABC):
     def __init__(
         self, strategy:IMangaStrategy, dom_reader:DomElement, url: str):
         self.Strategy = strategy
