@@ -1,6 +1,7 @@
 from feature_interfaces.services.error_handler import IErrorHandler
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.http_service import IHttpService
 from feature.manga_strategy.manga_interfaces import IMangaStrategy
 
 from feature.services.error_handler import ErrorHandler
@@ -9,26 +10,28 @@ from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.file_manager import FileManager
 from feature.image_converter.pillow_image_converter import PillowImageConverter
 from feature.manga_strategy.manga_factory import MangaFactory
+from feature.image_converter.image_converter_interfaces import IImageEditorService
 from infrastructure.http_service import HttpService
 
-def GetErrorHandler(mangaUrl: str, fileManager: IFileManager):
+
+def GetErrorHandler(mangaUrl: str, fileManager: IFileManager) -> IErrorHandler:
     return ErrorHandler(mangaUrl, fileManager)
 
-def GetFileManager(rootPath, folder):
+def GetFileManager(rootPath, folder) -> IFileManager:
     return FileManager(rootPath, folder)
 
-def GetMangaStrategy(url: str):
+def GetMangaStrategy(url: str) -> IMangaStrategy:
     return MangaFactory.get_manga_strategy(url)
 
-def GetUserFeddbackHandler(folderName:str, errorHandler: IErrorHandler):
+def GetUserFeddbackHandler(folderName:str, errorHandler: IErrorHandler) -> IUserFeedbackHandler:
     return UserFeedbackHandler(folderName, errorHandler)
 
 def GetMangaScrapper(
         strategy: IMangaStrategy, uiHandler: IUserFeedbackHandler, fileManager: IFileManager):
     return MangaScraper(strategy, fileManager, uiHandler)
 
-def GetImageConverter():
+def GetImageConverter() -> IImageEditorService:
     return PillowImageConverter()
 
-def GetHttpService():
+def GetHttpService() -> IHttpService:
     return HttpService()

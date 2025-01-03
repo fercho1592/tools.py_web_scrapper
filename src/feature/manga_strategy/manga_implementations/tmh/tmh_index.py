@@ -28,7 +28,7 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
             return None
         anchors_eles = image_divs[0].get_children_by_tag(COMMON_TAGS.ANCHOR)
         sel_page = anchors_eles[page - 1]
-        return self.strategy.get_page_from_url_async(
+        return self.Strategy.get_page_from_url_async(
             sel_page.get_attr_value(COMMON_ATTRS.HREF))
 
     def _get_manga_data_elements(self) -> list[HtmlElement]:

@@ -29,3 +29,7 @@ class IFileManager(ABC):
     @abstractmethod
     def DeleteAll(self, fromRootFolder: bool):
         pass
+
+    @abstractmethod
+    def DeleteFile(self, file: str):
+        pass

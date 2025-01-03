@@ -1,5 +1,5 @@
 from feature_interfaces.services.file_manager import IFileManager
-from os import path, makedirs, listdir
+from os import path, makedirs, listdir, remove
 from shutil import rmtree, move, Error
 from configs.my_logger import get_logger
 
@@ -10,11 +10,18 @@ class FileManager(IFileManager):
     IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
 
     def __init__(self, rootPath:str, folderName:str):
-        self.RootPath = rootPath
-        self.FolderName = folderName
-        self._logger = get_logger(__name__)
+        rawFullPath = path.join(rootPath, folderName)
+        directory, folder = path.split(rawFullPath)
+        if folder == "..":
+            directory, folder = path.split(directory)
+            rawFullPath = directory
+            directory, folder = path.split(directory)
 
-        self.FullPath = path.join(rootPath, folderName)
+        self.RootPath = directory
+        self.FolderName = folder
+        self.FullPath = rawFullPath
+
+        self._logger = get_logger(__name__)
         if not path.exists(self.FullPath):
             makedirs(self.FullPath)
 
@@ -37,13 +44,13 @@ class FileManager(IFileManager):
         ]
 
     def MoveFileTo(self, fileName: str, destinyFolder: IFileManager):
-        imagePath = f"{self.FullPath}/{fileName}"
-        folderPath = destinyFolder.GetFolderPath()
+        imagePath = self.GetFilePath(fileName)
+        toMovePath = destinyFolder.GetFilePath(fileName)
         try:
-            if path.exists(path.join(folderPath, fileName)):
+            if path.exists(toMovePath):
                 self._logger.info("Duplicated file [%s]", fileName)
                 return
-            move(imagePath, folderPath)
+            move(imagePath, toMovePath)
         except Error as e:
             self ._logger.error("Error al copiar el archivo: %r",e)
 
@@ -54,3 +61,9 @@ class FileManager(IFileManager):
             rmtree(self.FullPath)
         else:
             rmtree(self.RootPath)
+
+    def DeleteFile(self, file: str):
+        fileFullPath = self.GetFilePath(file)
+        if not path.exists(fileFullPath):
+            return
+        remove(fileFullPath)

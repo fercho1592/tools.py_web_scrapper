@@ -39,13 +39,14 @@ def main():
             
             create_pdf(imageFolder, item.PdfName, mangaData)
             resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
+            resultFolder.DeleteFile(item.PdfName)
             imageFolder.MoveFileTo(item.PdfName, resultFolder)
 
             uiHandler.ShowMessage(f"PDf created in [{resultFolder.GetFilePath(item.PdfName)}]")
 
             _logger.info("Clean folder")
-            downloadFolder.DeleteAll(True)
-            imageFolder.DeleteAll(True)
+            downloadFolder.DeleteAll(False)
+            imageFolder.DeleteAll(False)
 
             uiHandler.ShowMessage("Folder cleaned")
         except Exception as ex:

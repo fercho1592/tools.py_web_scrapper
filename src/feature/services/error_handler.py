@@ -21,7 +21,7 @@ class ErrorHandler(IErrorHandler):
     def SaveMessageError(self, message: str, ex: Exception):
         del ex
         self._WriteTextOnFile("errors.txt",[f"{self._url} | {self._folderpath}",
-                                             "Erron getting data"])
+                                             message])
         self._errors.append("Error getting data")
 
     def _WriteTextOnFile(self, file_name: str, lines:list[str]):
