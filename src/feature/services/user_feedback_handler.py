@@ -15,6 +15,7 @@ class UserFeedbackHandler(IUserFeedbackHandler):
         self.ErrorHandler.SaveDownloadError(message, item, totalItems, ex)
 
     def ShowMessageError(self, message: str, ex: Exception):
+        del ex
         print(message)
         self.ErrorHandler.SaveMessageError(message)
 

@@ -7,5 +7,5 @@ class IErrorHandler(ABC):
     def SaveDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
         pass
     @abstractmethod
-    def SaveMessageError(self: Self, message: str):
+    def SaveMessageError(self: Self, message: str, ex: Exception):
         pass

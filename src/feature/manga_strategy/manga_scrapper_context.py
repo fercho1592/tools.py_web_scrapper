@@ -41,13 +41,13 @@ class MangaScraper:
                 self._logger.info(
                     "Trying to get page [%s: %s-%s]",imageName, imageNumber, lastNumber)
 
-                self._httpService.SetHeaders(headers)
-                self._httpService.DownloadImageFromUrl(
-                    imageUrl, imageName, self.FileManager.GetFolderPath())
+                if not self.FileManager.HasFile(imageName):
+                    self._httpService.SetHeaders(headers)
+                    self._httpService.DownloadImageFromUrl(
+                        imageUrl, imageName, self.FileManager.GetFolderPath())
                 progressBar.NextItem()
             except Exception as ex:
                 self._uiHandler.ShowMessageError(f"Error in {currentPage.get_image_number()}", ex)
-
             if currentPage.is_last_page():
                 break
             currentPage = currentPage.get_next_page_async()
