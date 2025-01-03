@@ -15,9 +15,8 @@ class UserFeedbackHandler(IUserFeedbackHandler):
         self.ErrorHandler.SaveDownloadError(message, item, totalItems, ex)
 
     def ShowMessageError(self, message: str, ex: Exception):
-        del ex
         print(message)
-        self.ErrorHandler.SaveMessageError(message)
+        self.ErrorHandler.SaveMessageError(message, ex)
 
     def CreateProgressBar(self, itemsNumber: int, descriptionMessage: str) -> IProgressBar:
         return ProgressBar(itemsNumber, descriptionMessage)

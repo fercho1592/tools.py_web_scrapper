@@ -23,7 +23,8 @@ class ErrorHandler(IErrorHandler):
         self._errors.append("Error getting data")
 
     def _WriteTextOnFile(self, file_name: str, lines:list[str]):
-        with open(f"{self._folderManager.folder_path}/{file_name}", "a", encoding="utf-8") as file:
+        file = self._folderManager.GetFilePath(file_name)
+        with open(file, "a", encoding="utf-8") as file:
             file.seek(0, SEEK_END)
             for line in lines:
                 file.writelines(line + "\n")

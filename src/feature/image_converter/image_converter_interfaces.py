@@ -1,16 +1,18 @@
 from feature_interfaces.services.file_manager import IFileManager
-from abc import ABC
+from abc import ABC, abstractmethod
 
 class IImageEditorService(ABC):
+    @abstractmethod
     def convert_image(
         self,
         folder_manager: IFileManager,
         image_name:str,
         new_image_name:str,
-        dest_path = "./converted_to_jpg"
+        destinyFolder: IFileManager
     ):
         pass
-
+    
+    @abstractmethod
     def get_image_size(
       self,
       folder_manager,

@@ -1,13 +1,11 @@
-'''Module to implement a '''
-from . import image_converter_interfaces
+from .image_converter_interfaces import IImageEditorService
 from feature_interfaces.services.file_manager import IFileManager
 from configs.my_logger import get_logger
 from PIL import Image
 
 IMAGE_FORMAT = "JPEG"
 
-class PillowImageConverter(image_converter_interfaces.IImageEditorService):
-    '''Class to edit and convert images'''
+class PillowImageConverter(IImageEditorService):
     def __init__(self) -> None:
         self._logger = get_logger(__name__)
         pass
@@ -16,25 +14,21 @@ class PillowImageConverter(image_converter_interfaces.IImageEditorService):
         self,
         folder_manager: IFileManager,
         image_name: str,
-        new_image_name,
-        dest_path="converted_to_png"
+        new_image_name: str,
+        destinyFolder: IFileManager
     ):
         new_image_name = f"{new_image_name}.{IMAGE_FORMAT.lower()}"
-        folder_path = folder_manager.GetFolderPath()
-        old_image_path = f"{folder_path}/{image_name}"
-        new_folder_path =f"{folder_path}/{dest_path}"
-        new_image_path = f"{new_folder_path}/{new_image_name}"
 
-        if folder_manager.HasFile(new_image_path):
+        if folder_manager.HasFile(new_image_name):
             self._logger.info("Image duplicated: %s", new_image_name)
             return
 
         try:
-            img = Image.open(old_image_path)
-            img.save(new_image_path, IMAGE_FORMAT)
+            img = Image.open(folder_manager.GetFilePath(image_name))
+            img.save(destinyFolder.GetFilePath(new_image_name), IMAGE_FORMAT)
             self._logger.info("Image converted: %s", new_image_name)
         except FileNotFoundError as e:
-            self._logger.error("File not found: %s | %r", old_image_path, e)
+            self._logger.error("File not found: %s | %r", folder_manager.GetFilePath(image_name), e)
         except OSError as e:
             self._logger.error("Error al convertir la imagen %s | %r", image_name, e)
         return

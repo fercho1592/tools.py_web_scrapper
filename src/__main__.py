@@ -39,11 +39,11 @@ def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            convert_images(downloadFolder)
-            create_pdf(downloadFolder, item.PdfName, mangaData)
-            downloadFolder.MoveFileTo(item.PdfName, resultFolder)
+            convert_images(downloadFolder, imageFolder)
+            create_pdf(imageFolder, item.PdfName, mangaData)
+            imageFolder.MoveFileTo(item.PdfName, resultFolder)
 
-            uiHandler.ShowMessage(f"PDf created in [{resultFolder}/{item.PdfName}]")
+            uiHandler.ShowMessage(f"PDf created in [{resultFolder.GetFilePath(item.PdfName)}]")
 
             _logger.info("Clean folder")
             downloadFolder.DeleteAll()
@@ -76,24 +76,17 @@ def create_pdf(folder_manager: FileManager,pdf_name:str,manga_data:dict[str,str]
     finally:
         _logger.info("End Create Pdf")
 
-def convert_images(folder_manager: FileManager) -> IFileManager:
+def convert_images(folder_manager: IFileManager, destFolder: IFileManager) -> IFileManager:
     try:
         _logger.info("Start Convert Images")
-        full_dest_path = f"{folder_manager.GetFolderPath()}/{DEST_FOLDER}"
-        destFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, full_dest_path)
         for image_name in folder_manager.GetImagesInFolder():
             splited_name = image_name.split(".")
             if splited_name[-1].upper() not in ["PNG", "JPG"]:
                 image_converter.convert_image(
-                    folder_manager,
-                    image_name,
-                    splited_name[0],
-                    DEST_FOLDER
+                    folder_manager,image_name, splited_name[0], destFolder
                 )
             else:
                 folder_manager.MoveFileTo(image_name, destFolder)
-
-        return destFolder
     finally:
         _logger.info("End Convert Images")
 

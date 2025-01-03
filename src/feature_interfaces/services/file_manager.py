@@ -15,6 +15,10 @@ class IFileManager(ABC):
         pass
 
     @abstractmethod
+    def GetFilePath(self, fileName: str) -> str:
+        pass
+
+    @abstractmethod
     def GetImagesInFolder(self) -> list[str]:
         pass
 

@@ -25,7 +25,10 @@ class FileManager(IFileManager):
         return self.RootPath
 
     def HasFile(self, fileName: str) -> bool:
-        return path.exists(path.join(self.FullPath, fileName))
+        return path.exists(self.GetFilePath(fileName))
+
+    def GetFilePath(self, fileName: str) -> str:
+        return path.join(self.FullPath, fileName)
 
     def GetImagesInFolder(self) -> list[str]:
         elementos = listdir(self.FullPath)
