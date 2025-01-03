@@ -8,8 +8,8 @@ from feature_interfaces.services.file_manager import IFileManager
 
 _logger = get_logger(__name__)
 image_converter = IOT.GetImageConverter()
-DEST_FOLDER = "converted_images"
-PROSSESING_FOLDER = "../Processing"
+PROSSESING_FOLDER = f"{DOWNLOAD_FOLDER}/../Processing"
+PROCESSED_IMAGES = f"{PROSSESING_FOLDER}/converted_images"
 
 
 def main():
@@ -17,12 +17,7 @@ def main():
         print("*************************************************")
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
-        imageFolder = f"{DOWNLOAD_FOLDER}/{item.FolderName}"
-        resultFolder = f"{DOWNLOAD_FOLDER}/{item.FolderName}/.."
-        processingFolder = f"{DOWNLOAD_FOLDER}/{PROSSESING_FOLDER}/{item.FolderName}"
-        downloadFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, processingFolder)
-        imageFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, imageFolder)
-        resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, resultFolder)
+        downloadFolder = IOT.GetFileManager(PROSSESING_FOLDER, item.FolderName)
         errorHandler = IOT.GetErrorHandler(item.MangaUrl, downloadFolder)
         uiHandler = IOT.GetUserFeddbackHandler(item.FolderName, errorHandler)
         strategy = IOT.GetMangaStrategy(item.MangaUrl)
@@ -39,15 +34,18 @@ def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
+            imageFolder = IOT.GetFileManager(PROCESSED_IMAGES, item.FolderName)
             convert_images(downloadFolder, imageFolder)
+            
             create_pdf(imageFolder, item.PdfName, mangaData)
+            resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
             imageFolder.MoveFileTo(item.PdfName, resultFolder)
 
             uiHandler.ShowMessage(f"PDf created in [{resultFolder.GetFilePath(item.PdfName)}]")
 
             _logger.info("Clean folder")
-            downloadFolder.DeleteAll()
-            imageFolder.DeleteAll()
+            downloadFolder.DeleteAll(True)
+            imageFolder.DeleteAll(True)
 
             uiHandler.ShowMessage("Folder cleaned")
         except Exception as ex:

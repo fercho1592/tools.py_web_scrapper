@@ -31,6 +31,7 @@ class MangaScraper:
             progressBar.SetCurrentProcess(manga_page)
         except Exception as ex:
             self._uiHandler.ShowMessageError("Error getting data", ex)
+            raise ex
 
         while True:
             try:
@@ -48,6 +49,7 @@ class MangaScraper:
                 progressBar.NextItem()
             except Exception as ex:
                 self._uiHandler.ShowMessageError(f"Error in {currentPage.get_image_number()}", ex)
+                raise ex
             if currentPage.is_last_page():
                 break
             currentPage = currentPage.get_next_page_async()

@@ -3,7 +3,8 @@ from feature_interfaces.services.file_manager import IFileManager
 from configs.my_logger import get_logger
 from PIL import Image
 
-IMAGE_FORMAT = "JPEG"
+#IMAGE_FORMAT = "JPEG"
+IMAGE_FORMAT = "PNG"
 
 class PillowImageConverter(IImageEditorService):
     def __init__(self) -> None:
@@ -25,7 +26,9 @@ class PillowImageConverter(IImageEditorService):
 
         try:
             img = Image.open(folder_manager.GetFilePath(image_name))
-            img.save(destinyFolder.GetFilePath(new_image_name), IMAGE_FORMAT)
+            convertedImage = Image.new("RGBA", img.size)
+            convertedImage.paste(img)
+            convertedImage.save(destinyFolder.GetFilePath(new_image_name), IMAGE_FORMAT)
             self._logger.info("Image converted: %s", new_image_name)
         except FileNotFoundError as e:
             self._logger.error("File not found: %s | %r", folder_manager.GetFilePath(image_name), e)

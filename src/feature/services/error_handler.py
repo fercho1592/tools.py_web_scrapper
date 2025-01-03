@@ -1,12 +1,14 @@
 from feature_interfaces.services.error_handler import IErrorHandler
 from feature_interfaces.services.file_manager import IFileManager
 from io import SEEK_END
+import configs.dependency_injection as IOT 
 
 class ErrorHandler(IErrorHandler):
     def __init__(self, urlItem:str, filemanager: IFileManager):
         self._url = urlItem
         self._folderpath = filemanager.GetFolderPath()
         self._folderManager = filemanager
+        self._generalErrorFolderManager = IOT.GetFileManager("~", "errors")
         self._errors = []
 
     def SaveDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
@@ -28,3 +30,9 @@ class ErrorHandler(IErrorHandler):
             file.seek(0, SEEK_END)
             for line in lines:
                 file.writelines(line + "\n")
+
+        generalFile = self._generalErrorFolderManager.GetFilePath("error.txt")
+        with open(generalFile, "a", encoding="utf-8") as gFile:
+            gFile.seek(0, SEEK_END)
+            for line in lines:
+                gFile.writelines(line + "\n")

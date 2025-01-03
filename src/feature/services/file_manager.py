@@ -7,7 +7,7 @@ DOWNLOAD_FOLDER = path.normpath(
             path.expanduser("~/Desktop")) + "/Manga_downloads"
 
 class FileManager(IFileManager):
-    IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP"]
+    IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
 
     def __init__(self, rootPath:str, folderName:str):
         self.RootPath = rootPath
@@ -47,5 +47,10 @@ class FileManager(IFileManager):
         except Error as e:
             self ._logger.error("Error al copiar el archivo: %r",e)
 
-    def DeleteAll(self):
-        rmtree(self.FullPath)
+    def DeleteAll(self, fromRootFolder: bool):
+        if not path.exists(self.FullPath):
+            return
+        if not fromRootFolder:
+            rmtree(self.FullPath)
+        else:
+            rmtree(self.RootPath)
