@@ -17,7 +17,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
 
     def _get_index_page(self, index_page: int) -> IMangaIndex:
         self._logger.info("Getting Index page# [%s]", index_page)
-        return self.strategy.get_index_page_async(index_page)
+        return self.Strategy.get_index_page_async(index_page)
 
     def get_manga_page_async(self, page:int = 0) -> IMangaPage:
         page = 1 if page < 1 else page
@@ -30,7 +30,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         page_to_search = pages[real_page-1]
         page_children = page_to_search
 
-        new_page = index.strategy.get_page_from_url_async(
+        new_page = index.Strategy.get_page_from_url_async(
         page_children.get_attr_value(COMMON_ATTRS.HREF))
         return new_page
 

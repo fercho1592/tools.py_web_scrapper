@@ -1,6 +1,6 @@
 '''Module to implement a '''
 from . import image_converter_interfaces
-from infrastructure.file_manager import FileManager
+from feature_interfaces.services.file_manager import IFileManager
 from configs.my_logger import get_logger
 from PIL import Image
 
@@ -14,18 +14,18 @@ class PillowImageConverter(image_converter_interfaces.IImageEditorService):
 
     def convert_image(
         self,
-        folder_manager: FileManager,
+        folder_manager: IFileManager,
         image_name: str,
         new_image_name,
         dest_path="converted_to_png"
     ):
         new_image_name = f"{new_image_name}.{IMAGE_FORMAT.lower()}"
-        folder_path = folder_manager.folder_path
+        folder_path = folder_manager.GetFolderPath()
         old_image_path = f"{folder_path}/{image_name}"
         new_folder_path =f"{folder_path}/{dest_path}"
         new_image_path = f"{new_folder_path}/{new_image_name}"
-        folder_manager.create_folder_if_not_exist(new_folder_path)
-        if folder_manager.exist_file(new_image_path):
+
+        if folder_manager.HasFile(new_image_path):
             self._logger.info("Image duplicated: %s", new_image_name)
             return
 
@@ -41,10 +41,10 @@ class PillowImageConverter(image_converter_interfaces.IImageEditorService):
 
     def get_image_size(
         self,
-        folder_manager:FileManager,
+        folder_manager:IFileManager,
         image_name: str
     ):
-        image_path = f"{folder_manager.folder_path}/{image_name}"
+        image_path = f"{folder_manager.GetFolderPath()}/{image_name}"
         img = Image.open(image_path)
         size = img.size
         self._logger.debug("Get image size of: %s", size)

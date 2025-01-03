@@ -18,9 +18,9 @@ def main():
 
         resultFolder = f"{DOWNLOAD_FOLDER}/{item.FolderName}"
         processingFolder = f"{DOWNLOAD_FOLDER}/{PROSSESING_FOLDER}/{item.FolderName}"
-        uiHandler = IOT.GetUserFeddbackHandler(item.FolderName, errorHandler)
         folderManager = IOT.GetFileManager(DOWNLOAD_FOLDER, processingFolder)
         errorHandler = IOT.GetErrorHandler(item.MangaUrl, folderManager)
+        uiHandler = IOT.GetUserFeddbackHandler(item.FolderName, errorHandler)
         strategy = IOT.GetMangaStrategy(item.MangaUrl)
         scrapper = IOT.GetMangaScrapper(strategy, uiHandler, folderManager)
         mangaData = scrapper.get_manga_data()

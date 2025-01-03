@@ -16,7 +16,7 @@ class QueueItem:
         return QueueItem(
             manga_url= line_items[0].strip().lower(),
             path= line_items[1].strip(),
-            page_number= int(sPageNumber) if sPageNumber else None,
+            page_number= int(sPageNumber) if sPageNumber else 0,
             pdf_only = bool(line_items[3].strip() if len(line_items) >= 4 else 0)
         )
 

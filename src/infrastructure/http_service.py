@@ -3,8 +3,8 @@ import requests
 import configs.my_logger as my_logger
 from exceptions.http_service_exception import HttpServiceException
 from feature_interfaces.services.http_service import IHttpService
+from os import path
 
-__logger = my_logger.get_logger(__name__)
 DEFAULT_HEADERS = {
   "User-Agent": "Mozilla/5.0 \
     (Macintosh; Intel Mac OS X 10_11_5) \
@@ -15,6 +15,7 @@ DEFAULT_HEADERS = {
 class HttpService(IHttpService):
     def __init__(self):
         self._headers = DEFAULT_HEADERS
+        self._logger = my_logger.get_logger(__name__)
 
     def GetHtmlFromUrl(self, web_page: str):
         try:
@@ -26,15 +27,16 @@ class HttpService(IHttpService):
 
     def DownloadImageFromUrl(self, url: str, imageName: str ,to_folder: str):
         try:
+            filePath = path.join(to_folder, imageName)
             response = requests.get(url, stream=True, headers= self._headers, timeout= 10)
 
             response.raise_for_status()
 
-            with open(to_folder, "wb") as out_file:
+            with open(filePath, "wb") as out_file:
                 for chunk in response.iter_content(1024):
                     out_file.write(chunk)
 
-            __logger.debug("Imagen descargada correctamente a: %s", to_folder)
+            self._logger.debug("Imagen descargada correctamente a: %s", to_folder)
 
         except requests.exceptions.RequestException as ex:
             raise HttpServiceException(f"Error al descargar la imagen: {url}") from ex

@@ -45,7 +45,7 @@ class MangaScraper:
                 self._httpService.DownloadImageFromUrl(
                     imageUrl, imageName, self.FileManager.GetFolderPath())
                 progressBar.NextItem()
-            except HttpServiceException as ex:
+            except Exception as ex:
                 self._uiHandler.ShowMessageError(f"Error in {currentPage.get_image_number()}", ex)
 
             if currentPage.is_last_page():

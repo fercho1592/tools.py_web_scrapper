@@ -78,3 +78,6 @@ class IMangaStrategy(ABC):
     @abstractmethod
     def get_url(self) -> str:
         pass
+    @abstractmethod
+    def get_index_page_async(self, index_page = 0) -> IMangaIndex:
+        pass
