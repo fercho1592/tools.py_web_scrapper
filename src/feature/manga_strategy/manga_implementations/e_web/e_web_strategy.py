@@ -40,7 +40,8 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
         return EMangaPage(self, dom_reader, url)
 
     def _is_index_page(self, dom_element: DomElement) -> bool:
-        return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) != 0
+        temp = len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn"))
+        return temp != 0
 
     def get_index_page(self, url:str) -> IMangaIndex:
         url = url if url is not None else self.WebPage

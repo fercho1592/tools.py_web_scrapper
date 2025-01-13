@@ -5,6 +5,7 @@ from infrastructure.pdf_generator import PdfCreator
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.file_manager import FileManager, DOWNLOAD_FOLDER
 from feature_interfaces.services.file_manager import IFileManager
+from tools.string_path_fix import FixStringsTools
 
 _logger = get_logger(__name__)
 image_converter = IOT.GetImageConverter()
@@ -36,8 +37,13 @@ def main():
 
             imageFolder = IOT.GetFileManager(PROCESSED_IMAGES, item.FolderName)
             convert_images(downloadFolder, imageFolder)
-            
+
             create_pdf(imageFolder, item.PdfName, mangaData)
+            artistName = FixStringsTools.ConvertString(mangaData["artist"])
+            group = FixStringsTools.ConvertString(mangaData["groups"])
+            group = group if len(group) else ""
+            artistName = artistName if artistName is not None else group
+            item.FolderName = item.FolderName.format(artistName = artistName)
             resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
             resultFolder.DeleteFile(item.PdfName)
             imageFolder.MoveFileTo(item.PdfName, resultFolder)

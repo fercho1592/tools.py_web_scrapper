@@ -45,7 +45,7 @@ class PdfCreator(IPdfCreator):
                 pdf.write(10, key)
                 pdf.ln(10)
                 pdf.set_font("Swansea","", 10)
-                pdf.write(10, FixStringsTools.normalize_string(data),)
+                pdf.write(10, FixStringsTools.NormalizeString(data),)
 
 
         self._logger.info("Saving PDF %s", pdfName)

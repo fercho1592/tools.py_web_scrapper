@@ -10,11 +10,11 @@ class Test:
         #("ñoño", "nono"),
     ])
     def test_fix_string_for_path(self, string, expected):
-        assert FixStringsTools.fix_string_for_path(string) == expected
+        assert FixStringsTools.FixStringForPath(string) == expected
 
 
     @pytest.mark.parametrize(("string", "expected"), [
         ("Sukininaru♥", "Sukininaru"),
     ])
     def test_normailize_string_gets_invalid_text_return_valid_text(self, string, expected):
-        assert FixStringsTools.normalize_string(string) == expected
+        assert FixStringsTools.NormalizeString(string) == expected

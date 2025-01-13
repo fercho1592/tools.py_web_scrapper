@@ -3,7 +3,7 @@ from unicodedata import normalize
 
 class FixStringsTools:
     @staticmethod
-    def fix_string_for_path(string:str) -> str:
+    def FixStringForPath(string:str) -> str:
         path_to_fix = string
         path_to_fix = path_to_fix.replace("ū", "uu")
         path_to_fix = re.sub(
@@ -15,7 +15,14 @@ class FixStringsTools:
         return path_to_fix
 
     @staticmethod
-    def normalize_string(text: str) -> str:
+    def NormalizeString(text: str) -> str:
         result = normalize("NFD",text)\
             .replace("♥","")
         return result
+
+    @staticmethod
+    def ConvertString(text:str)-> str:
+        if len(text) == 0:
+            return None
+
+        return text.strip()

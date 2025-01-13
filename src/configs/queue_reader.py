@@ -1,11 +1,11 @@
 class QueueItem:
     def __init__(self, manga_url, path, page_number = None, pdf_only = False) -> None:
-        self.MangaUrl = manga_url
-        self.FolderName = path
-        self.PageNumber = page_number
-        self.PdfName = f"{self.FolderName.split("/")[-1]}.pdf"
-        self.PdfOnly = 1
-        self.DownloadFiles = not pdf_only
+        self.MangaUrl:str = manga_url
+        self.FolderName:str = path
+        self.PageNumber:int = page_number
+        self.PdfName:str = f"{self.FolderName.split("/")[-1]}.pdf"
+        self.PdfOnly:bool = True
+        self.DownloadFiles:bool = not pdf_only
 
     @staticmethod
     def QueueItemFromFile(line:str):
