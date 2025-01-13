@@ -41,7 +41,7 @@ def main():
             create_pdf(imageFolder, item.PdfName, mangaData)
             artistName = FixStringsTools.ConvertString(mangaData["artist"])
             group = FixStringsTools.ConvertString(mangaData["groups"])
-            group = group if len(group) else ""
+            group = group if group is not None and len(group) else ""
             artistName = artistName if artistName is not None else group
             item.FolderName = item.FolderName.format(artistName = artistName)
             resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
