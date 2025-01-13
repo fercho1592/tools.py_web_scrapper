@@ -1,8 +1,8 @@
-from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
+from feature_interfaces.strategies.i_manga_strategy import IMangaPage, IMangaIndex
+from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
+from feature_interfaces.web_drivers.enums import CommonTags as COMMON_TAGS
+from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
-import feature.html_reader.common_attrs as COMMON_ATTRS
-import feature.html_reader.common_tags as COMMON_TAGS
-from feature.html_reader.dom_reader import HtmlElement
 
 class EMangaIndex(BaseMangaIndex,IMangaIndex):
     @staticmethod
@@ -34,7 +34,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         page_children.get_attr_value(COMMON_ATTRS.HREF))
         return new_page
 
-    def _get_manga_data_elements(self) -> list[HtmlElement]:
+    def _get_manga_data_elements(self) -> list[IWebElementDriver]:
         taglist = self.DomReader.get_by_attrs(COMMON_ATTRS.ID, "taglist")[0]
         children = taglist.get_children_by_tag(COMMON_TAGS.TR)
         return children

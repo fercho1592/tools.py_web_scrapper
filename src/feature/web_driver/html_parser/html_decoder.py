@@ -1,9 +1,11 @@
 from html.parser import HTMLParser
-from feature.html_reader.dom_reader import HtmlElement, DomElement
+from feature.web_driver.html_parser.dom_reader import HtmlElement, DomElement
+from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
+from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 
 class HtmlDecoder(HTMLParser):
     def set_html(self, dom_html:str) -> None:
-        self.Components:list[HtmlElement] = []
+        self.Components:list[IWebElementDriver] = []
         self.LastOpen:list[HtmlElement] = []
         self.feed(dom_html)
 
@@ -26,5 +28,5 @@ class HtmlDecoder(HTMLParser):
         component = self.LastOpen[-1]
         component.set_value(data)
 
-    def get_dom_component(self) -> DomElement:
+    def get_dom_component(self) -> IWebReaderDriver:
         return DomElement(self.Components)

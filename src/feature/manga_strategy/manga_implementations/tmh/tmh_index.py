@@ -1,8 +1,8 @@
-from feature.html_reader.dom_reader import HtmlElement
-from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
+from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
+from feature_interfaces.web_drivers.enums import CommonTags as COMMON_TAGS
+from feature_interfaces.strategies.i_manga_strategy import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
-import feature.html_reader.common_attrs as COMMON_ATTRS
-import feature.html_reader.common_tags as COMMON_TAGS
+from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
     @staticmethod
@@ -31,7 +31,7 @@ class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
         return self.Strategy.get_page_from_url_async(
             sel_page.get_attr_value(COMMON_ATTRS.HREF))
 
-    def _get_manga_data_elements(self) -> list[HtmlElement]:
+    def _get_manga_data_elements(self) -> list[IWebElementDriver]:
         form_data = self.DomReader.get_by_attrs(
         COMMON_ATTRS.ID, "form-favorite-author"
         )[0]
