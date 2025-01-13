@@ -43,6 +43,7 @@ def main():
             group = FixStringsTools.ConvertString(mangaData["groups"])
             group = group if group is not None and len(group) else ""
             artistName = artistName if artistName is not None else group
+            artistName = artistName.replace("|", "-")
             item.FolderName = item.FolderName.format(artistName = artistName)
             resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
             resultFolder.DeleteFile(item.PdfName)
