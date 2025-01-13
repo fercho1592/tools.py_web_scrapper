@@ -53,6 +53,8 @@ class EMangaPage(BaseMangaPage,IMangaPage):
 
     def get_index_page(self) -> IMangaIndex:
         manga_arrows = self.Reader.get_by_attrs(COMMON_ATTRS.CLASS, "sb")
+        if len(manga_arrows) == 0:
+            raise Exception("Invalid url")
         index_arrow = manga_arrows[0].get_children_by_tag(COMMON_TAGS.ANCHOR)[0]
         href = index_arrow.get_attr_value(COMMON_ATTRS.HREF)
 

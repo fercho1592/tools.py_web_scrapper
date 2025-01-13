@@ -1,6 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
+from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
+
 class IWebElementDriver(ABC):
     @abstractmethod
     def get_value(self):
@@ -19,6 +21,6 @@ class IWebElementDriver(ABC):
         pass
     @abstractmethod
     def get_children_by_tag(
-        self, tag_name:str, attr: str = None, value: str = None
+        self, tag_name:CommonTags, attr: CommonAttrs = None, value: str = None
     ) -> list[IWebElementDriver]:
         pass
