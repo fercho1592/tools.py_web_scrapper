@@ -1,7 +1,9 @@
 from feature_interfaces.web_drivers.enums import CommonAttrs
 from typing import Self
+from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
+from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 
-class HtmlElement:
+class HtmlElement(IWebElementDriver):
     def __init__(
         self, tag:str, attrs:list[tuple[str, str | None]], parent:Self = None):
         self.Tag = tag
@@ -55,15 +57,15 @@ class HtmlElement:
 
         return result
 
-class DomElement:
-    def __init__(self, components:list[HtmlElement]):
+class DomElement(IWebReaderDriver):
+    def __init__(self, components:list[IWebElementDriver]):
         self.__components = components
 
     def get_by_tag_name(
         self, tag_name:str,
         attr: str = None,
         value: str = None
-    ) -> list[HtmlElement]:
+    ) -> list[IWebElementDriver]:
         result = []
         for child in self.__components:
             if(child.Tag == tag_name and attr is None):
@@ -76,5 +78,5 @@ class DomElement:
 
         return result
 
-    def get_by_attrs(self, attr, valule = None) -> list[HtmlElement]:
+    def get_by_attrs(self, attr, valule = None) -> list[IWebElementDriver]:
         return [comp for comp in self.__components if comp.has_attr(attr, valule)]

@@ -1,6 +1,6 @@
 from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaPage, IMangaIndex
-import feature.web_driver.dom_reader as DomElement
+import feature.web_driver.html_parser.dom_reader as DomElement
 import configs.config_manager as config_manager
 import configs.dependency_injection as IOT
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer

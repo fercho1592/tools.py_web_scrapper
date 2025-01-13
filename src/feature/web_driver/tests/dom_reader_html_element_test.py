@@ -1,5 +1,5 @@
 #import pytest
-from ..dom_reader import HtmlElement
+from ..html_parser.dom_reader import HtmlElement
 from feature_interfaces.web_drivers.enums import CommonAttrs
 from feature_interfaces.web_drivers.enums import CommonTags
 

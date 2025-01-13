@@ -1,8 +1,8 @@
 import configs.config_manager as config_manager
 import configs.dependency_injection as IOT
 from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
+from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaIndex, IMangaPage
-from feature.web_driver.dom_reader import DomElement
 from feature.manga_strategy.manga_implementations.e_web.e_web_index import EMangaIndex
 from feature.manga_strategy.manga_implementations.e_web.e_web_page import EMangaPage
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
@@ -40,7 +40,7 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
         DefaultViewTimer()
         return EMangaPage(self, dom_reader, url)
 
-    def _is_index_page(self, dom_element: DomElement) -> bool:
+    def _is_index_page(self, dom_element: IWebReaderDriver) -> bool:
         return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "gn")) != 0
 
     def get_index_page(self, url:str) -> IMangaIndex:

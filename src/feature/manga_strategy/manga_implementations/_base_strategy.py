@@ -1,12 +1,14 @@
 from typing import Self
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaIndex, IMangaPage
-from feature.web_driver.dom_reader import DomElement
+from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 import configs.my_logger as my_logger
 import configs.dependency_injection as IOT
 import time
 from abc import ABC
 
 from abc import abstractmethod
+
+
 
 def DefaultViewTimer():
     delay_seconds = 5
@@ -44,7 +46,7 @@ class BaseStrategy(IMangaStrategy, ABC):
         return self.WebPage
 
 class BaseMangaIndex(IMangaIndex, ABC):
-    def __init__(self, strategy: IMangaStrategy,dom_reader: DomElement) -> None:
+    def __init__(self, strategy: IMangaStrategy,dom_reader: IWebReaderDriver) -> None:
         super().__init__()
         self.Strategy = strategy
         self.DomReader = dom_reader
@@ -69,7 +71,7 @@ class BaseMangaIndex(IMangaIndex, ABC):
 
 class BaseMangaPage(IMangaPage, ABC):
     def __init__(
-        self, strategy:IMangaStrategy, dom_reader:DomElement, url: str):
+        self, strategy:IMangaStrategy, dom_reader:IWebReaderDriver, url: str):
         self.Strategy = strategy
         self.Reader = dom_reader
         self.Url:str = url
