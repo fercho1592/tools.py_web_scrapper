@@ -1,6 +1,6 @@
 '''Factory to select wich manga implementation will be used'''
 from feature.manga_strategy.manga_implementations.container import MANGA_IMPLEMENTATIONS
-from feature.manga_strategy.manga_interfaces import IMangaStrategy
+from feature_interfaces.strategies.manga_interfaces import IMangaStrategy
 
 class MangaFactory:
     @staticmethod

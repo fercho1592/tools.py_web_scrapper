@@ -1,5 +1,5 @@
 '''Set up all manga implementations'''
-from feature.manga_strategy.manga_interfaces import IMangaStrategy
+from feature_interfaces.strategies.manga_interfaces import IMangaStrategy
 from feature.manga_strategy.manga_implementations.tmh import tmh_strategy
 from feature.manga_strategy.manga_implementations.e_web import e_web_strategy
 

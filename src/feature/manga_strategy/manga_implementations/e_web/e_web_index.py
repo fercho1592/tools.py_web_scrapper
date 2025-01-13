@@ -1,4 +1,4 @@
-from feature.manga_strategy.manga_interfaces import IMangaPage, IMangaIndex
+from feature_interfaces.strategies.manga_interfaces import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
