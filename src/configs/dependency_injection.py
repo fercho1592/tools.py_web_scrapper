@@ -9,6 +9,7 @@ from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.file_manager import FileManager
 from feature.image_converter.pillow_image_converter import PillowImageConverter
 from feature.manga_strategy.manga_factory import MangaFactory
+from feature.web_driver.html_decoder import HtmlDecoder
 from infrastructure.http_service import HttpService
 
 def GetErrorHandler(mangaUrl: str, fileManager: IFileManager):
@@ -32,3 +33,12 @@ def GetImageConverter():
 
 def GetHttpService():
     return HttpService()
+
+def GetWebReaderDriver(url:str):
+    httpService = GetHttpService()
+    html = httpService.GetHtmlFromUrl(url)
+
+    decoder = HtmlDecoder()
+    decoder.set_html(html)
+
+    return decoder.get_dom_component()

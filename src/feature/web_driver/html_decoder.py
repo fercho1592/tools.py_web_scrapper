@@ -1,5 +1,5 @@
 from html.parser import HTMLParser
-from feature.html_reader.dom_reader import HtmlElement, DomElement
+from feature.web_driver.dom_reader import HtmlElement, DomElement
 
 class HtmlDecoder(HTMLParser):
     def set_html(self, dom_html:str) -> None:

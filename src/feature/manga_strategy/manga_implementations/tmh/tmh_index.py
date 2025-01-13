@@ -1,8 +1,8 @@
-import feature.html_reader.common_attrs as COMMON_ATTRS
-import feature.html_reader.common_tags as COMMON_TAGS
-from feature.html_reader.dom_reader import HtmlElement
-from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
+from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
+from feature_interfaces.web_drivers.enums import CommonTags as COMMON_TAGS
 from feature_interfaces.strategies.i_manga_strategy import IMangaPage, IMangaIndex
+from feature.web_driver.dom_reader import HtmlElement
+from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
     @staticmethod

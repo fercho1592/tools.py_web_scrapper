@@ -1,4 +1,4 @@
-import feature.html_reader.common_attrs as CommonAttr
+from feature_interfaces.web_drivers.enums import CommonAttrs
 from typing import Self
 
 class HtmlElement:
@@ -17,7 +17,7 @@ class HtmlElement:
         return self.Value
 
     def get_id(self):
-        id_attr = [attr for attr in self.Attrs if attr[0] == CommonAttr.ID]
+        id_attr = [attr for attr in self.Attrs if attr[0] == CommonAttrs.ID]
         return id_attr[0][1] if len(id_attr) > 0 else None
 
     def add_children(self, child:Self):

@@ -1,7 +1,6 @@
 from typing import Self
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaIndex, IMangaPage
-from feature.html_reader.html_decoder import HtmlDecoder
-from feature.html_reader.dom_reader import DomElement
+from feature.web_driver.dom_reader import DomElement
 import configs.my_logger as my_logger
 import configs.dependency_injection as IOT
 import time
@@ -28,12 +27,6 @@ class BaseStrategy(IMangaStrategy, ABC):
         self._logger = my_logger.get_logger(__name__)
         self.WebPage = web_page
         self.HttpService = IOT.GetHttpService()
-
-    def _get_dom_component(self, url: str):
-        html = self.HttpService.GetHtmlFromUrl(url)
-        decoder = HtmlDecoder()
-        decoder.set_html(html)
-        return decoder.get_dom_component()
 
     @abstractmethod
     def get_page_from_url_async(self, url: str) -> IMangaPage:
