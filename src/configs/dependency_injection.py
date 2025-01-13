@@ -1,7 +1,7 @@
 from feature_interfaces.services.error_handler import IErrorHandler
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from feature_interfaces.services.file_manager import IFileManager
-from feature_interfaces.strategies.manga_interfaces import IMangaStrategy
+from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
 
 from feature.services.error_handler import ErrorHandler
 from feature.services.user_feedback_handler import UserFeedbackHandler

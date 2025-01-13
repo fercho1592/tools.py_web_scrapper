@@ -4,7 +4,7 @@ import configs.config_manager as config_manager
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
 from feature.manga_strategy.manga_implementations.tmh.tmh_index import TmhMangaIndex
 from feature.manga_strategy.manga_implementations.tmh.tmh_page import TmhMangaPage
-from feature_interfaces.strategies.manga_interfaces import IMangaStrategy, IMangaPage, IMangaIndex
+from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaPage, IMangaIndex
 
 class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
     @staticmethod

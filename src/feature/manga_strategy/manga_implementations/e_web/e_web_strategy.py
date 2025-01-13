@@ -4,7 +4,7 @@ from feature.html_reader.dom_reader import DomElement
 from feature.manga_strategy.manga_implementations.e_web.e_web_index import EMangaIndex
 from feature.manga_strategy.manga_implementations.e_web.e_web_page import EMangaPage
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
-from feature_interfaces.strategies.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
+from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaIndex, IMangaPage
 
 class EMangaStrategy(BaseStrategy,IMangaStrategy):
     @staticmethod

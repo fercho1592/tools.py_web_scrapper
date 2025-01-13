@@ -1,5 +1,5 @@
 from typing import Self
-from feature_interfaces.strategies.manga_interfaces import IMangaStrategy, IMangaIndex, IMangaPage
+from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaIndex, IMangaPage
 from feature.html_reader.html_decoder import HtmlDecoder
 from feature.html_reader.dom_reader import DomElement
 import configs.my_logger as my_logger

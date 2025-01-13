@@ -1,8 +1,8 @@
-from feature.html_reader.dom_reader import HtmlElement
-from feature_interfaces.strategies.manga_interfaces import IMangaPage, IMangaIndex
-from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
 import feature.html_reader.common_attrs as COMMON_ATTRS
 import feature.html_reader.common_tags as COMMON_TAGS
+from feature.html_reader.dom_reader import HtmlElement
+from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
+from feature_interfaces.strategies.i_manga_strategy import IMangaPage, IMangaIndex
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
     @staticmethod

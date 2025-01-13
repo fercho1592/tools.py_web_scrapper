@@ -1,5 +1,5 @@
 from exceptions.http_service_exception import HttpServiceException
-from feature_interfaces.strategies.manga_interfaces import IMangaStrategy
+from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
 from feature_interfaces.services.file_manager import IFileManager
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from tools.string_path_fix import FixStringsTools
