@@ -12,7 +12,8 @@
     result = arrayEle.map((element) => {
       const anchor = element.getElementsByTagName("a")[0]
       const href = anchor.getAttribute("href")
-      const name = ("[" + mainFolder + "]/" +anchor.getInnerHTML()).toUpperCase().replace("!","").replace("?","")
+      const labelText = anchor.getInnerHTML().trim()
+      const name = ("[" + mainFolder + "]/" + labelText).toUpperCase().replace("!","").replace("?","")
       return (href + " | " + name).replace("\n", "")
     })
   
