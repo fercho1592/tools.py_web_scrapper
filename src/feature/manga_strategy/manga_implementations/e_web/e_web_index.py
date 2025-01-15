@@ -15,7 +15,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
         ## fix Manga name
         return manga_name
 
-    def _get_index_page(self, index_page: int) -> IMangaIndex:
+    def _get_index_page(self, index_page: int) -> "EMangaIndex":
         self._logger.info("Getting Index page# [%s]", index_page)
         return self.Strategy.get_index_page_async(index_page)
 
@@ -45,7 +45,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
             li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
             if li_elements[0].get_value() == "female:":
                 tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
-                return [ele.Value for ele in tags]
+                return [ele.get_value() for ele in tags]
         return []
 
     def get_manga_artist(self) -> list[str]:
@@ -54,7 +54,7 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
             li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
             if li_elements[0].get_value() == "artist:":
                 tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
-                return [ele.Value for ele in tags]
+                return [ele.get_value() for ele in tags]
         return []
 
     def get_manga_group(self) -> list[str]:
@@ -63,5 +63,5 @@ class EMangaIndex(BaseMangaIndex,IMangaIndex):
             li_elements = ele.get_children_by_tag(COMMON_TAGS.TD)
             if li_elements[0].get_value() == "group:":
                 tags = ele.get_children_by_tag(COMMON_TAGS.ANCHOR)
-                return [ele.Value for ele in tags]
+                return [ele.get_value() for ele in tags]
         return []

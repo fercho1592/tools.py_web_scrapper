@@ -9,12 +9,12 @@ class ErrorHandler(IErrorHandler):
         self._folderpath = filemanager.GetFolderPath()
         self._folderManager = filemanager
         self._generalErrorFolderManager = IOT.GetFileManager("~", "errors")
-        self._errors = []
+        self._errors:list[str] = []
 
     def SaveDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
         if len(self._errors) == 0:
             self._WriteTextOnFile("errors.txt",[f"{self._url} | {self._folderpath}"])
-        self._errors.append(item)
+        self._errors.append(message)
 
         self._WriteTextOnFile("errors.txt",[ f"Error in {item}"])
 
@@ -25,8 +25,8 @@ class ErrorHandler(IErrorHandler):
         self._errors.append("Error getting data")
 
     def _WriteTextOnFile(self, file_name: str, lines:list[str]):
-        file = self._folderManager.GetFilePath(file_name)
-        with open(file, "a", encoding="utf-8") as file:
+        filePath = self._folderManager.GetFilePath(file_name)
+        with open(filePath, "a", encoding="utf-8") as file:
             file.seek(0, SEEK_END)
             for line in lines:
                 file.writelines(line + "\n")

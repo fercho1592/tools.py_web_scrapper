@@ -18,7 +18,6 @@ class MangaScraper:
         self._httpService =  IOT.GetHttpService()
 
     def run_manga_download_async(self, manga_page:int = 0) -> None:
-        errors = []
         try:
             currentPage = self.Strategy.get_first_page(manga_page)
             (imageNumber, lastNumber) = currentPage.get_image_number()
@@ -55,8 +54,8 @@ class MangaScraper:
             currentPage = currentPage.get_next_page_async()
 
         self._logger.info("Download of [%s] complete", currentPage.get_manga_name())
-        return errors
-
+        self._uiHandler.ShowMessage(f"Download of {currentPage.get_manga_name()} complete")
+        
     def get_manga_data(self) -> dict[str,str]:
         index = self.Strategy.get_index_page(self.Strategy.get_url())
         name = FixStringsTools.FixStringForPath(index.get_manga_name())

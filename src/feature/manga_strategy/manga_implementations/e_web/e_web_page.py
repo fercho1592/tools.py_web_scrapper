@@ -25,13 +25,13 @@ class EMangaPage(BaseMangaPage,IMangaPage):
         div = self.Reader.get_by_attrs(COMMON_ATTRS.ID, "i2")[0]
         img_details_ele = div.get_children_by_tag(COMMON_TAGS.SPAN)
 
-        self.ImageNumber = (
+        self.ImageNumber = img_details_ele[0].get_value().strip()
+        return (
             img_details_ele[0].get_value().strip(),
             img_details_ele[1].get_value().strip()
         )
-        return self.ImageNumber
 
-    def get_next_page_async(self) -> IMangaPage:
+    def get_next_page_async(self) -> "IMangaPage":
         next_page_url = self._get_next_image_url()
         new_page = self.Strategy.get_page_from_url_async(next_page_url)
 
