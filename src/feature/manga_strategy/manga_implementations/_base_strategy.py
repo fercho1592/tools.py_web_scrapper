@@ -3,16 +3,9 @@ from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMang
 from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 import configs.my_logger as my_logger
 import configs.dependency_injection as IOT
-import time
 from abc import ABC
 
 from abc import abstractmethod
-
-
-
-def DefaultViewTimer():
-    delay_seconds = 5
-    time.sleep(delay_seconds)
 
 class BaseStrategy(IMangaStrategy, ABC):
     @staticmethod
