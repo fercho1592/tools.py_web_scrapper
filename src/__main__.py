@@ -3,7 +3,7 @@ from configs.queue_reader import read_queue, QueueItem
 from configs.my_logger import get_logger
 from infrastructure.pdf_generator import PdfCreator
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
-from feature.services.file_manager import FileManager, DOWNLOAD_FOLDER
+from feature.services.file_manager import DOWNLOAD_FOLDER
 from feature_interfaces.services.file_manager import IFileManager
 from tools.string_path_fix import FixStringsTools
 
@@ -74,7 +74,7 @@ def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
     finally:
         _logger.info("End manga download for [%s]", queueItem.FolderName)
 
-def create_pdf(folder_manager: FileManager,pdf_name:str,manga_data:dict[str,str]) -> None:
+def create_pdf(folder_manager: IFileManager,pdf_name:str,manga_data:dict[str,str]) -> None:
     try:
         _logger.info("Start create PDF")
         pdf_creator = PdfCreator(folder_manager, image_converter)
