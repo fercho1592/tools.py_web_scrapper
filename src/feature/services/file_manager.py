@@ -9,7 +9,8 @@ DOWNLOAD_FOLDER = path.normpath(
 class FileManager(IFileManager):
     IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
 
-    def __init__(self, rootPath:str, folderName:str):
+    def __init__(self, rootPath:str, folderName:str | None):
+        folder = "." if folder is None else folder
         rawFullPath = path.join(rootPath, folderName)
         directory, folder = path.split(rawFullPath)
         if folder == "..":

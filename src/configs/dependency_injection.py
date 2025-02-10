@@ -19,7 +19,7 @@ from infrastructure.http_service import HttpService
 def GetErrorHandler(mangaUrl: str, fileManager: IFileManager) -> IErrorHandler:
     return ErrorHandler(mangaUrl, fileManager)
 
-def GetFileManager(rootPath, folder) -> IFileManager:
+def GetFileManager(rootPath: str, folder: str | None) -> IFileManager:
     return FileManager(rootPath, folder)
 
 def GetMangaStrategy(url: str) -> IMangaStrategy:
