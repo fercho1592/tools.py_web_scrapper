@@ -72,7 +72,7 @@ class DomElement(IWebReaderDriver):
             if(child.Tag == tag_name.value and attr is None):
                 result.append(child)
             elif (child.Tag == tag_name.value\
-                   and (attr is not None and child.has_attr(attr.value, value))):
+                   and (attr is not None and child.has_attr(attr, value))):
                 result.append(child)
 
             result.extend(child.get_children_by_tag(tag_name, attr, value))
