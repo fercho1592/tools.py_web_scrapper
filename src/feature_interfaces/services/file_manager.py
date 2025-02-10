@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-class IFileManager(ABC):
+class IFileScrapperManager(ABC):
     @abstractmethod
     def GetFolderPath(self):
         pass
@@ -23,7 +23,7 @@ class IFileManager(ABC):
         pass
 
     @abstractmethod
-    def MoveFileTo(self, fileName: str, destinyFolder: IFileManager):
+    def MoveFileTo(self, fileName: str, destinyFolder: IFileScrapperManager):
         pass
 
     @abstractmethod

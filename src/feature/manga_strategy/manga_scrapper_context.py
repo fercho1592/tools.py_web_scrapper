@@ -1,6 +1,6 @@
 from exceptions.http_service_exception import HttpServiceException
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from tools.string_path_fix import FixStringsTools
 import configs.my_logger as MyLogger
@@ -9,7 +9,7 @@ import configs.dependency_injection as IOT
 class MangaScraper:
     def __init__(self,
                 strategy: IMangaStrategy,
-                fileManager: IFileManager,
+                fileManager: IFileScrapperManager,
                 uiHandler: IUserFeedbackHandler) -> None:
         self.Strategy = strategy
         self.FileManager = fileManager

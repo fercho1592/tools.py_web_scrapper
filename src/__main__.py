@@ -4,7 +4,7 @@ from configs.my_logger import get_logger
 from infrastructure.pdf_generator import PdfCreator
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.file_manager import DOWNLOAD_FOLDER
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from tools.string_path_fix import FixStringsTools
 
 _logger = get_logger(__name__)
@@ -18,7 +18,7 @@ def main():
         print("*************************************************")
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
-        downloadFolder = IOT.GetFileManager(PROSSESING_FOLDER, item.FolderName)
+        downloadFolder = IOT.GetFileScrapperManager(PROSSESING_FOLDER, item.FolderName)
         errorHandler = IOT.GetErrorHandler(item.MangaUrl, downloadFolder)
         uiHandler = IOT.GetUserFeddbackHandler(item.FolderName, errorHandler)
         strategy = IOT.GetMangaStrategy(item.MangaUrl)
@@ -35,7 +35,7 @@ def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            imageFolder = IOT.GetFileManager(PROCESSED_IMAGES, item.FolderName)
+            imageFolder = IOT.GetFileScrapperManager(PROCESSED_IMAGES, item.FolderName)
             convert_images(downloadFolder, imageFolder)
 
             create_pdf(imageFolder, item.PdfName, mangaData)
@@ -45,7 +45,7 @@ def main():
             artistName = artistName if artistName is not None else group
             artistName = artistName.replace("|", "-")
             item.FolderName = item.FolderName.format(artistName = artistName)
-            resultFolder = IOT.GetFileManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
+            resultFolder = IOT.GetFileScrapperManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
             resultFolder.DeleteFile(item.PdfName)
             imageFolder.MoveFileTo(item.PdfName, resultFolder)
 
@@ -74,7 +74,7 @@ def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
     finally:
         _logger.info("End manga download for [%s]", queueItem.FolderName)
 
-def create_pdf(folder_manager: IFileManager,pdf_name:str,manga_data:dict[str,str]) -> None:
+def create_pdf(folder_manager: IFileScrapperManager,pdf_name:str,manga_data:dict[str,str]) -> None:
     try:
         _logger.info("Start create PDF")
         pdf_creator = PdfCreator(folder_manager, image_converter)
@@ -82,7 +82,7 @@ def create_pdf(folder_manager: IFileManager,pdf_name:str,manga_data:dict[str,str
     finally:
         _logger.info("End Create Pdf")
 
-def convert_images(folder_manager: IFileManager, destFolder: IFileManager) -> IFileManager:
+def convert_images(folder_manager: IFileScrapperManager, destFolder: IFileScrapperManager) -> IFileScrapperManager:
     try:
         _logger.info("Start Convert Images")
         for image_name in folder_manager.GetImagesInFolder():

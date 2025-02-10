@@ -1,14 +1,14 @@
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from abc import ABC, abstractmethod
 
 class IImageEditorService(ABC):
     @abstractmethod
     def convert_image(
         self,
-        folder_manager: IFileManager,
+        folder_manager: IFileScrapperManager,
         image_name:str,
         new_image_name:str,
-        destinyFolder: IFileManager
+        destinyFolder: IFileScrapperManager
     ):
         pass
     

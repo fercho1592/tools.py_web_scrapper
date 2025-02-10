@@ -1,6 +1,6 @@
 '''Module to create PDFs'''
 from fpdf import FPDF
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.services.pdf_creator import IPdfCreator
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from configs.my_logger import get_logger
@@ -9,7 +9,7 @@ from tools.string_path_fix import FixStringsTools
 class PdfCreator(IPdfCreator):
     def __init__(
         self,
-        folder: IFileManager,
+        folder: IFileScrapperManager,
         imageEditor: IImageEditorService
     ) -> None:
         self.FileManager = folder

@@ -1,5 +1,5 @@
 from .image_converter_interfaces import IImageEditorService
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from configs.my_logger import get_logger
 from PIL import Image
 
@@ -13,10 +13,10 @@ class PillowImageConverter(IImageEditorService):
 
     def convert_image(
         self,
-        folder_manager: IFileManager,
+        folder_manager: IFileScrapperManager,
         image_name: str,
         new_image_name: str,
-        destinyFolder: IFileManager
+        destinyFolder: IFileScrapperManager
     ):
         new_image_name = f"{new_image_name}.{IMAGE_FORMAT.lower()}"
 
@@ -38,7 +38,7 @@ class PillowImageConverter(IImageEditorService):
 
     def get_image_size(
         self,
-        folder_manager:IFileManager,
+        folder_manager:IFileScrapperManager,
         image_name: str
     ):
         image_path = f"{folder_manager.GetFolderPath()}/{image_name}"

@@ -1,4 +1,4 @@
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from os import path, makedirs, listdir, remove
 from shutil import rmtree, move, Error
 from configs.my_logger import get_logger
@@ -6,7 +6,7 @@ from configs.my_logger import get_logger
 DOWNLOAD_FOLDER = path.normpath(
             path.expanduser("~/Desktop")) + "/Manga_downloads"
 
-class FileManager(IFileManager):
+class FileManager(IFileScrapperManager):
     IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
 
     def __init__(self, rootPath:str, folderName:str | None):
@@ -44,7 +44,7 @@ class FileManager(IFileManager):
             if ele.split(".")[-1].upper() in FileManager.IMAGE_TYPES
         ]
 
-    def MoveFileTo(self, fileName: str, destinyFolder: IFileManager):
+    def MoveFileTo(self, fileName: str, destinyFolder: IFileScrapperManager):
         imagePath = self.GetFilePath(fileName)
         toMovePath = destinyFolder.GetFilePath(fileName)
         try:

@@ -1,14 +1,14 @@
 from feature_interfaces.services.error_handler import IErrorHandler
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 from io import SEEK_END
 import configs.dependency_injection as IOT 
 
 class ErrorHandler(IErrorHandler):
-    def __init__(self, urlItem:str, filemanager: IFileManager):
+    def __init__(self, urlItem:str, filemanager: IFileScrapperManager):
         self._url = urlItem
         self._folderpath = filemanager.GetFolderPath()
         self._folderManager = filemanager
-        self._generalErrorFolderManager = IOT.GetFileManager("~", "errors")
+        self._generalErrorFolderManager = IOT.GetFileScrapperManager("~", "errors")
         self._errors = []
 
     def SaveDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):

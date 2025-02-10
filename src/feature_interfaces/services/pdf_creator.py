@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from feature_interfaces.services.file_manager import IFileManager
+from feature_interfaces.services.file_manager import IFileScrapperManager
 
 class IPdfCreator(ABC):
     @abstractmethod
@@ -8,5 +8,5 @@ class IPdfCreator(ABC):
         pass
 
     @abstractmethod
-    def SetFileManager(self, fileManager: IFileManager):
+    def SetFileManager(self, fileManager: IFileScrapperManager):
         pass
