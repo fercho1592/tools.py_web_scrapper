@@ -5,7 +5,8 @@ from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaIndex, IMangaPage
 from feature.manga_strategy.manga_implementations.e_web.e_web_index import EMangaIndex
 from feature.manga_strategy.manga_implementations.e_web.e_web_page import EMangaPage
-from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy, DefaultViewTimer
+from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy
+from tools.custom_decorators import delayed_view_timer
 
 class EMangaStrategy(BaseStrategy,IMangaStrategy):
     @staticmethod
@@ -29,15 +30,15 @@ class EMangaStrategy(BaseStrategy,IMangaStrategy):
         index_page = EMangaIndex(self, dom_element)
         return index_page.get_manga_page_async(page_number)
 
+    @delayed_view_timer
     def get_index_page_async(self, index_page = 0) -> IMangaIndex:
         dom_reader = IOT.GetWebReaderDriver(f"{self.WebPage}?p={index_page}")
 
-        DefaultViewTimer()
         return EMangaIndex(self, dom_reader)
 
+    @delayed_view_timer
     def get_page_from_url_async(self, url: str) -> IMangaPage:
         dom_reader = IOT.GetWebReaderDriver(url)
-        DefaultViewTimer()
         return EMangaPage(self, dom_reader, url)
 
     def _is_index_page(self, dom_element: IWebReaderDriver) -> bool:

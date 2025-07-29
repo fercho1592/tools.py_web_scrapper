@@ -11,7 +11,8 @@ class HtmlDecoder(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         last_component = self.LastOpen[-1] if len(self.LastOpen) > 0 else None
-        new_component = HtmlElement(tag, attrs, last_component)
+        dictAttrs = dict(attrs)
+        new_component = HtmlElement(tag, dictAttrs, last_component)
         if last_component is not None:
             last_component.add_children(new_component)
 

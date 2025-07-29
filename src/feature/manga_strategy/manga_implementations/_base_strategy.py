@@ -3,16 +3,9 @@ from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMang
 from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 import configs.my_logger as my_logger
 import configs.dependency_injection as IOT
-import time
 from abc import ABC
 
 from abc import abstractmethod
-
-
-
-def DefaultViewTimer():
-    delay_seconds = 5
-    time.sleep(delay_seconds)
 
 class BaseStrategy(IMangaStrategy, ABC):
     @staticmethod
@@ -35,7 +28,7 @@ class BaseStrategy(IMangaStrategy, ABC):
         pass
 
     @abstractmethod
-    def get_first_page(self, page_number: int) -> IMangaPage:
+    def get_first_page(self, page_number: int = 0) -> IMangaPage:
         pass
 
     @abstractmethod
@@ -75,12 +68,12 @@ class BaseMangaPage(IMangaPage, ABC):
         self.Strategy = strategy
         self.Reader = dom_reader
         self.Url:str = url
-        self.ImageName:str = None
-        self.ImageNumber:int = None
+        self.ImageName:str | None = None
+        self.ImageNumber:int | None = None
         self._logger = my_logger.get_logger(__name__)
 
     @abstractmethod
-    def get_img_url(self) -> str:
+    def get_img_url(self) -> tuple[str, dict[str, str]]:
         pass
 
     @abstractmethod

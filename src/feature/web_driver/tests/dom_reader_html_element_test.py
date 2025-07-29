@@ -7,17 +7,17 @@ ID_VALUE = "id-element"
 CLASS_VALUE = "class-value"
 
 class Test:
-    EMPTY_ELEMENT = HtmlElement(CommonTags.ANCHOR.value, [])
-    DEFAULT_ELEMENT = HtmlElement(CommonTags.ANCHOR.value, [
-        (CommonAttrs.ID.value, ID_VALUE),
-        (CommonAttrs.CLASS.value, CLASS_VALUE)
-    ])
+    EMPTY_ELEMENT = HtmlElement(CommonTags.ANCHOR.value, {})
+    DEFAULT_ELEMENT = HtmlElement(CommonTags.ANCHOR.value, {
+        CommonAttrs.ID.value: ID_VALUE,
+        CommonAttrs.CLASS.value: CLASS_VALUE
+    })
     CHILDREN_ELEMENTS = [
-        HtmlElement(CommonTags.IMG.value, [(CommonAttrs.ID.value, ID_VALUE),]),
-        HtmlElement(CommonTags.ANCHOR.value, []),
-        HtmlElement(CommonTags.I.value, []),
-        HtmlElement(CommonTags.H1.value, []),
-        HtmlElement(CommonTags.H3.value, []),
+        HtmlElement(CommonTags.IMG.value, {CommonAttrs.ID.value: ID_VALUE,}),
+        HtmlElement(CommonTags.ANCHOR.value, {}),
+        HtmlElement(CommonTags.I.value, {}),
+        HtmlElement(CommonTags.H1.value, {}),
+        HtmlElement(CommonTags.H3.value, {}),
     ]
 
     def test_get_id_has_no_id_returns_none(self):

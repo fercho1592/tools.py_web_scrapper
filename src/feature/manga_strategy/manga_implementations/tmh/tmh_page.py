@@ -29,7 +29,7 @@ class TmhMangaPage(BaseMangaPage,IMangaPage):
             COMMON_TAGS.OPTION)[-1]
         return (selected.get_value(), last_page.get_value())
 
-    def get_next_page_async(self) -> IMangaPage:
+    def get_next_page_async(self) -> "IMangaPage":
         image_eles = self.Reader.get_by_tag_name(COMMON_TAGS.I,
         COMMON_ATTRS.CLASS, "fa fa-chevron-right fa-2x")
         if len(image_eles) == 0:

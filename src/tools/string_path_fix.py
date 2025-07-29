@@ -21,7 +21,7 @@ class FixStringsTools:
         return result
 
     @staticmethod
-    def ConvertString(text:str)-> str:
+    def ConvertString(text:str)-> str | None:
         if len(text) == 0:
             return None
 

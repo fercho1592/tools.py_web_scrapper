@@ -63,11 +63,10 @@ class IMangaStrategy(ABC):
         pass
     @staticmethod
     @abstractmethod
-    def create_strategy(url:str) -> Self:
+    def create_strategy(url:str) -> "IMangaStrategy":
         pass
     @abstractmethod
-    def get_first_page(
-        self, page_number: int = 0, index_page: int = 0) -> IMangaPage:
+    def get_first_page(self, page_number: int = 0) -> IMangaPage:
         pass
     @abstractmethod
     def get_page_from_url_async(self, url: str) -> IMangaPage:
