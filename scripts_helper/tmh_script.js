@@ -12,10 +12,11 @@
     result = arrayEle.map((element) => {
       const anchor = element.getElementsByTagName("a")[0]
       const href = anchor.getAttribute("href")
-      const labelText = anchor.getInnerHTML().trim()
+      const labelText = anchor.getHTML().trim()
       const name = ("[" + mainFolder + "]/" + labelText).toUpperCase().replace("!","").replace("?","")
-      return (href + " | " + name).replace("\n", "")
-    })
+      return {url: href, name: name}
+    }).sort((a, b) => a.name.localeCompare(b.name))
+    .map((element) => (element.url + " | " + element.name).replace("\n", ""))
   
     console.log(result.join("\n"))
 })()

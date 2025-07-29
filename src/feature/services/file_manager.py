@@ -10,7 +10,7 @@ class FileManager(IFileScrapperManager):
     IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
 
     def __init__(self, rootPath:str, folderName:str | None):
-        folder = "." if folder is None else folder
+        folder = "." if folderName is None else folderName
         rawFullPath = path.join(rootPath, folderName)
         directory, folder = path.split(rawFullPath)
         if folder == "..":
