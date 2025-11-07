@@ -11,3 +11,4 @@ azure-servicebus == 7.12.3
 tqdm == 4.66.5
 mypy == 1.14.0
 selenium == 4.27.1
+python-telegram-bot >= 22.5
