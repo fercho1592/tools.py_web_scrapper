@@ -19,6 +19,9 @@ The program use a file `config.ini` for all secrets and setups at root directory
     [AzureServiceBus]
     connection_string = primary_conection_string
 
+    [TelegramBot]
+    token = telegram-token
+
 ## Virtual env
 Action |CMD
 -------|--------
