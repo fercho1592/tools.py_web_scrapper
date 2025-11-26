@@ -4,12 +4,9 @@ from telegram.constants import ReactionEmoji
 from asyncio import sleep
 
 def BuildApp() -> Application:
-    import json
-
-    with open('env.json') as f:
-        env = json.load(f)
-
-    bot_token = env['telegram']['bot_token']
+    from configs.config_manager import read_telegram_bot_config
+    config = read_telegram_bot_config()
+    bot_token = config["bot_token"]
 
     app = ApplicationBuilder().token(bot_token).build()
     return app

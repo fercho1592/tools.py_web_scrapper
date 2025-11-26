@@ -33,3 +33,13 @@ def read_azure_service_bus_config():
         "connection_string": connection_string,
         "queue_name": queue_name
     }
+
+def read_telegram_bot_config():
+    config = configparser.ConfigParser()
+    config.read("./config.ini")
+
+    bot_token = config.get("TelegramBot", "token")
+
+    return {
+        "bot_token": bot_token
+    }
