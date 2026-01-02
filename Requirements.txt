@@ -7,6 +7,7 @@ configparser == 7.1.0
 fpdf2 == 2.7.9
 Pillow == 10.4.0
 pytest == 8.3.3
+unittest2 == 1.1.0  # Solo si se requiere compatibilidad extendida, opcional
 azure-servicebus == 7.12.3
 tqdm == 4.66.5
 mypy == 1.14.0
