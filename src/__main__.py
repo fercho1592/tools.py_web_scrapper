@@ -3,6 +3,7 @@ from configs.queue_reader import read_queue, QueueItem
 from feature.services.file_manager import DOWNLOAD_FOLDER
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.services.error_handler import IErrorHandler
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
@@ -11,8 +12,8 @@ from infrastructure.pdf_generator import PdfCreator
 from tools.string_path_fix import FixStringsTools
 
 container = IOT.build_container()
-_logger = container.resolve_factory(Logger, __name__)
-image_converter = container.resolve(IImageEditorService)
+_logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
+image_converter: IImageEditorService = container.resolve(IImageEditorService)
 PROSSESING_FOLDER = f"{DOWNLOAD_FOLDER}/../Processing"
 PROCESSED_IMAGES = f"{PROSSESING_FOLDER}/converted_images"
 
