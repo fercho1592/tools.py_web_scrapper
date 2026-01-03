@@ -3,19 +3,20 @@ from fpdf import FPDF
 from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.services.pdf_creator import IPdfCreator
 from feature.image_converter.image_converter_interfaces import IImageEditorService
-from configs.logger_factory import get_logger
 from tools.string_path_fix import FixStringsTools
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 
 class PdfCreator(IPdfCreator):
     def __init__(
         self,
         folder: IFileScrapperManager,
-        imageEditor: IImageEditorService
+        imageEditor: IImageEditorService,
+        logger: LoggerProtocol
     ) -> None:
         self.FileManager = folder
         self.ImageEditor = imageEditor
-        self._logger = get_logger(__name__)
-
+        self._logger = logger
+    
     def CreatePdf(self, pdfName: str, manga_data: dict[str,str] | None):
         self._logger.info(
             "Start process to create [%s] pdf from folder[%s]", 

@@ -1,14 +1,14 @@
 from .image_converter_interfaces import IImageEditorService
 from feature_interfaces.services.file_manager import IFileScrapperManager
-from configs.logger_factory import LoggerFactory
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from PIL import Image
 
 #IMAGE_FORMAT = "JPEG"
 IMAGE_FORMAT = "PNG"
 
 class PillowImageConverter(IImageEditorService):
-    def __init__(self, logger_factory: LoggerFactory) -> None:
-        self._logger = logger_factory.get_logger(__name__)
+    def __init__(self, logger: LoggerProtocol) -> None:
+        self._logger = logger
         pass
 
     def convert_image(

@@ -82,7 +82,7 @@ def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
 def create_pdf(folder_manager: IFileScrapperManager,pdf_name:str,manga_data:dict[str,str]) -> None:
     try:
         _logger.info("Start create PDF")
-        pdf_creator = PdfCreator(folder_manager, image_converter)
+        pdf_creator = PdfCreator(folder_manager, image_converter, _logger)
         pdf_creator.CreatePdf(pdf_name, manga_data)
     finally:
         _logger.info("End Create Pdf")

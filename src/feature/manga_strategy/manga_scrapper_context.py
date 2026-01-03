@@ -3,14 +3,15 @@ from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
 from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from tools.string_path_fix import FixStringsTools
-import configs.logger_factory as MyLogger
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
+
 
 class MangaScraper:
     def __init__(self,
                 strategy: IMangaStrategy,
                 fileManager: IFileScrapperManager,
                 uiHandler: IUserFeedbackHandler,
-                logger: MyLogger.Logger,
+                logger: LoggerProtocol,
                 httpService: IHttpService
                 ) -> None:
         self.Strategy = strategy

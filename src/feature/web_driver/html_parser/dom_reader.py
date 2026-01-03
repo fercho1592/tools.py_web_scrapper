@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
 from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
@@ -9,7 +9,7 @@ class HtmlElement(IWebElementDriver):
     Attrs: dict[str, str]
     Parent: IWebElementDriver | None = None
     Value: str | None = None
-    Children:list[IWebElementDriver] = []
+    Children:list[IWebElementDriver] = field(default_factory=list)
 
     def set_value(self, value:str):
         self.Value = value

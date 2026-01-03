@@ -14,8 +14,8 @@ class StrategyFactory:
         (tmh_strategy.TmhMangaStrategy, ConfigEnum.TMH_MANGA_DOMAIN)
     ]
 
-    def __init__(self, config_manager: ConfigServiceProtocol, container: Container) -> None:
-        self.config_manager:ConfigServiceProtocol = config_manager
+    def __init__(self, container: Container) -> None:
+        self.config_manager:ConfigServiceProtocol = container.resolve(ConfigServiceProtocol)
         self.container:Container = container
 
     def get_manga_strategy(self, url:str) -> IMangaStrategy:
