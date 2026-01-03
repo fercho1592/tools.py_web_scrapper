@@ -40,7 +40,7 @@ def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            imageFolder = IOT.GetFileScrapperManager(PROCESSED_IMAGES, item.FolderName)
+            imageFolder = container.resolve_factory(IFileScrapperManager, PROCESSED_IMAGES, item.FolderName)
             convert_images(downloadFolder, imageFolder)
 
             create_pdf(imageFolder, item.PdfName, mangaData)
@@ -63,7 +63,6 @@ def main():
             uiHandler.ShowMessage("Folder cleaned")
         except Exception as ex:
             uiHandler.ShowMessageError("Erron on PDF convertion", ex)
-            continue
 
     return
 

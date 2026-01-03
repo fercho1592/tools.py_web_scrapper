@@ -12,23 +12,23 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
         # Identify if is a page or index
         if self._is_index_page(dom_element) is False:
             self._logger.debug("Creating an object Page for [%s]", self.WebPage)
-            return TmhMangaPage(self, dom_element, self.WebPage)
+            return TmhMangaPage(self, dom_element, self.WebPage, self._logger)
 
         # create index page
         self._logger.debug("Creating an object Index for [%s]", self.WebPage)
-        index_page = TmhMangaIndex(self, dom_element)
+        index_page = TmhMangaIndex(self, dom_element, self._logger)
         return index_page.get_manga_page_async(page_number)
 
     @delayed_view_timer
     def get_index_page_async(self, index_page = 0) -> IMangaIndex:
         del index_page
         dom_reader = self.HttpService.GetDoomComponentFromUrl(self.WebPage)
-        return TmhMangaIndex(self, dom_reader)
+        return TmhMangaIndex(self, dom_reader, self._logger)
 
     @delayed_view_timer
     def get_page_from_url_async(self, url: str) -> IMangaPage:
         dom_reader = self.HttpService.GetDoomComponentFromUrl(url)
-        return TmhMangaPage(self, dom_reader, url)
+        return TmhMangaPage(self, dom_reader, url, self._logger)
 
     def _is_index_page(self, dom_element:IWebReaderDriver):
         return len(dom_element.get_by_attrs(COMMON_ATTRS.ID, "content-images")) == 0
@@ -38,7 +38,7 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
         dom_reader = self.HttpService.GetDoomComponentFromUrl(url)
 
         if self._is_index_page(dom_reader):
-            return TmhMangaIndex(self,dom_reader)
+            return TmhMangaIndex(self,dom_reader, self._logger)
 
-        page = TmhMangaPage(self, dom_reader, url)
+        page = TmhMangaPage(self, dom_reader, url, self._logger)
         return page.get_index_page()

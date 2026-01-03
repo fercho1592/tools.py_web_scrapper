@@ -72,3 +72,6 @@ class DomElement(IWebReaderDriver):
 
     def get_by_attrs(self, attr: CommonAttrs, valule = None) -> list[IWebElementDriver]:
         return [comp for comp in self.__components if comp.has_attr(attr, valule)]
+    
+    def get_parent(self) -> IWebElementDriver | None:
+        return None

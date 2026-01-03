@@ -16,21 +16,21 @@ class BaseStrategy(ABC):
         return self.WebPage
 
 class BaseMangaIndex(ABC):
-    def __init__(self, strategy: IMangaStrategy,dom_reader: IWebReaderDriver) -> None:
+    def __init__(self, strategy: IMangaStrategy,dom_reader: IWebReaderDriver, logger: LoggerProtocol) -> None:
         super().__init__()
         self.Strategy = strategy
         self.DomReader = dom_reader
-        self._logger = logger_factory.get_logger(__name__)
+        self._logger = logger
 
 class BaseMangaPage(ABC):
     def __init__(
-        self, strategy:IMangaStrategy, dom_reader:IWebReaderDriver, url: str):
+        self, strategy:IMangaStrategy, dom_reader:IWebReaderDriver, url: str, logger: LoggerProtocol):
         self.Strategy = strategy
         self.Reader = dom_reader
         self.Url:str = url
         self.ImageName:str | None = None
         self.ImageNumber:int | None = None
-        self._logger = logger_factory.get_logger(__name__)
+        self._logger = logger
 
     def get_image_name(self) -> str:
         default_image_name = self._get_image_name()
