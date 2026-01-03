@@ -24,7 +24,7 @@ def main():
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
         downloadFolder: IFileScrapperManager = container.resolve_factory(IFileScrapperManager, PROSSESING_FOLDER, item.FolderName)
-        errorHandler: IErrorHandler = container.resolve_factory(IErrorHandler, item.MangaUrl, downloadFolder)
+        errorHandler: IErrorHandler = container.resolve_factory(IErrorHandler, item.MangaUrl, item.FolderName)
         uiHandler: IUserFeedbackHandler = container.resolve_factory(IUserFeedbackHandler, item.FolderName, errorHandler)
         strategy:IMangaStrategy = container.resolve_factory(IMangaStrategy, item.MangaUrl)
         scrapper:MangaScraper = container.resolve_factory(MangaScraper, strategy, downloadFolder, uiHandler)
