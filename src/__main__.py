@@ -1,14 +1,18 @@
 import configs.dependency_injection as IOT
 from configs.queue_reader import read_queue, QueueItem
-from configs.my_logger import get_logger
-from infrastructure.pdf_generator import PdfCreator
-from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.file_manager import DOWNLOAD_FOLDER
+from feature.image_converter.image_converter_interfaces import IImageEditorService
+from feature.manga_strategy.manga_scrapper_context import MangaScraper
+from feature_interfaces.services.error_handler import IErrorHandler
+from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
+from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
 from feature_interfaces.services.file_manager import IFileScrapperManager
+from infrastructure.pdf_generator import PdfCreator
 from tools.string_path_fix import FixStringsTools
 
-_logger = get_logger(__name__)
-image_converter = IOT.GetImageConverter()
+container = IOT.build_container()
+_logger = container.resolve_factory(Logger, __name__)
+image_converter = container.resolve(IImageEditorService)
 PROSSESING_FOLDER = f"{DOWNLOAD_FOLDER}/../Processing"
 PROCESSED_IMAGES = f"{PROSSESING_FOLDER}/converted_images"
 
@@ -18,11 +22,11 @@ def main():
         print("*************************************************")
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
-        downloadFolder = IOT.GetFileScrapperManager(PROSSESING_FOLDER, item.FolderName)
-        errorHandler = IOT.GetErrorHandler(item.MangaUrl, downloadFolder)
-        uiHandler = IOT.GetUserFeddbackHandler(item.FolderName, errorHandler)
-        strategy = IOT.GetMangaStrategy(item.MangaUrl)
-        scrapper = IOT.GetMangaScrapper(strategy, uiHandler, downloadFolder)
+        downloadFolder: IFileScrapperManager = container.resolve_factory(IFileScrapperManager, PROSSESING_FOLDER, item.FolderName)
+        errorHandler: IErrorHandler = container.resolve_factory(IErrorHandler, item.MangaUrl, downloadFolder)
+        uiHandler: IUserFeedbackHandler = container.resolve_factory(IUserFeedbackHandler, item.FolderName, errorHandler)
+        strategy:IMangaStrategy = container.resolve_factory(IMangaStrategy, item.MangaUrl)
+        scrapper:MangaScraper = container.resolve_factory(MangaScraper, strategy, downloadFolder, uiHandler)
         mangaData = scrapper.get_manga_data()
 
         try:

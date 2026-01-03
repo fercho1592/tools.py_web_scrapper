@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
-from typing import Self
 from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 

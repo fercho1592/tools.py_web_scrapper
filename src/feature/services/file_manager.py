@@ -1,7 +1,7 @@
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.services.file_manager import IFileScrapperManager
 from os import path, makedirs, listdir, remove
 from shutil import rmtree, move, Error
-from configs.my_logger import get_logger
 
 DOWNLOAD_FOLDER = path.normpath(
             path.expanduser("~/Desktop")) + "/Manga_downloads"
@@ -9,7 +9,7 @@ DOWNLOAD_FOLDER = path.normpath(
 class FileManager(IFileScrapperManager):
     IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
 
-    def __init__(self, rootPath:str, folderName:str | None):
+    def __init__(self, rootPath:str, folderName:str | None, logger: LoggerProtocol):
         folder = "." if folderName is None else folderName
         rawFullPath = path.join(rootPath, folderName)
         directory, folder = path.split(rawFullPath)
@@ -22,7 +22,7 @@ class FileManager(IFileScrapperManager):
         self.FolderName = folder
         self.FullPath = rawFullPath
 
-        self._logger = get_logger(__name__)
+        self._logger = logger
         if not path.exists(self.FullPath):
             makedirs(self.FullPath)
 

@@ -5,10 +5,6 @@ from feature.manga_strategy.manga_implementations._base_strategy import BaseMang
 from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 
 class TmhMangaIndex(BaseMangaIndex,IMangaIndex):
-    @staticmethod
-    def get_max_pages_in_index() -> int:
-        return 100
-
     def get_manga_name(self) -> str:
         divs = self.DomReader.get_by_attrs(
         COMMON_ATTRS.CLASS, valule="panel panel-primary panel-title")

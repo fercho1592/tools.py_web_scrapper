@@ -1,21 +1,23 @@
-from exceptions.http_service_exception import HttpServiceException
+from feature_interfaces.services.http_service import IHttpService
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
 from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
 from tools.string_path_fix import FixStringsTools
-import configs.my_logger as MyLogger
-import configs.dependency_injection as IOT
+import configs.logger_factory as MyLogger
 
 class MangaScraper:
     def __init__(self,
                 strategy: IMangaStrategy,
                 fileManager: IFileScrapperManager,
-                uiHandler: IUserFeedbackHandler) -> None:
+                uiHandler: IUserFeedbackHandler,
+                logger: MyLogger.Logger,
+                httpService: IHttpService
+                ) -> None:
         self.Strategy = strategy
         self.FileManager = fileManager
         self._uiHandler = uiHandler
-        self._logger = MyLogger.get_logger(__name__)
-        self._httpService =  IOT.GetHttpService()
+        self._logger = logger
+        self._httpService = httpService
 
     def run_manga_download_async(self, manga_page:int = 0) -> None:
         try:

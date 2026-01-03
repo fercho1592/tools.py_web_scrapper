@@ -16,3 +16,7 @@ class IWebReaderDriver(ABC):
     @abstractmethod
     def get_by_attrs(self, attr: CommonAttrs, valule: str | None = None) -> list[IWebElementDriver]:
         pass
+
+    @abstractmethod
+    def get_parent(self) -> IWebElementDriver | None:
+        pass

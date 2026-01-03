@@ -1,5 +1,5 @@
 import pytest
-from ..tools.string_path_fix import FixStringsTools
+from tools.string_path_fix import FixStringsTools
 
 class Test:
 

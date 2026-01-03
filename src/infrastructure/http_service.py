@@ -1,9 +1,12 @@
 '''Service to get html info from an url'''
 import requests
-import configs.my_logger as my_logger
 from exceptions.http_service_exception import HttpServiceException
+from feature.web_driver.html_parser.html_decoder import HtmlDecoder
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.services.http_service import IHttpService
 from os import path
+
+from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 
 DEFAULT_HEADERS = {
   "User-Agent": "Mozilla/5.0 \
@@ -13,9 +16,9 @@ DEFAULT_HEADERS = {
 }
 
 class HttpService(IHttpService):
-    def __init__(self):
+    def __init__(self, logger: LoggerProtocol):
         self._headers = DEFAULT_HEADERS
-        self._logger = my_logger.get_logger(__name__)
+        self._logger = logger
 
     def GetHtmlFromUrl(self, web_page: str):
         try:
@@ -48,3 +51,9 @@ class HttpService(IHttpService):
         if self._headers is None:
             self._headers = {}
         self._headers.update(headers)
+
+    def GetDoomComponentFromUrl(self, url: str) -> IWebReaderDriver:
+        html = self.GetHtmlFromUrl(url)
+        decoder = HtmlDecoder()
+        decoder.set_html(html)
+        return decoder.get_dom_component()

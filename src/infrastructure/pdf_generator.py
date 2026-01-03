@@ -3,7 +3,7 @@ from fpdf import FPDF
 from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.services.pdf_creator import IPdfCreator
 from feature.image_converter.image_converter_interfaces import IImageEditorService
-from configs.my_logger import get_logger
+from configs.logger_factory import get_logger
 from tools.string_path_fix import FixStringsTools
 
 class PdfCreator(IPdfCreator):

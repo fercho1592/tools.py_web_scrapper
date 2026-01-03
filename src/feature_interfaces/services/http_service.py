@@ -1,6 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
+from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
+
 class IHttpService(ABC):
     @abstractmethod
     def GetHtmlFromUrl(self, web_page: str):
@@ -10,4 +12,7 @@ class IHttpService(ABC):
         pass
     @abstractmethod
     def SetHeaders(self, headers: dict[str, str]):
+        pass
+    @abstractmethod
+    def GetDoomComponentFromUrl(self, url: str) -> IWebReaderDriver:
         pass

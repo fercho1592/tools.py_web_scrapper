@@ -32,15 +32,8 @@ class IMangaPage(ABC):
 
 class IMangaIndex(ABC):
     '''Interface that represent index page'''
-    @staticmethod
-    @abstractmethod
-    def get_max_pages_in_index() -> int:
-        pass
     @abstractmethod
     def get_manga_name(self) -> str:
-        pass
-    @abstractmethod
-    def _get_index_page(self, index_page: int) -> Self:
         pass
     @abstractmethod
     def get_manga_page_async(self, page:int = 0) -> IMangaPage:
@@ -57,14 +50,6 @@ class IMangaIndex(ABC):
 
 class IMangaStrategy(ABC):
     ''' Main Class for strategi'''
-    @staticmethod
-    @abstractmethod
-    def is_from_domain(url:str) -> bool:
-        pass
-    @staticmethod
-    @abstractmethod
-    def create_strategy(url:str) -> "IMangaStrategy":
-        pass
     @abstractmethod
     def get_first_page(self, page_number: int = 0) -> IMangaPage:
         pass

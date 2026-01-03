@@ -4,22 +4,11 @@ from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMang
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy
 from feature.manga_strategy.manga_implementations.tmh.tmh_index import TmhMangaIndex
 from feature.manga_strategy.manga_implementations.tmh.tmh_page import TmhMangaPage
-import configs.config_manager as config_manager
-import configs.dependency_injection as IOT
 from tools.custom_decorators import delayed_view_timer
 
 class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
-    @staticmethod
-    def is_from_domain(url:str) -> bool:
-        config = config_manager.read_config()
-        return url.startswith(config["tmh_manga_domain"])
-
-    @staticmethod
-    def create_strategy(url:str) -> IMangaStrategy:
-        return TmhMangaStrategy(url)
-
     def get_first_page(self, page_number: int) -> IMangaPage:
-        dom_element = IOT.GetWebReaderDriver(self.WebPage)
+        dom_element = self.HttpService.GetDoomComponentFromUrl(self.WebPage)
         # Identify if is a page or index
         if self._is_index_page(dom_element) is False:
             self._logger.debug("Creating an object Page for [%s]", self.WebPage)
@@ -33,12 +22,12 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
     @delayed_view_timer
     def get_index_page_async(self, index_page = 0) -> IMangaIndex:
         del index_page
-        dom_reader = IOT.GetWebReaderDriver(self.WebPage)
+        dom_reader = self.HttpService.GetDoomComponentFromUrl(self.WebPage)
         return TmhMangaIndex(self, dom_reader)
 
     @delayed_view_timer
     def get_page_from_url_async(self, url: str) -> IMangaPage:
-        dom_reader = IOT.GetWebReaderDriver(url)
+        dom_reader = self.HttpService.GetDoomComponentFromUrl(url)
         return TmhMangaPage(self, dom_reader, url)
 
     def _is_index_page(self, dom_element:IWebReaderDriver):
@@ -46,7 +35,7 @@ class TmhMangaStrategy(BaseStrategy, IMangaStrategy):
 
     def get_index_page(self, url:str | None = None) -> IMangaIndex:
         url = url if url is not None else self.WebPage
-        dom_reader = IOT.GetWebReaderDriver(url)
+        dom_reader = self.HttpService.GetDoomComponentFromUrl(url)
 
         if self._is_index_page(dom_reader):
             return TmhMangaIndex(self,dom_reader)

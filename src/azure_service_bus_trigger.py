@@ -1,12 +1,9 @@
-from configs.my_logger import get_logger
 from configs.config_manager import read_azure_service_bus_config
 
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
 
 async def run_trigger():
-    logger = get_logger(__name__)
-    del logger
     az_settings = read_azure_service_bus_config()
 
     async with ServiceBusClient.from_connection_string(
