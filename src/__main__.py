@@ -50,7 +50,7 @@ def main():
             artistName = artistName if artistName is not None else group
             artistName = artistName.replace("|", "-")
             item.FolderName = item.FolderName.format(artistName = artistName)
-            resultFolder = IOT.GetFileScrapperManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
+            resultFolder = container.resolve_factory(IFileScrapperManager, DOWNLOAD_FOLDER, f"{item.FolderName}/..")
             resultFolder.DeleteFile(item.PdfName)
             imageFolder.MoveFileTo(item.PdfName, resultFolder)
 
