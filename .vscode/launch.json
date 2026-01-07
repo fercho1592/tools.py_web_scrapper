@@ -19,6 +19,13 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "Python Debugger: Links",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/prepare_links.py",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "Python Debugger: From Azure Service Bus Queue",
       "type": "debugpy",
       "request": "launch",
