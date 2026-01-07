@@ -1,23 +1,17 @@
 import configs.dependency_injection as IOT
 from configs.queue_reader import read_queue, QueueItem
 from feature.services.error_handler import ErrorLogFileHandler
-from feature.services.file_manager import DOWNLOAD_FOLDER
+from feature.services.file_manager import FileManager
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.user_feedback_handler import UserFeedbackHandler
 from feature_interfaces.protocols.config_protocol import LoggerProtocol
-from feature_interfaces.services.error_handler import IErrorHandler
-from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
-from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
-from feature_interfaces.services.file_manager import IFileScrapperManager
+from feature_interfaces.models.folders_struct import FolderPath, MangaFoldersStruct
 from infrastructure.pdf_generator import PdfCreator
-from tools.string_path_fix import FixStringsTools
 
 container = IOT.build_container()
 _logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
 image_converter: IImageEditorService = container.resolve(IImageEditorService)
-PROSSESING_FOLDER = f"{DOWNLOAD_FOLDER}/../Processing"
-PROCESSED_IMAGES = f"{PROSSESING_FOLDER}/converted_images"
 
 
 def main():
@@ -25,91 +19,99 @@ def main():
         print("*************************************************")
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
-        downloadFolder: IFileScrapperManager = container.resolve_factory(IFileScrapperManager, PROSSESING_FOLDER, item.FolderName)
-        errorHandler: IErrorHandler = container.resolve_factory(IErrorHandler, item.MangaUrl, item.FolderName)
-        uiHandler: IUserFeedbackHandler = container.resolve(IUserFeedbackHandler)
-        strategy:IMangaStrategy = container.resolve_factory(IMangaStrategy, item.MangaUrl)
-        scrapper:MangaScraper = container.resolve_factory(MangaScraper, strategy, downloadFolder, uiHandler)
+        mangaFolder = MangaFoldersStruct(item.FolderName)
+        errorHandler = ErrorLogFileHandler(item.MangaUrl, mangaFolder.FolderName)
+        uiHandler = UserFeedbackHandler()
+        scrapper:MangaScraper = container.resolve_factory(MangaScraper, item.MangaUrl)
         mangaData = scrapper.get_manga_data()
 
         try:
-            run_manga_downloader(scrapper,item)
+            uiHandler.ShowMessage(f"Start download of {item.MangaUrl} in [{item.FolderName}]")
+            run_manga_downloader(scrapper, item, mangaFolder.download_folder)
+        except Exception as ex:
+            _logger.error("Download incomplete for [%s]", item.MangaUrl)
+            errorHandler.SaveDownloadError("Error during manga download", ex)
+            continue
+        else:
+            _logger.info("End manga download for [%s]", item.MangaUrl)
+
+        try:
+            convert_images(mangaFolder.download_folder, mangaFolder.converted_folder)
         except Exception as ex:
             del ex
-            _logger.info("Download incomplete for [%s]", item.MangaUrl)
+            _logger.error("Error converting images")
             continue
 
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            imageFolder = container.register_factory(IFileScrapperManager, PROCESSED_IMAGES, item.FolderName)
-            convert_images(downloadFolder, imageFolder)
+            create_pdf(mangaFolder.converted_folder, mangaFolder.pdf_folder, item.PdfName, mangaData)
 
-            create_pdf(imageFolder, item.PdfName, mangaData)
-            artistName = FixStringsTools.ConvertString(mangaData["artist"])
-            group = FixStringsTools.ConvertString(mangaData["groups"])
-            group = group if group is not None and len(group) else ""
-            artistName = artistName if artistName is not None else group
-            artistName = artistName.replace("|", "-")
-            item.FolderName = item.FolderName.format(artistName = artistName)
-            resultFolder = IOT.GetFileScrapperManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
-            resultFolder.DeleteFile(item.PdfName)
-            imageFolder.MoveFileTo(item.PdfName, resultFolder)
+            # artistName = FixStringsTools.ConvertString(mangaData["artist"])
+            # group = FixStringsTools.ConvertString(mangaData["groups"])
+            # group = group if group is not None and len(group) else ""
+            # artistName = artistName if artistName is not None else group
+            # artistName = artistName.replace("|", "-")
+            # item.FolderName = item.FolderName.format(artistName = artistName)
 
-            uiHandler.ShowMessage(f"PDf created in [{resultFolder.GetFilePath(item.PdfName)}]")
-
-            _logger.info("Clean folder")
-            downloadFolder.DeleteAll(False)
-            imageFolder.DeleteAll(False)
-
-            uiHandler.ShowMessage("Folder cleaned")
+            uiHandler.ShowMessage(f"PDf created in [{mangaFolder.pdf_folder.get_file_path(item.PdfName)}]")
         except Exception as ex:
-            uiHandler.ShowMessageError("Erron on PDF convertion", ex)
+            uiHandler.ShowMessageError("Erron on PDF convertion")
             errorHandler.SaveMessageError("Error on PDF conversion", ex)
 
+        try:
+            fileManager = FileManager(_logger)
+            fileManager.DeleteAll(mangaFolder.download_folder)
+            fileManager.DeleteAll(mangaFolder.converted_folder)
+        except Exception as ex:
+            del ex
+            _logger.error("Error deleting temp folders")
+
+        _logger.info("End process for [%s | %s]", item.FolderName, item.MangaUrl)
+        print("*************************************************")
     return
 
-def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
-    uiHandler = UserFeedbackHandler()
-    errorHandler = ErrorLogFileHandler(queueItem.MangaUrl, queueItem.FolderName)
+def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem, downloadFolder: FolderPath) -> None:
     if queueItem.DownloadFiles is False:
         _logger.info("Ignore Dowload files")
         return
     try:
         _logger.info("Start manga download for [%s]", queueItem.FolderName)
-        uiHandler.ShowMessage(f"Start download of {queueItem.MangaUrl} in [{queueItem.FolderName}]")
         scrapper.set_starting_page(queueItem.PageNumber)
         while True:
-            scrapper.download_current_page()
+            scrapper.download_current_page(downloadFolder)
             hasNext = scrapper.set_next_page()
             if not hasNext:
                 break
     except Exception as ex:
-        errorHandler.SaveDownloadError("Error during manga download", scrapper.progressBar.CurrentItem, scrapper.progressBar.TotalItems, ex)
-    else:
-        _logger.info("End manga download for [%s]", queueItem.FolderName)
+        raise Exception(f"Error during manga download in item [{scrapper.progressBar.CurrentItem}/{scrapper.progressBar.TotalItems}]") from ex
+    
 
-def create_pdf(folder_manager: IFileScrapperManager,pdf_name:str,manga_data:dict[str,str]) -> None:
-    try:
-        _logger.info("Start create PDF")
-        pdf_creator = PdfCreator(folder_manager, image_converter)
-        pdf_creator.CreatePdf(pdf_name, manga_data)
-    finally:
-        _logger.info("End Create Pdf")
-
-def convert_images(folder_manager: IFileScrapperManager, destFolder: IFileScrapperManager) -> IFileScrapperManager:
+def convert_images(initFolder: FolderPath, destFolder: FolderPath) -> None:
+    fileManager = FileManager(_logger)
+    fileManager.CreateIfNotexist(destFolder)
     try:
         _logger.info("Start Convert Images")
-        for image_name in folder_manager.GetImagesInFolder():
+        for image_name in fileManager.GetImagesInFolder(initFolder):
             splited_name = image_name.split(".")
             if splited_name[-1].upper() not in ["PNG", "JPG"]:
                 image_converter.convert_image(
-                    folder_manager,image_name, splited_name[0], destFolder
+                    initFolder,image_name, splited_name[0], destFolder
                 )
             else:
-                folder_manager.MoveFileTo(image_name, destFolder)
+                fileManager.MoveFileTo(initFolder, image_name, destFolder)
+        
+        fileManager.DeleteAll(initFolder)
     finally:
         _logger.info("End Convert Images")
+
+def create_pdf(image_folder: FolderPath, pdf_folder: FolderPath, pdf_name:str, manga_data:dict[str,str]) -> None:
+    try:
+        _logger.info("Start create PDF")
+        pdf_creator = PdfCreator(image_converter, _logger)
+        pdf_creator.CreatePdf(pdf_name, manga_data, image_folder, pdf_folder)
+    finally:
+        _logger.info("End Create Pdf")
 
 if __name__ == "__main__":
     main()

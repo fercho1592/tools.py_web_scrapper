@@ -1,7 +1,8 @@
+from feature.services.file_manager import FileManager
 from feature.services.user_feedback_handler import ProgressBar
+from feature_interfaces.models.folders_struct import FolderPath
 from feature_interfaces.services.http_service import IHttpService
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
-from feature_interfaces.services.file_manager import IFileScrapperManager
 from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from tools.string_path_fix import FixStringsTools
 
@@ -9,12 +10,10 @@ from tools.string_path_fix import FixStringsTools
 class MangaScraper:
     def __init__(self,
                 strategy: IMangaStrategy,
-                fileManager: IFileScrapperManager,
                 logger: LoggerProtocol,
                 httpService: IHttpService
                 ) -> None:
         self.Strategy = strategy
-        self.FileManager = fileManager
         self._logger = logger
         self._httpService = httpService
 
@@ -30,7 +29,10 @@ class MangaScraper:
             self._logger.error("Error getting data from [%s]", self.Strategy.get_url())
             raise Exception("Error getting manga data") from ex
 
-    def download_current_page(self) -> None:
+    def download_current_page(self, folderPath: FolderPath) -> None:
+        fileManager = FileManager(self._logger)
+        fileManager.CreateIfNotexist(folderPath)
+
         try:
             (imageUrl, headers) = self.currentPage.get_img_url()
             (imageNumber, lastNumber) = self.currentPage.get_image_number()
@@ -38,10 +40,12 @@ class MangaScraper:
 
             self._logger.info("Trying to get page [%s: %s-%s]",imageName, imageNumber, lastNumber)
 
-            if not self.FileManager.HasFile(imageName):
-                self._httpService.SetHeaders(headers)
-                self._httpService.DownloadImageFromUrl(
-                    imageUrl, imageName, self.FileManager.GetFolderPath())
+            if fileManager.HasFile(folderPath, imageName):
+                self._logger.info("File already exists: [%s]", imageName)
+                return
+
+            self._httpService.SetHeaders(headers)
+            self._httpService.DownloadImageFromUrl(imageUrl, imageName, folderPath.full_path)
         except Exception as ex:
             self._logger.error("Error downloading image from [%s]", imageUrl)
             raise Exception("Error downloading image") from ex
