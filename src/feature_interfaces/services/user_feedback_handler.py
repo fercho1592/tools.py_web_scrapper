@@ -6,9 +6,6 @@ class IUserFeedbackHandler(ABC):
     def ShowMessage(self, message: str):
         pass
     @abstractmethod
-    def ShowDownloadError(self, message: str, item: int, totalItems:int, ex: Exception):
-        pass
-    @abstractmethod
     def ShowMessageError(self, message: str, ex: Exception):
         pass
     @abstractmethod
