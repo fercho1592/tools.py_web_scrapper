@@ -1,8 +1,10 @@
 import configs.dependency_injection as IOT
 from configs.queue_reader import read_queue, QueueItem
+from feature.services.error_handler import ErrorLogFileHandler
 from feature.services.file_manager import DOWNLOAD_FOLDER
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
+from feature.services.user_feedback_handler import UserFeedbackHandler
 from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.services.error_handler import IErrorHandler
 from feature_interfaces.services.user_feedback_handler import IUserFeedbackHandler
@@ -25,7 +27,7 @@ def main():
 
         downloadFolder: IFileScrapperManager = container.resolve_factory(IFileScrapperManager, PROSSESING_FOLDER, item.FolderName)
         errorHandler: IErrorHandler = container.resolve_factory(IErrorHandler, item.MangaUrl, item.FolderName)
-        uiHandler: IUserFeedbackHandler = container.resolve_factory(IUserFeedbackHandler, item.FolderName, errorHandler)
+        uiHandler: IUserFeedbackHandler = container.resolve(IUserFeedbackHandler)
         strategy:IMangaStrategy = container.resolve_factory(IMangaStrategy, item.MangaUrl)
         scrapper:MangaScraper = container.resolve_factory(MangaScraper, strategy, downloadFolder, uiHandler)
         mangaData = scrapper.get_manga_data()
@@ -40,7 +42,7 @@ def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            imageFolder = container.resolve_factory(IFileScrapperManager, PROCESSED_IMAGES, item.FolderName)
+            imageFolder = container.register_factory(IFileScrapperManager, PROCESSED_IMAGES, item.FolderName)
             convert_images(downloadFolder, imageFolder)
 
             create_pdf(imageFolder, item.PdfName, mangaData)
@@ -50,7 +52,7 @@ def main():
             artistName = artistName if artistName is not None else group
             artistName = artistName.replace("|", "-")
             item.FolderName = item.FolderName.format(artistName = artistName)
-            resultFolder = container.resolve_factory(IFileScrapperManager, DOWNLOAD_FOLDER, f"{item.FolderName}/..")
+            resultFolder = IOT.GetFileScrapperManager(DOWNLOAD_FOLDER, f"{item.FolderName}/..")
             resultFolder.DeleteFile(item.PdfName)
             imageFolder.MoveFileTo(item.PdfName, resultFolder)
 
@@ -63,25 +65,34 @@ def main():
             uiHandler.ShowMessage("Folder cleaned")
         except Exception as ex:
             uiHandler.ShowMessageError("Erron on PDF convertion", ex)
+            errorHandler.SaveMessageError("Error on PDF conversion", ex)
 
     return
 
 def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem):
-
+    uiHandler = UserFeedbackHandler()
+    errorHandler = ErrorLogFileHandler(queueItem.MangaUrl, queueItem.FolderName)
     if queueItem.DownloadFiles is False:
         _logger.info("Ignore Dowload files")
         return
-
     try:
         _logger.info("Start manga download for [%s]", queueItem.FolderName)
-        scrapper.run_manga_download_async(queueItem.PageNumber)
-    finally:
+        uiHandler.ShowMessage(f"Start download of {queueItem.MangaUrl} in [{queueItem.FolderName}]")
+        scrapper.set_starting_page(queueItem.PageNumber)
+        while True:
+            scrapper.download_current_page()
+            hasNext = scrapper.set_next_page()
+            if not hasNext:
+                break
+    except Exception as ex:
+        errorHandler.SaveDownloadError("Error during manga download", scrapper.progressBar.CurrentItem, scrapper.progressBar.TotalItems, ex)
+    else:
         _logger.info("End manga download for [%s]", queueItem.FolderName)
 
 def create_pdf(folder_manager: IFileScrapperManager,pdf_name:str,manga_data:dict[str,str]) -> None:
     try:
         _logger.info("Start create PDF")
-        pdf_creator = PdfCreator(folder_manager, image_converter, _logger)
+        pdf_creator = PdfCreator(folder_manager, image_converter)
         pdf_creator.CreatePdf(pdf_name, manga_data)
     finally:
         _logger.info("End Create Pdf")
