@@ -20,13 +20,15 @@ def main():
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
 
         mangaFolder = MangaFoldersStruct(item.FolderName)
-        errorHandler = ErrorLogFileHandler(item.MangaUrl, mangaFolder.FolderName)
+        errorHandler = ErrorLogFileHandler(item.MangaUrl, mangaFolder.error_log_folder)
         uiHandler = UserFeedbackHandler()
-        scrapper:MangaScraper = container.resolve_factory(MangaScraper, item.MangaUrl)
+        scrapper: MangaScraper = container.resolve_factory(MangaScraper, item.MangaUrl)
         mangaData = scrapper.get_manga_data()
 
         try:
-            uiHandler.ShowMessage(f"Start download of {item.MangaUrl} in [{item.FolderName}]")
+            uiHandler.ShowMessage(
+                f"Start download of {item.MangaUrl} in [{item.FolderName}]"
+            )
             run_manga_downloader(scrapper, item, mangaFolder.download_folder)
         except Exception as ex:
             _logger.error("Download incomplete for [%s]", item.MangaUrl)
@@ -45,7 +47,12 @@ def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            create_pdf(mangaFolder.converted_folder, mangaFolder.pdf_folder, item.PdfName, mangaData)
+            create_pdf(
+                mangaFolder.converted_folder,
+                mangaFolder.pdf_folder,
+                item.PdfName,
+                mangaData,
+            )
 
             # artistName = FixStringsTools.ConvertString(mangaData["artist"])
             # group = FixStringsTools.ConvertString(mangaData["groups"])
@@ -54,7 +61,9 @@ def main():
             # artistName = artistName.replace("|", "-")
             # item.FolderName = item.FolderName.format(artistName = artistName)
 
-            uiHandler.ShowMessage(f"PDf created in [{mangaFolder.pdf_folder.get_file_path(item.PdfName)}]")
+            uiHandler.ShowMessage(
+                f"PDf created in [{mangaFolder.pdf_folder.get_file_path(item.PdfName)}]"
+            )
         except Exception as ex:
             uiHandler.ShowMessageError("Erron on PDF convertion")
             errorHandler.SaveMessageError("Error on PDF conversion", ex)
@@ -71,7 +80,10 @@ def main():
         print("*************************************************")
     return
 
-def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem, downloadFolder: FolderPath) -> None:
+
+def run_manga_downloader(
+    scrapper: MangaScraper, queueItem: QueueItem, downloadFolder: FolderPath
+) -> None:
     if queueItem.DownloadFiles is False:
         _logger.info("Ignore Dowload files")
         return
@@ -84,8 +96,11 @@ def run_manga_downloader(scrapper: MangaScraper, queueItem: QueueItem, downloadF
             if not hasNext:
                 break
     except Exception as ex:
-        raise Exception(f"Error during manga download in item [{scrapper.progressBar.CurrentItem}/{scrapper.progressBar.TotalItems}]") from ex
-    
+        (current_page, total_pages) = scrapper.get_current_page()
+        raise Exception(
+            f"Error during manga download in item [{current_page}/{total_pages}]"
+        ) from ex
+
 
 def convert_images(initFolder: FolderPath, destFolder: FolderPath) -> None:
     fileManager = FileManager(_logger)
@@ -96,22 +111,29 @@ def convert_images(initFolder: FolderPath, destFolder: FolderPath) -> None:
             splited_name = image_name.split(".")
             if splited_name[-1].upper() not in ["PNG", "JPG"]:
                 image_converter.convert_image(
-                    initFolder,image_name, splited_name[0], destFolder
+                    initFolder, image_name, splited_name[0], destFolder
                 )
             else:
                 fileManager.MoveFileTo(initFolder, image_name, destFolder)
-        
+
         fileManager.DeleteAll(initFolder)
     finally:
         _logger.info("End Convert Images")
 
-def create_pdf(image_folder: FolderPath, pdf_folder: FolderPath, pdf_name:str, manga_data:dict[str,str]) -> None:
+
+def create_pdf(
+    image_folder: FolderPath,
+    pdf_folder: FolderPath,
+    pdf_name: str,
+    manga_data: dict[str, str],
+) -> None:
     try:
         _logger.info("Start create PDF")
         pdf_creator = PdfCreator(image_converter, _logger)
         pdf_creator.CreatePdf(pdf_name, manga_data, image_folder, pdf_folder)
     finally:
         _logger.info("End Create Pdf")
+
 
 if __name__ == "__main__":
     main()

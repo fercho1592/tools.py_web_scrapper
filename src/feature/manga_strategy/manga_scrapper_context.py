@@ -8,11 +8,12 @@ from tools.string_path_fix import FixStringsTools
 
 
 class MangaScraper:
-    def __init__(self,
-                strategy: IMangaStrategy,
-                logger: LoggerProtocol,
-                httpService: IHttpService
-                ) -> None:
+    def __init__(
+        self,
+        strategy: IMangaStrategy,
+        logger: LoggerProtocol,
+        httpService: IHttpService,
+    ) -> None:
         self.Strategy = strategy
         self._logger = logger
         self._httpService = httpService
@@ -38,33 +39,43 @@ class MangaScraper:
             (imageNumber, lastNumber) = self.currentPage.get_image_number()
             imageName = self.currentPage.get_image_name()
 
-            self._logger.info("Trying to get page [%s: %s-%s]",imageName, imageNumber, lastNumber)
+            self._logger.info(
+                "Trying to get page [%s: %s-%s]", imageName, imageNumber, lastNumber
+            )
 
             if fileManager.HasFile(folderPath, imageName):
                 self._logger.info("File already exists: [%s]", imageName)
                 return
 
             self._httpService.SetHeaders(headers)
-            self._httpService.DownloadImageFromUrl(imageUrl, imageName, folderPath.full_path)
+            self._httpService.DownloadImageFromUrl(
+                imageUrl, imageName, folderPath.full_path
+            )
         except Exception as ex:
             self._logger.error("Error downloading image from [%s]", imageUrl)
             raise Exception("Error downloading image") from ex
-        
+
     def set_next_page(self) -> bool:
         try:
+            self.progressBar.NextItem()
             if self.currentPage.is_last_page():
                 return False
-            self.progressBar.NextItem()
             self.currentPage = self.currentPage.get_next_page_async()
             return True
         except Exception as ex:
-            self._logger.error("Error getting next page from [%s]", self.Strategy.get_url())
+            self._logger.error(
+                "Error getting next page from [%s]", self.Strategy.get_url()
+            )
             raise Exception("Error getting next page") from ex
 
-    def get_manga_data(self) -> dict[str,str]:
+    def get_current_page(self):
+        (imageNumber, lastNumber) = self.currentPage.get_image_number()
+        return (imageNumber, lastNumber)
+
+    def get_manga_data(self) -> dict[str, str]:
         index = self.Strategy.get_index_page(self.Strategy.get_url())
         name = FixStringsTools.FixStringForPath(index.get_manga_name())
-        artist =  " | ".join(index.get_manga_artist())
+        artist = " | ".join(index.get_manga_artist())
         groups = " | ".join(index.get_manga_group())
         genders = " | ".join(index.get_manga_genders())
 

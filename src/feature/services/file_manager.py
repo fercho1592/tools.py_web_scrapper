@@ -3,11 +3,11 @@ from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from os import path, makedirs, listdir, remove
 from shutil import rmtree, move, Error
 
-DOWNLOAD_FOLDER = path.normpath(
-            path.expanduser("~/Desktop")) + "/Manga_downloads"
+DOWNLOAD_FOLDER = path.normpath(path.expanduser("~/Desktop"))
+
 
 class FileManager:
-    IMAGE_TYPES= ["PNG","JPG", "JPEG", "WEBP", "GIF"]
+    IMAGE_TYPES = ["PNG", "JPG", "JPEG", "WEBP", "GIF"]
 
     def __init__(self, logger: LoggerProtocol):
         self._logger = logger
@@ -25,7 +25,10 @@ class FileManager:
 
     def GetImagesInFolder(self, folder_path: FolderPath) -> list[str]:
         elementos = listdir(folder_path.full_path)
-        return [ele for ele in elementos\
+        elementos.sort()
+        return [
+            ele
+            for ele in elementos
             if ele.split(".")[-1].upper() in FileManager.IMAGE_TYPES
         ]
 
@@ -41,7 +44,9 @@ class FileManager:
             return
         remove(fileFullPath)
 
-    def MoveFileTo(self, sourceFolder: FolderPath, fileName: str, destinyFolder: FolderPath):
+    def MoveFileTo(
+        self, sourceFolder: FolderPath, fileName: str, destinyFolder: FolderPath
+    ):
         imagePath = sourceFolder.get_file_path(fileName)
         toMovePath = destinyFolder.get_file_path(fileName)
         try:
@@ -50,4 +55,4 @@ class FileManager:
                 return
             move(imagePath, toMovePath)
         except Error as e:
-            self ._logger.error("Error al copiar el archivo: %r",e)
+            self._logger.error("Error al copiar el archivo: %r", e)

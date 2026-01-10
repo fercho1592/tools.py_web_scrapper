@@ -1,4 +1,5 @@
 import re
+import time
 from configs import dependency_injection as IOT
 from configs.queue_reader import QueueItem
 from feature_interfaces.protocols.config_protocol import LoggerProtocol
@@ -11,6 +12,7 @@ def main() -> None:
     logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
     links = read_links_from_file("links.txt")
     queue_list = []
+    error_links = []
 
     # Get a list of links
 
@@ -24,6 +26,8 @@ def main() -> None:
             scrapper: MangaScraper = container.resolve_factory(MangaScraper, link)
             # get all metadata
             manga_data = scrapper.get_manga_data()
+            # Add timer to avoid being blocked
+            time.sleep(2)
             # identify if is part of a series
             if is_series(manga_data):
                 # identify chapter number
@@ -40,6 +44,7 @@ def main() -> None:
             queue_list.append(item)
         except Exception as e:
             logger.error(f"Error processing link {link}: {e}")
+            error_links.append(link)
             continue
 
     queue_list = sorted(queue_list, key=lambda x: x.FolderName)
@@ -47,9 +52,12 @@ def main() -> None:
     # serialize result list to file
     with open("temp-download-queue.txt", "w") as f:
         for item in queue_list:
-            f.write(
-                f"{item.MangaUrl}|{item.FolderName}|{item.PageNumber}|{item.PdfOnly}\n"
-            )
+            f.write(f"{item.MangaUrl} | {item.FolderName}\n")
+    # serialize result list to file
+    with open("error_links.txt", "w") as f:
+        for item in error_links:
+            f.write(f"{item}\n")
+
     pass
 
 
@@ -88,11 +96,19 @@ def identify_chapter_number(manga_data: dict) -> str:
 
 def read_links_from_file(file_path: str = "links.txt") -> list[str]:
     links = []
+    num_re = re.compile(r"^\s*\d+\s*[\.\)\-]?\s*(.*)")
     with open(file_path, "r", encoding="utf-8") as file:
         for line in file:
             line = line.strip()
-            if line and not line.startswith("#"):
-                links.append(line.split(" ")[-1])
+            if not line or line.startswith("#"):
+                continue
+
+            m = num_re.match(line)
+            if m:
+                line = m.group(1).strip()
+                return line
+
+            links.append(line.split("|")[0].strip())
     return links
 
 
