@@ -7,11 +7,13 @@ from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.user_feedback_handler import UserFeedbackHandler
 from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.models.folders_struct import FolderPath, MangaFoldersStruct
+from feature_interfaces.services.webdav_service import WebDAVService
 from infrastructure.pdf_generator import PdfCreator
 
 container = IOT.build_container()
 _logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
 image_converter: IImageEditorService = container.resolve(IImageEditorService)
+webdav_service: WebDAVService = container.resolve(WebDAVService)
 
 
 def main():
@@ -24,6 +26,18 @@ def main():
         uiHandler = UserFeedbackHandler()
         scrapper: MangaScraper = container.resolve_factory(MangaScraper, item.MangaUrl)
         mangaData = scrapper.get_manga_data()
+
+        if check_existing_pdf(mangaFolder, item.PdfName):
+            uiHandler.ShowMessage(f"PDF already exists")
+            _logger.info("PDF already exists for [%s]", item.MangaUrl)
+            if webdav_service.check_file_exists(
+                mangaFolder.dav_folder.get_file_path(item.PdfName)
+            ):
+                continue
+            webdav_service.upload_file(
+                mangaFolder.pdf_folder, item.PdfName, mangaFolder.dav_folder
+            )
+            continue
 
         try:
             uiHandler.ShowMessage(
@@ -76,9 +90,25 @@ def main():
             del ex
             _logger.error("Error deleting temp folders")
 
+        try:
+            webdav_service.upload_file(
+                mangaFolder.pdf_folder, item.PdfName, mangaFolder.dav_folder
+            )
+        except Exception as ex:
+            _logger.error("Error uploading file to WebDAV: %s", ex)
+
         _logger.info("End process for [%s | %s]", item.FolderName, item.MangaUrl)
         print("*************************************************")
     return
+
+
+def check_existing_pdf(pdfFolder: MangaFoldersStruct, pdfName: str) -> bool:
+    fileManager = FileManager(_logger)
+    if fileManager.HasFile(pdfFolder.pdf_folder, pdfName):
+        return True
+    if webdav_service.check_file_exists(pdfFolder.dav_folder.get_file_path(pdfName)):
+        return True
+    return False
 
 
 def run_manga_downloader(

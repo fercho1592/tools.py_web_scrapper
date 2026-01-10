@@ -9,6 +9,9 @@ class ConfigEnum(Enum):
     AZURE_SERVICE_BUS_CONNECTION_STRING = ("AzureServiceBus", "connection_string")
     AZURE_SERVICE_BUS_QUEUE_NAME = ("AzureServiceBus", "queue_name")
     TELEGRAM_BOT_TOKEN = ("TelegramBot", "token")
+    E_WEBDAV_URL = ("WebDAV", "url")
+    E_WEBDAV_USER = ("WebDAV", "user")
+    E_WEBDAV_PASSWORD = ("WebDAV", "password")
 
     @staticmethod
     def get_default(service_name: Self) -> str:

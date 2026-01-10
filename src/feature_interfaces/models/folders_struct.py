@@ -36,6 +36,12 @@ class MangaFoldersStruct:
             root_path=path.join(WORKING_FOLDER, "pdfs"),
             relative_path=path.join(WORKING_FOLDER, "pdfs", *manga_folder_path, ".."),
         )
+        #  - for final pdf and
+        self.dav_folder = FolderPath(
+            root_path="_/Manga_downloads/",
+            relative_path=path.join("_/Manga_downloads/", *manga_folder_path, ".."),
+        )
+        self.dav_folder.full_path = self.dav_folder.relative_path
         #  - for error logs
         self.error_log_folder = FolderPath(
             root_path=path.join(WORKING_FOLDER, "error_logs"),
