@@ -13,8 +13,7 @@ class MangaDownloaderCommand:
 
 
 class MangaDownloaderHandler:
-    def __init__(self, loggerFactory: LoggerFactory, factory: MangaFactoryProtocol):
-        self._factory = factory
+    def __init__(self, loggerFactory: LoggerFactory):
         self._logger = loggerFactory.get_logger(__name__)
 
         # requires scrapper
