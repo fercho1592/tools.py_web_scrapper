@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from configs.logger_factory import LoggerFactory
 from feature.services.file_manager import FileManager
 from feature_interfaces.models.folders_struct import FolderPath
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.services.webdav_service import WebDAVService
 
 
@@ -15,13 +15,13 @@ class WebDavCommand:
 class WebDavHandler:
     def __init__(
         self,
-        loggerFactory: LoggerFactory,
+        loggerFactory: LoggerProtocol,
         webdav: WebDAVService,
     ):
-        self._logger = loggerFactory.get_logger(__name__)
+        self._logger = loggerFactory
         self._webdav_service = webdav
 
-    async def handler(self, command: WebDavCommand) -> None:
+    async def handle(self, command: WebDavCommand) -> None:
         # verifiy if file exist
         if not self.check_file_exists_local(command.pdf_path, command.manga_name):
             raise FileNotFoundError(

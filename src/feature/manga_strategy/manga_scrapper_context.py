@@ -78,10 +78,12 @@ class MangaScraper:
         artist = " | ".join(index.get_manga_artist())
         groups = " | ".join(index.get_manga_group())
         genders = " | ".join(index.get_manga_genders())
+        (_, last_page) = self.get_current_page()
 
         return {
             "name": name,
             "artist": artist,
             "groups": groups,
             "genders": genders,
+            "last_page": last_page
         }

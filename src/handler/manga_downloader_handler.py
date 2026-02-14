@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from configs.logger_factory import LoggerFactory
 from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.protocols.factory_protocol import MangaFactoryProtocol
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 
 
 @dataclass
@@ -13,12 +12,12 @@ class MangaDownloaderCommand:
 
 
 class MangaDownloaderHandler:
-    def __init__(self, loggerFactory: LoggerFactory):
-        self._logger = loggerFactory.get_logger(__name__)
+    def __init__(self, loggerFactory: LoggerProtocol):
+        self._logger = loggerFactory
 
         # requires scrapper
 
-    async def handler(self, command: MangaDownloaderCommand):
+    async def handle(self, command: MangaDownloaderCommand):
         try:
             self._logger.info(
                 "Start manga download for [%s]", command.folderPath.relative_path

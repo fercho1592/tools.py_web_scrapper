@@ -104,6 +104,7 @@ def build_container():
         PDFCreatorHandler,
         lambda: PDFCreatorHandler(
             container.resolve_factory(LoggerProtocol, PDFCreatorHandler.__name__),
+            container.resolve(IPdfCreator),
         ),
     )
 

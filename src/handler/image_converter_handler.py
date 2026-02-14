@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from configs.logger_factory import LoggerFactory
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.services.file_manager import FileManager
 from feature_interfaces.models.folders_struct import FolderPath
-
+from feature_interfaces.protocols.config_protocol import LoggerProtocol
 
 @dataclass
 class ImageConverterCommand:
@@ -13,9 +12,9 @@ class ImageConverterCommand:
 
 class ImageConverterHandler:
     def __init__(
-        self, logger_factory: LoggerFactory, image_converter: IImageEditorService
+        self, logger_factory: LoggerProtocol, image_converter: IImageEditorService
     ):
-        self._logger = logger_factory.get_logger(__name__)
+        self._logger = logger_factory
         self._image_converter = image_converter
 
     async def handle(self, command: ImageConverterCommand) -> None:
@@ -36,7 +35,5 @@ class ImageConverterHandler:
                     fileManager.MoveFileTo(
                         command.image_folder, image_name, command.pdf_folder
                     )
-
-            fileManager.DeleteAll(command.image_folder)
         finally:
             self._logger.info("End Convert Images")
