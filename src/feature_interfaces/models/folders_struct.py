@@ -15,7 +15,7 @@ class FolderPath:
         self.full_path = path.abspath(relative_path)
 
     def get_file_path(self, file_name: str) -> str:
-        return path.join(self.full_path, file_name)
+        return path.normpath(path.join(self.full_path, file_name))
 
 
 @dataclass

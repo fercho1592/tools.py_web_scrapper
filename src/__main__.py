@@ -86,8 +86,8 @@ async def main():
 
             await pdf_creator_handler.handle(
                 PDFCreatorCommand(
-                    image_folder=mangaFolder.pdf_folder,
-                    pdf_folder=mangaFolder,
+                    image_folder=mangaFolder.converted_folder,
+                    pdf_folder=mangaFolder.pdf_folder,
                     pdf_name=item.PdfName,
                     manga_data=mangaData,
                 )
