@@ -66,20 +66,23 @@ async def main():
             errorHandler.SaveDownloadError("Error during manga download", ex)
             continue
         else:
+            uiHandler.ShowMessage("End Manga Download")
             _logger.info("End manga download for [%s]", item.MangaUrl)
 
         try:
+            uiHandler.ShowMessage("Starting image convertion")
             await image_converte_hangler.handle(
                 ImageConverterCommand(
                     image_folder=mangaFolder.download_folder,
                     pdf_folder=mangaFolder.converted_folder,
                 )
             )
-            #fileManager.DeleteAll(mangaFolder.download_folder)
         except Exception as ex:
             del ex
             _logger.error("Error converting images")
             continue
+        else:
+            fileManager.DeleteAll(mangaFolder.download_folder)
 
         try:
             uiHandler.ShowMessage("Creating Pdf")
@@ -99,17 +102,12 @@ async def main():
         except Exception as ex:
             uiHandler.ShowMessageError("Erron on PDF convertion")
             errorHandler.SaveMessageError("Error on PDF conversion", ex)
+        else:
+            uiHandler.ShowMessage("Deleting Convert Folder")
+            fileManager.DeleteAll(mangaFolder.converted_folder)
 
         try:
-            # fileManager.DeleteAll(mangaFolder.download_folder)
-            # fileManager.DeleteAll(mangaFolder.converted_folder)
-            ...
-        except Exception as ex:
-            del ex
-            _logger.error("Error deleting temp folders")
-            continue
-
-        try:
+            uiHandler.ShowMessage("Uploading PDF to Webdav Service")
             await webdav_handler.handle(
                 WebDavCommand(
                     manga_name=item.PdfName,
@@ -117,10 +115,12 @@ async def main():
                     dav_path=mangaFolder.dav_folder,
                 )
             )
-
         except Exception as ex:
             _logger.error("Error uploading file to WebDAV: %s", ex)
             continue
+        else:
+            uiHandler.ShowMessage("Deleting PDF Folder")
+            fileManager.DeleteAll(mangaFolder.pdf_folder)
 
         _logger.info("End process for [%s | %s]", item.FolderName, item.MangaUrl)
         print("*************************************************")
