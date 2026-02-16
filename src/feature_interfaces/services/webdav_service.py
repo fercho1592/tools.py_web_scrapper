@@ -47,7 +47,8 @@ class WebDAVService:
     def create_remote_dirs(self, client: Client, remote_path: str):
         dirs = remote_path.split("/")
         path = ""
-        for dir in dirs[:-1]:  # Exclude the file name
+        for dir in dirs:  # Exclude the file name
             path_str = os.path.join(path, dir)
             if not client.exists(path_str):
                 client.mkdir(path_str)
+            path = path_str
