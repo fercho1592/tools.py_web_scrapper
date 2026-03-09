@@ -26,3 +26,4 @@ class ConfigEnum(Enum):
 
 class FunctionEnum(Enum):
     PDF_CREATOR = "pdf_creator"
+    WEBDAV = "webdav"

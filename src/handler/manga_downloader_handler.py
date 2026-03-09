@@ -11,6 +11,9 @@ class MangaDownloaderCommand:
     folderPath: FolderPath
 
 
+@DeprecationWarning(
+    "Use the handle function instead of the class-based handler for better performance and simplicity."
+)
 class MangaDownloaderHandler:
     def __init__(self, loggerFactory: LoggerProtocol):
         self._logger = loggerFactory
@@ -34,3 +37,6 @@ class MangaDownloaderHandler:
             raise Exception(
                 f"Error during manga download in item [{current_page}/{total_pages}]"
             ) from ex
+
+
+async def handle(loggerFactory: LoggerProtocol, command: MangaDownloaderCommand):
