@@ -1,5 +1,6 @@
 from functools import partial
-from feature_interfaces.enums.settings_enum import ConfigEnum
+from feature.services.file_manager import FileManager
+from feature_interfaces.enums.settings_enum import ConfigEnum, FunctionEnum
 from feature_interfaces.protocols.config_protocol import (
     ConfigServiceProtocol,
     LoggerProtocol,
@@ -14,10 +15,12 @@ from feature.image_converter.pillow_image_converter import PillowImageConverter
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.container import Container
 from feature.manga_strategy.manga_implementations.container import StrategyFactory
-from handler.image_converter_handler import ImageConverterHandler
-from handler.manga_downloader_handler import MangaDownloaderHandler
+
+import handler.image_converter_handler as image_converter_handler
+import handler.manga_downloader_handler as manga_downloader_handler
 import handler.pdf_creator_handler as pdf_creator_handler
-from handler.webdav_handler import WebDavHandler
+import handler.webdav_handler as webdav_handler
+
 from infrastructure.http_service import HttpService
 from infrastructure.pdf_generator import PdfCreator
 from configs.config_manager import ConfigParserService, EnvironConfig
@@ -86,29 +89,12 @@ def build_factories(container: Container):
     )
 
     container.register(
-        ImageConverterHandler,
-        lambda: ImageConverterHandler(
-            container.resolve_factory(LoggerProtocol, ImageConverterHandler.__name__),
+        image_converter_handler.ImageConverterHandler,
+        lambda: image_converter_handler.ImageConverterHandler(
+            container.resolve_factory(
+                LoggerProtocol, image_converter_handler.ImageConverterHandler.__name__
+            ),
             container.resolve(IImageEditorService),
-        ),
-    )
-    container.register(
-        WebDavHandler,
-        lambda: WebDavHandler(
-            container.resolve_factory(LoggerProtocol, WebDavHandler.__name__),
-            container.resolve(WebDAVService),
-        ),
-    )
-    container.register(
-        MangaDownloaderHandler,
-        lambda: MangaDownloaderHandler(
-            container.resolve_factory(LoggerProtocol, MangaDownloaderHandler.__name__)
-        ),
-    )
-    container.register(
-        pdf_creator_handler.PDFCreatorHandler,
-        lambda: pdf_creator_handler.PDFCreatorHandler(
-            container.resolve(IPdfCreator),
         ),
     )
 
@@ -121,8 +107,37 @@ def _env_service_factory():
 
 
 def build_partials(container: Container):
-    pdf_handler = partial(
+    fn_pdf_handler = partial(
         pdf_creator_handler.handle, pdf_creator_service=container.resolve(IPdfCreator)
     )
 
-    container.register_function(pdf_handler, name="pdf_creator_handler.handle")
+    logger = container.resolve_factory(LoggerProtocol, webdav_handler.__name__)
+    fn_webdav_handler = partial(
+        webdav_handler.handle,
+        webdav_service=container.resolve(WebDAVService),
+        FileManager=FileManager(logger),
+        logger=logger,
+    )
+
+    fn_manga_downloader_handler = partial(
+        manga_downloader_handler.handle,
+        logger=container.resolve_factory(
+            LoggerProtocol, manga_downloader_handler.__name__
+        ),
+    )
+    fn_image_converter_handler = partial(
+        image_converter_handler.handle,
+        image_editor_service=container.resolve(IImageEditorService),
+        logger=container.resolve_factory(
+            LoggerProtocol, image_converter_handler.__name__
+        ),
+    )
+
+    container.register_function(FunctionEnum.PDF_CREATOR, fn_pdf_handler)
+    container.register_function(FunctionEnum.WEBDAV, fn_webdav_handler)
+    container.register_function(
+        FunctionEnum.MANGA_DOWNLOADER, fn_manga_downloader_handler
+    )
+    container.register_function(
+        FunctionEnum.IMAGE_CONVERTER, fn_image_converter_handler
+    )
