@@ -43,7 +43,7 @@ class Container:
 
         return factory(*args, **kwargs)
 
-    def resolve_function(self, name: FunctionEnum) -> Any:
+    def resolve_function(self, name: FunctionEnum) -> Callable[..., Any]:
         if name.value not in self._functions:
             raise ValueError(f"No function registered for {name.value}")
 

@@ -12,38 +12,6 @@ class ImageConverterCommand:
     pdf_folder: FolderPath
 
 
-@DeprecationWarning(
-    "Use the handle function instead of the class-based handler for better performance and simplicity."
-)
-class ImageConverterHandler:
-    def __init__(
-        self, logger_factory: LoggerProtocol, image_converter: IImageEditorService
-    ):
-        self._logger = logger_factory
-        self._image_converter = image_converter
-
-    async def handle(self, command: ImageConverterCommand) -> None:
-        fileManager = FileManager(self._logger)
-        fileManager.CreateIfNotexist(command.pdf_folder)
-        try:
-            self._logger.info("Start Convert Images")
-            for image_name in fileManager.GetImagesInFolder(command.image_folder):
-                splited_name = image_name.split(".")
-                if splited_name[-1].upper() not in ["PNG", "JPG"]:
-                    self._image_converter.convert_image(
-                        command.image_folder,
-                        image_name,
-                        splited_name[0],
-                        command.pdf_folder,
-                    )
-                else:
-                    fileManager.MoveFileTo(
-                        command.image_folder, image_name, command.pdf_folder
-                    )
-        finally:
-            self._logger.info("End Convert Images")
-
-
 @log_ejecucion
 async def handle(
     fileManager: FileManager,

@@ -12,23 +12,6 @@ class PDFCreatorCommand:
     manga_data: dict[str, str]
 
 
-@DeprecationWarning(
-    "Use the handle function instead of the class-based handler for better performance and simplicity."
-)
-class PDFCreatorHandler:
-    def __init__(self, pdf_creator_service: IPdfCreator):
-        self._pdf_creator = pdf_creator_service
-
-    @log_ejecucion
-    async def handle(self, command: PDFCreatorCommand) -> None:
-        self._pdf_creator.CreatePdf(
-            command.pdf_name,
-            command.manga_data,
-            command.image_folder,
-            command.pdf_folder,
-        )
-
-
 @log_ejecucion
 async def handle(pdf_creator_service: IPdfCreator, command: PDFCreatorCommand) -> None:
     pdf_creator_service.CreatePdf(

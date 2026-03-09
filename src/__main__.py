@@ -1,31 +1,31 @@
 import asyncio
 import configs.dependency_injection as IOT
-from configs.queue_reader import QueueItem, read_queue
+from configs.queue_reader import read_queue
 from feature.services.error_handler import ErrorLogFileHandler
 from feature.services.file_manager import FileManager
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.user_feedback_handler import UserFeedbackHandler
+from feature_interfaces.enums.settings_enum import FunctionEnum
 from feature_interfaces.protocols.config_protocol import LoggerProtocol
 from feature_interfaces.models.folders_struct import MangaFoldersStruct
-from handler.image_converter_handler import ImageConverterHandler, ImageConverterCommand
-from handler.manga_downloader_handler import (
-    MangaDownloaderHandler,
-    MangaDownloaderCommand,
-)
-from handler.pdf_creator_handler import PDFCreatorHandler, PDFCreatorCommand
-from handler.webdav_handler import WebDavHandler, WebDavCommand
+
+from handler.image_converter_handler import ImageConverterCommand
+from handler.manga_downloader_handler import MangaDownloaderCommand
+from handler.pdf_creator_handler import PDFCreatorCommand
+from handler.webdav_handler import WebDavCommand
 
 container = IOT.build_container()
 _logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
-image_converte_hangler: ImageConverterHandler = container.resolve(ImageConverterHandler)
-manga_downloader_handler: MangaDownloaderHandler = container.resolve(
-    MangaDownloaderHandler
-)
-pdf_creator_handler: PDFCreatorHandler = container.resolve(PDFCreatorHandler)
-webdav_handler: WebDavHandler = container.resolve(WebDavHandler)
 
 
 async def main():
+    fn_image_converte_hangler = container.resolve_function(FunctionEnum.IMAGE_CONVERTER)
+    fn_manga_downloader_handler = container.resolve_function(
+        FunctionEnum.MANGA_DOWNLOADER
+    )
+    fn_pdf_creator_handler = container.resolve_function(FunctionEnum.PDF_CREATOR)
+    fn_webdav_handler = container.resolve_function(FunctionEnum.WEBDAV)
+
     for item in read_queue():
         print("*************************************************")
         _logger.info("Start process for [%s | %s]", item.FolderName, item.MangaUrl)
@@ -38,8 +38,8 @@ async def main():
         fileManager = FileManager(_logger)
 
         if check_existing_pdf(mangaFolder, item.PdfName):
-            uiHandler.ShowMessage(f"PDF already exists")
-            await webdav_handler.handle(
+            uiHandler.ShowMessage("PDF already exists")
+            await fn_webdav_handler(
                 WebDavCommand(
                     manga_name=item.PdfName,
                     pdf_path=mangaFolder.pdf_folder,
@@ -53,7 +53,7 @@ async def main():
             uiHandler.ShowMessage(
                 f"Start download of {item.MangaUrl} in [{item.FolderName}]"
             )
-            await manga_downloader_handler.handle(
+            await fn_manga_downloader_handler(
                 MangaDownloaderCommand(
                     scrapper=scrapper,
                     pageNumber=0,
@@ -71,7 +71,7 @@ async def main():
 
         try:
             uiHandler.ShowMessage("Starting image convertion")
-            await image_converte_hangler.handle(
+            await fn_image_converte_hangler.handle(
                 ImageConverterCommand(
                     image_folder=mangaFolder.download_folder,
                     pdf_folder=mangaFolder.converted_folder,
@@ -87,7 +87,7 @@ async def main():
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
-            await pdf_creator_handler.handle(
+            await fn_pdf_creator_handler(
                 PDFCreatorCommand(
                     image_folder=mangaFolder.converted_folder,
                     pdf_folder=mangaFolder.pdf_folder,
@@ -108,7 +108,7 @@ async def main():
 
         try:
             uiHandler.ShowMessage("Uploading PDF to Webdav Service")
-            await webdav_handler.handle(
+            await fn_webdav_handler(
                 WebDavCommand(
                     manga_name=item.PdfName,
                     pdf_path=mangaFolder.pdf_folder,

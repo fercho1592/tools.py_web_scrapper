@@ -88,16 +88,6 @@ def build_factories(container: Container):
         ),
     )
 
-    container.register(
-        image_converter_handler.ImageConverterHandler,
-        lambda: image_converter_handler.ImageConverterHandler(
-            container.resolve_factory(
-                LoggerProtocol, image_converter_handler.ImageConverterHandler.__name__
-            ),
-            container.resolve(IImageEditorService),
-        ),
-    )
-
 
 def _env_service_factory():
     environService = EnvironConfig()
