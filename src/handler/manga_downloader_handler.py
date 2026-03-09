@@ -50,3 +50,4 @@ async def handle(logger: LoggerProtocol, command: MangaDownloaderCommand):
         hasNext = command.scrapper.set_next_page()
         if not hasNext:
             break
+
