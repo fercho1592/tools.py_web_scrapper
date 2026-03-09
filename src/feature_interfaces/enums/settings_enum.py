@@ -22,3 +22,7 @@ class ConfigEnum(Enum):
 
     def __str__(self):
         return self.value
+
+
+class FunctionEnum(Enum):
+    PDF_CREATOR = "pdf_creator"

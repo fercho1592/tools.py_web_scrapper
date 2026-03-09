@@ -1,3 +1,4 @@
+from functools import partial
 from feature_interfaces.enums.settings_enum import ConfigEnum
 from feature_interfaces.protocols.config_protocol import (
     ConfigServiceProtocol,
@@ -15,25 +16,29 @@ from feature.container import Container
 from feature.manga_strategy.manga_implementations.container import StrategyFactory
 from handler.image_converter_handler import ImageConverterHandler
 from handler.manga_downloader_handler import MangaDownloaderHandler
-from handler.pdf_creator_handler import PDFCreatorHandler
+import handler.pdf_creator_handler as pdf_creator_handler
 from handler.webdav_handler import WebDavHandler
 from infrastructure.http_service import HttpService
-
+from infrastructure.pdf_generator import PdfCreator
 from configs.config_manager import ConfigParserService, EnvironConfig
 from configs.logger_factory import LoggerFactory
-from infrastructure.pdf_generator import PdfCreator
 
 
 def build_container():
-
     container = Container()
+    build_factories(container)
+    build_partials(container)
+    return container
+
+
+def build_factories(container: Container):
     container.register(
         IHttpService,
         lambda: HttpService(
             container.resolve_factory(LoggerProtocol, HttpService.__name__)
         ),
     )
-    container.register(ConfigServiceProtocol, __env_service_factory, is_singleton=True)
+    container.register(ConfigServiceProtocol, _env_service_factory, is_singleton=True)
     container.register(
         IImageEditorService,
         lambda: PillowImageConverter(
@@ -101,18 +106,23 @@ def build_container():
         ),
     )
     container.register(
-        PDFCreatorHandler,
-        lambda: PDFCreatorHandler(
-            container.resolve_factory(LoggerProtocol, PDFCreatorHandler.__name__),
+        pdf_creator_handler.PDFCreatorHandler,
+        lambda: pdf_creator_handler.PDFCreatorHandler(
             container.resolve(IPdfCreator),
         ),
     )
 
-    return container
 
-
-def __env_service_factory():
+def _env_service_factory():
     environService = EnvironConfig()
     if environService.get_config_value(ConfigEnum.E_MANGA_DOMAIN):
         return environService
     return ConfigParserService()
+
+
+def build_partials(container: Container):
+    pdf_handler = partial(
+        pdf_creator_handler.handle, pdf_creator_service=container.resolve(IPdfCreator)
+    )
+
+    container.register_function(pdf_handler, name="pdf_creator_handler.handle")
