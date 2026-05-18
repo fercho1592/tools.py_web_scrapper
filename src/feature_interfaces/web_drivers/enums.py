@@ -1,8 +1,10 @@
-'''Enums to Attrs and Tags'''
+"""Enums to Attrs and Tags"""
+
 from enum import Enum
 
+
 class CommonAttrs(Enum):
-    HREF= "href"
+    HREF = "href"
     CLASS = "class"
     ID = "id"
     NAME = "name"
@@ -10,6 +12,8 @@ class CommonAttrs(Enum):
     SRC = "src"
     SELECTED = "selected"
     DATA_ORIGINAL = "data-original"
+    TITLE = "title"
+
 
 class CommonTags(Enum):
     ANCHOR = "a"
@@ -23,3 +27,5 @@ class CommonTags(Enum):
     I = "i"
     UL = "ul"
     LI = "li"
+    SOURCE = "source"
+    VIDEO = "video"

@@ -22,3 +22,10 @@ class ConfigEnum(Enum):
 
     def __str__(self):
         return self.value
+
+
+class FunctionEnum(Enum):
+    PDF_CREATOR = "pdf_creator"
+    WEBDAV = "webdav"
+    MANGA_DOWNLOADER = "manga_downloader"
+    IMAGE_CONVERTER = "image_converter"

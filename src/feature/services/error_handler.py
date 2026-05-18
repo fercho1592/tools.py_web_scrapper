@@ -1,5 +1,5 @@
 from feature.services.file_manager import FileManager
-from feature_interfaces.models.folders_struct import FolderPath, WORKING_FOLDER
+from feature_interfaces.models.folders_struct import FolderPath, WORKING_FOLDER_MANGA
 from feature_interfaces.services.error_handler import IErrorHandler
 from io import SEEK_END
 from os import path
@@ -8,7 +8,7 @@ from os import path
 class ErrorLogFileHandler(IErrorHandler):
 
     FILE_NAME = "errors.txt"
-    GLOBAL_ERROR_LOG_FOLDER = FolderPath(WORKING_FOLDER, "./errors")
+    GLOBAL_ERROR_LOG_FOLDER = FolderPath(WORKING_FOLDER_MANGA, "./errors")
 
     def __init__(self, urlItem: str, folder_path: FolderPath):
         self._url = urlItem
