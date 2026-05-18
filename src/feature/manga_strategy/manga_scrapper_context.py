@@ -85,3 +85,7 @@ class MangaScraper:
             "groups": groups,
             "genders": genders,
         }
+    
+    def cleanup(self) -> None:
+        self._logger.info("Cleaning up resources for [%s]", self.Strategy.get_url())
+        self.progressBar.Finish()

@@ -5,6 +5,8 @@ from shutil import rmtree, move, Error
 
 DOWNLOAD_FOLDER = path.normpath(path.expanduser("~/Desktop"))
 
+allow_delete = True
+
 
 class FileManager:
     IMAGE_TYPES = ["PNG", "JPG", "JPEG", "WEBP", "GIF"]
@@ -33,12 +35,24 @@ class FileManager:
         ]
 
     def DeleteAll(self, fromRootFolder: FolderPath):
+        if allow_delete is False:
+            self._logger.warning(
+                "DeleteAll is disabled. Skipping deletion of folder [%s]",
+                fromRootFolder.relative_path,
+            )
+            return
         if not path.exists(fromRootFolder.root_path):
             return
         else:
             rmtree(fromRootFolder.root_path)
 
     def DeleteFile(self, folder_path: FolderPath, file: str):
+        if allow_delete is False:
+            self._logger.warning(
+                "DeleteAll is disabled. Skipping deletion of folder [%s]",
+                fromRootFolder.relative_path,
+            )
+            return
         fileFullPath = folder_path.get_file_path(file)
         if not path.exists(fileFullPath):
             return
@@ -56,3 +70,21 @@ class FileManager:
             move(imagePath, toMovePath)
         except Error as e:
             self._logger.error("Error al copiar el archivo: %r", e)
+
+    def get_last_downloaded_page(self, folder_path: FolderPath) -> int:
+        if not path.exists(folder_path.full_path):
+            return 0
+
+        images = self.GetImagesInFolder(folder_path)
+        if len(images) == 0:
+            return 0
+
+        last_image = images[-1]
+        last_page_str = last_image.split("_")[0]
+        try:
+            return int(last_page_str)
+        except ValueError:
+            self._logger.error(
+                "Error parsing page number from file name [%s]", last_image
+            )
+            return 0

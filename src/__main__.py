@@ -50,17 +50,19 @@ async def main():
             continue
 
         try:
+            # getting las page downloaded for this manga
+            last_page = fileManager.get_last_downloaded_page(mangaFolder.download_folder)
+
             uiHandler.ShowMessage(
-                f"Start download of {item.MangaUrl} in [{item.FolderName}]"
+                f"Start download of {item.MangaUrl} in [{item.FolderName}] from page [{last_page}]"
             )
             await manga_downloader_handler.handle(
                 MangaDownloaderCommand(
                     scrapper=scrapper,
-                    pageNumber=0,
+                    pageNumber=last_page,
                     folderPath=mangaFolder.download_folder,
                 )
             )
-
         except Exception as ex:
             _logger.error("Download incomplete for [%s]", item.MangaUrl)
             errorHandler.SaveDownloadError("Error during manga download", ex)
@@ -123,6 +125,7 @@ async def main():
             fileManager.DeleteAll(mangaFolder.pdf_folder)
 
         _logger.info("End process for [%s | %s]", item.FolderName, item.MangaUrl)
+        uiHandler
         print("*************************************************")
     return
 

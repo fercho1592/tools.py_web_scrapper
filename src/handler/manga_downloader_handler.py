@@ -30,7 +30,10 @@ class MangaDownloaderHandler:
                 if not hasNext:
                     break
         except Exception as ex:
-            (current_page, total_pages) = command.scrapper.get_current_page()
+            current_page, total_pages = command.scrapper.get_current_page()
+            command.scrapper.cleanup()
             raise Exception(
                 f"Error during manga download in item [{current_page}/{total_pages}]"
             ) from ex
+
+        command.scrapper.cleanup()

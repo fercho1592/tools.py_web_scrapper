@@ -63,7 +63,7 @@ def main() -> None:
 
 def create_path(manga_data: dict) -> str:
     regex = re.compile(r"\([^)]*\)|\[[^\]]*\]")
-    pdf_name = regex.sub("", manga_data.get("name")).strip() + ".pdf"
+    pdf_name = regex.sub("", manga_data.get("name")).strip()
     # get artist
     artist = manga_data.get("artist", None)
     # get groups
@@ -106,7 +106,6 @@ def read_links_from_file(file_path: str = "links.txt") -> list[str]:
             m = num_re.match(line)
             if m:
                 line = m.group(1).strip()
-                return line
 
             links.append(line.split("|")[0].strip())
     return links

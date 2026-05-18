@@ -23,3 +23,6 @@ class ProgressBar(IProgressBar):
 
     def NextItem(self) -> None:
         self._progressBar.update()
+
+    def Finish(self) -> None:
+        self._progressBar.close()

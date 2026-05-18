@@ -33,16 +33,10 @@ class ErrorLogFileHandler(IErrorHandler):
 
     def _WriteTextOnFile(self, file_name: str, lines: list[str]):
         fileManager = FileManager(None)
-        fileManager.CreateIfNotexist(self._folderpath)
         fileManager.CreateIfNotexist(ErrorLogFileHandler.GLOBAL_ERROR_LOG_FOLDER)
-        filePath = path.join(self._folderpath.full_path, file_name)
-        with open(filePath, "a", encoding="utf-8") as file:
-            file.seek(0, SEEK_END)
-            for line in lines:
-                file.writelines(line + "\n")
 
         global_file_path = path.join(
-            ErrorLogFileHandler.GLOBAL_ERROR_LOG_FOLDER.full_path,
+            ErrorLogFileHandler.GLOBAL_ERROR_LOG_FOLDER.relative_path,
             ErrorLogFileHandler.FILE_NAME,
         )
         with open(global_file_path, "a", encoding="utf-8") as gFile:
