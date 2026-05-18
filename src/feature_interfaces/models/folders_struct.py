@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from os import path
+import os
 
 WORKING_FOLDER_MANGA = path.normpath(path.expanduser("~/Desktop")) + "/Manga_downloads"
 WORKING_FOLDER_VIDEO = path.normpath(path.expanduser("~/Desktop")) + "/Video_downloads"
@@ -11,7 +12,8 @@ class FolderPath:
     full_path: str
 
     def __init__(self, root_path: str, relative_path: str) -> None:
-        self.root_path = root_path
+        rootPath =relative_path.split(os.sep)[0]
+        self.root_path = path.join(root_path, rootPath)
         self.relative_path = relative_path
         self.full_path = path.abspath(relative_path)
 
