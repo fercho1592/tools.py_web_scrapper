@@ -20,8 +20,12 @@ class MangaScraper:
 
     def set_starting_page(self, page_number: int = 0) -> None:
         try:
-            self.currentPage = self.Strategy.get_first_page(page_number)
-            (imageNumber, lastNumber) = self.currentPage.get_image_number()
+            first_page = self.Strategy.get_first_page(0)
+            if page_number == 0:
+                self.currentPage = first_page
+            else:
+                self.currentPage = self.Strategy.get_first_page(page_number - 1)
+            (imageNumber, lastNumber) = first_page.get_image_number()
             intLastNumber = int(lastNumber)
 
             self.progressBar = ProgressBar(intLastNumber, "")

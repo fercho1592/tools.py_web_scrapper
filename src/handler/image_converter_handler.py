@@ -14,11 +14,11 @@ class ImageConverterCommand:
 
 @log_ejecucion
 async def handle(
-    fileManager: FileManager,
+    command: ImageConverterCommand,
     logger: LoggerProtocol,
     image_converter: IImageEditorService,
-    command: ImageConverterCommand,
 ) -> None:
+    fileManager = FileManager(logger)
     fileManager.CreateIfNotexist(command.pdf_folder)
     for image_name in fileManager.GetImagesInFolder(command.image_folder):
         splited_name = image_name.split(".")

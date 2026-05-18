@@ -14,12 +14,12 @@ class WebDavCommand:
 
 
 @log_ejecucion
-def handle(
+async def handle(
+    command: WebDavCommand,
     webdav_service: WebDAVService,
     fileManager: FileManager,
     logger: LoggerProtocol,
-    command: WebDavCommand,
-) -> None:
+):
     # verifiy if file exist
     if not check_file_exists_local(fileManager, command.pdf_path, command.manga_name):
         raise FileNotFoundError(

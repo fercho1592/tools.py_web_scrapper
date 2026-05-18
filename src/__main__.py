@@ -73,7 +73,7 @@ async def main():
 
         try:
             uiHandler.ShowMessage("Starting image convertion")
-            await fn_image_converte_hangler.handle(
+            await fn_image_converte_hangler(
                 ImageConverterCommand(
                     image_folder=mangaFolder.download_folder,
                     pdf_folder=mangaFolder.converted_folder,

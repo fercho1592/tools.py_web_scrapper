@@ -13,7 +13,7 @@ class MangaDownloaderCommand:
 
 
 @log_ejecucion
-async def handle(logger: LoggerProtocol, command: MangaDownloaderCommand):
+async def handle(command: MangaDownloaderCommand, logger: LoggerProtocol):
     logger.info("Start manga download for [%s]", command.folderPath.relative_path)
 
     command.scrapper.set_starting_page(command.pageNumber)
@@ -22,4 +22,3 @@ async def handle(logger: LoggerProtocol, command: MangaDownloaderCommand):
         hasNext = command.scrapper.set_next_page()
         if not hasNext:
             break
-

@@ -13,7 +13,7 @@ class PDFCreatorCommand:
 
 
 @log_ejecucion
-async def handle(pdf_creator_service: IPdfCreator, command: PDFCreatorCommand) -> None:
+async def handle(command: PDFCreatorCommand, pdf_creator_service: IPdfCreator) -> None:
     pdf_creator_service.CreatePdf(
         command.pdf_name,
         command.manga_data,

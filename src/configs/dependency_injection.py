@@ -24,7 +24,7 @@ import handler.webdav_handler as webdav_handler
 from infrastructure.http_service import HttpService
 from infrastructure.pdf_generator import PdfCreator
 from configs.config_manager import ConfigParserService, EnvironConfig
-from configs.logger_factory import LoggerFactory
+from configs.logger_factory import get_logger
 
 
 def build_container():
@@ -69,9 +69,7 @@ def build_factories(container: Container):
         IMangaStrategy,
         lambda url: container.resolve(StrategyFactory).get_manga_strategy(url),
     )
-    container.register_factory(
-        LoggerProtocol, lambda name: LoggerFactory().get_logger(name)
-    )
+    container.register_factory(LoggerProtocol, lambda name: get_logger(name))
     container.register(
         WebDAVService,
         lambda: WebDAVService(
@@ -105,7 +103,7 @@ def build_partials(container: Container):
     fn_webdav_handler = partial(
         webdav_handler.handle,
         webdav_service=container.resolve(WebDAVService),
-        FileManager=FileManager(logger),
+        fileManager=FileManager(logger),
         logger=logger,
     )
 
@@ -117,7 +115,7 @@ def build_partials(container: Container):
     )
     fn_image_converter_handler = partial(
         image_converter_handler.handle,
-        image_editor_service=container.resolve(IImageEditorService),
+        image_converter=container.resolve(IImageEditorService),
         logger=container.resolve_factory(
             LoggerProtocol, image_converter_handler.__name__
         ),
