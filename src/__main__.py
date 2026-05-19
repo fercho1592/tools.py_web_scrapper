@@ -51,7 +51,9 @@ async def main():
 
         try:
             # getting las page downloaded for this manga
-            last_page = fileManager.get_last_downloaded_page(mangaFolder.download_folder)
+            last_page = fileManager.get_last_downloaded_page(
+                mangaFolder.download_folder
+            )
 
             uiHandler.ShowMessage(
                 f"Start download of {item.MangaUrl} in [{item.FolderName}] from page [{last_page}]"
@@ -63,13 +65,13 @@ async def main():
                     folderPath=mangaFolder.download_folder,
                 )
             )
+
+            uiHandler.ShowMessage("End Manga Download")
+            _logger.info("End manga download for [%s]", item.MangaUrl)
         except Exception as ex:
             _logger.error("Download incomplete for [%s]", item.MangaUrl)
             errorHandler.SaveDownloadError("Error during manga download", ex)
             continue
-        else:
-            uiHandler.ShowMessage("End Manga Download")
-            _logger.info("End manga download for [%s]", item.MangaUrl)
 
         try:
             uiHandler.ShowMessage("Starting image convertion")
@@ -79,12 +81,12 @@ async def main():
                     pdf_folder=mangaFolder.converted_folder,
                 )
             )
+
+            fileManager.DeleteAll(mangaFolder.download_folder)
         except Exception as ex:
             del ex
             _logger.error("Error converting images")
             continue
-        else:
-            fileManager.DeleteAll(mangaFolder.download_folder)
 
         try:
             uiHandler.ShowMessage("Creating Pdf")
@@ -98,15 +100,15 @@ async def main():
                 )
             )
 
+            uiHandler.ShowMessage("Deleting Convert Folder")
+            fileManager.DeleteAll(mangaFolder.converted_folder)
+
             uiHandler.ShowMessage(
                 f"PDf created in [{mangaFolder.pdf_folder.get_file_path(item.PdfName)}]"
             )
         except Exception as ex:
             uiHandler.ShowMessageError("Erron on PDF convertion")
             errorHandler.SaveMessageError("Error on PDF conversion", ex)
-        else:
-            uiHandler.ShowMessage("Deleting Convert Folder")
-            fileManager.DeleteAll(mangaFolder.converted_folder)
 
         try:
             uiHandler.ShowMessage("Uploading PDF to Webdav Service")
@@ -117,15 +119,14 @@ async def main():
                     dav_path=mangaFolder.dav_folder,
                 )
             )
+
+            uiHandler.ShowMessage("Deleting PDF Folder")
+            fileManager.DeleteAll(mangaFolder.pdf_folder)
         except Exception as ex:
             _logger.error("Error uploading file to WebDAV: %s", ex)
             continue
-        else:
-            uiHandler.ShowMessage("Deleting PDF Folder")
-            fileManager.DeleteAll(mangaFolder.pdf_folder)
 
         _logger.info("End process for [%s | %s]", item.FolderName, item.MangaUrl)
-        uiHandler
         print("*************************************************")
     return
 
