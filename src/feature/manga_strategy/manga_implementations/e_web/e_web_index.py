@@ -7,7 +7,7 @@ from feature.manga_strategy.manga_implementations._base_strategy import BaseMang
 class EMangaIndex(BaseMangaIndex,IMangaIndex):
     @staticmethod
     def get_max_pages_in_index() -> int:
-        return 40
+        return 20
 
     def get_manga_name(self) -> str:
         name_element = self.DomReader.get_by_attrs(COMMON_ATTRS.ID, "gn")[0]
