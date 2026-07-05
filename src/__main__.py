@@ -25,6 +25,8 @@ async def main():
     )
     fn_pdf_creator_handler = container.resolve_function(FunctionEnum.PDF_CREATOR)
     fn_webdav_handler = container.resolve_function(FunctionEnum.WEBDAV)
+    uiHandler = UserFeedbackHandler()
+    fileManager = FileManager(_logger)
 
     for item in read_queue():
         print("*************************************************")
@@ -32,22 +34,19 @@ async def main():
 
         mangaFolder = MangaFoldersStruct(item.FolderName)
         errorHandler = ErrorLogFileHandler(item.MangaUrl, mangaFolder.error_log_folder)
-        uiHandler = UserFeedbackHandler()
         scrapper: MangaScraper = container.resolve_factory(MangaScraper, item.MangaUrl)
         mangaData = scrapper.get_manga_data()
-        fileManager = FileManager(_logger)
 
-        if check_existing_pdf(mangaFolder, item.PdfName):
-            uiHandler.ShowMessage("PDF already exists")
-            await fn_webdav_handler(
-                WebDavCommand(
-                    manga_name=item.PdfName,
-                    pdf_path=mangaFolder.pdf_folder,
-                    dav_path=mangaFolder.dav_folder,
-                )
-            )
+        # finish_download = await upload_to_webdav(
+        #     mangaFolder, item.PdfName, mangaFolder.dav_folder
+        # )
 
-            continue
+        # if finish_download is True:
+        #     _logger.info(
+        #         "File already exists in WebDAV, skipping download and conversion for [%s]",
+        #         item.MangaUrl,
+        #     )
+        #     continue
 
         try:
             # getting las page downloaded for this manga
@@ -88,6 +87,8 @@ async def main():
             _logger.error("Error converting images")
             continue
 
+        continue
+
         try:
             uiHandler.ShowMessage("Creating Pdf")
 
@@ -112,16 +113,9 @@ async def main():
 
         try:
             uiHandler.ShowMessage("Uploading PDF to Webdav Service")
-            await fn_webdav_handler(
-                WebDavCommand(
-                    manga_name=item.PdfName,
-                    pdf_path=mangaFolder.pdf_folder,
-                    dav_path=mangaFolder.dav_folder,
-                )
+            await upload_to_webdav(
+                mangaFolder, item.PdfName, mangaFolder
             )
-
-            uiHandler.ShowMessage("Deleting PDF Folder")
-            fileManager.DeleteAll(mangaFolder.pdf_folder)
         except Exception as ex:
             _logger.error("Error uploading file to WebDAV: %s", ex)
             continue
@@ -136,6 +130,26 @@ def check_existing_pdf(pdfFolder: MangaFoldersStruct, pdfName: str) -> bool:
     if fileManager.HasFile(pdfFolder.pdf_folder, pdfName):
         return True
     return False
+
+
+async def upload_to_webdav(
+    pdfFolder: MangaFoldersStruct, pdfName: str, davFolder: MangaFoldersStruct
+):
+    fileManager = FileManager(_logger)
+    if check_existing_pdf(pdfFolder, pdfName) is False:
+        return False
+    fn_webdav_handler = container.resolve_function(FunctionEnum.WEBDAV)
+    await fn_webdav_handler(
+        WebDavCommand(
+            manga_name=pdfName,
+            pdf_path=pdfFolder.pdf_folder,
+            dav_path=davFolder.dav_folder,
+        )
+    )
+
+    fileManager.DeleteAll(pdfFolder)
+
+    return True
 
 
 if __name__ == "__main__":

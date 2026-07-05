@@ -28,3 +28,12 @@ def read_queue() -> list[QueueItem]:
                 continue
             tuplas.append(QueueItem.QueueItemFromFile(linea))
     return tuplas
+
+def read_video_queue() -> list[QueueItem]:
+    tuplas:list[QueueItem] = []
+    with open("video-download-queue.txt", "r", encoding="utf-8") as archivo:
+        for linea in archivo:
+            if linea.startswith("#") or linea.rstrip() == "":
+                continue
+            tuplas.append(QueueItem.QueueItemFromFile(linea))
+    return tuplas

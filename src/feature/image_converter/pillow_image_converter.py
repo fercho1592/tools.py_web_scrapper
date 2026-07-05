@@ -27,10 +27,10 @@ class PillowImageConverter(IImageEditorService):
             return
 
         try:
-            img = Image.open(folder_manager.get_file_path(image_name))
-            convertedImage = Image.new("RGBA", img.size)
-            convertedImage.paste(img)
-            convertedImage.save(destinyFolder.get_file_path(new_image_name), IMAGE_FORMAT)
+            with Image.open(folder_manager.get_file_path(image_name)) as img:
+                convertedImage = Image.new("RGBA", img.size)
+                convertedImage.paste(img)
+                convertedImage.save(destinyFolder.get_file_path(new_image_name), IMAGE_FORMAT)
             self._logger.info("Image converted: %s", new_image_name)
         except FileNotFoundError as e:
             self._logger.error("File not found: %s | %r", folder_manager.get_file_path(image_name), e)
@@ -44,9 +44,9 @@ class PillowImageConverter(IImageEditorService):
         image_name: str
     ):
         image_path = folder_manager.get_file_path(image_name)
-        img = Image.open(image_path)
-        size = img.size
-        self._logger.debug("Get image size of: %s", size)
-        result_size = (float(size[0]), float(size[1]))
-        self._logger.debug("Result image size of: %s", result_size)
-        return result_size
+        with Image.open(image_path) as img:
+            size = img.size
+            self._logger.debug("Get image size of: %s", size)
+            result_size = (float(size[0]), float(size[1]))
+            self._logger.debug("Result image size of: %s", result_size)
+            return result_size

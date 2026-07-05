@@ -1,26 +1,27 @@
 import yt_dlp
+from configs.queue_reader import read_video_queue, QueueItem
+from feature_interfaces.models.folders_struct import VideoFoldersStruct
 
 
-def descargar_video(url):
+def descargar_video(item: QueueItem):
+    videoFolder = VideoFoldersStruct(item.FolderName)
+
     ydl_opts = {
         # 'bestvideo+bestaudio/best' asegura la máxima calidad
         "format": "bestvideo+bestaudio/best",
         # Nombre del archivo de salida
-        "outtmpl": "%(title)s.%(ext)s",
+        "outtmpl": f"{videoFolder.download_folder.full_path}.%(ext)s",
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             print("Iniciando descarga...")
-            ydl.download([url])
+            ydl.download([item.MangaUrl])
             print("\n¡Descarga completada con éxito!")
     except Exception as e:
         print(f"Ocurrió un error: {e}")
 
 
 if __name__ == "__main__":
-    # url = input("Introduce la URL del video de YouTube: ")
-    # url = "https://www.youtube.com/watch?v=Kgo-PRi_aJw"
-
-    url = "https://zoids.lat/filemooon/zoids-cc/1/master.m3u8"
-    descargar_video(url)
+    for item in read_video_queue():
+        descargar_video(item)

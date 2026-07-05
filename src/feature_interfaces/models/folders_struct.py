@@ -12,7 +12,7 @@ class FolderPath:
     full_path: str
 
     def __init__(self, root_path: str, relative_path: str) -> None:
-        rootPath =relative_path.split(os.sep)[0]
+        rootPath = relative_path.split(os.sep)[0]
         self.root_path = path.join(root_path, rootPath)
         self.relative_path = relative_path
         self.full_path = path.abspath(relative_path)
