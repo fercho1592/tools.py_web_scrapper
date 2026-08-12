@@ -3,6 +3,7 @@ from __future__ import annotations
 from bs4 import BeautifulSoup, Tag
 
 from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
+from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
 from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
 
@@ -108,7 +109,7 @@ class SoupDomElement(IWebReaderDriver):
         return None
 
 
-class BeautifulSoupDecoder:
+class BeautifulSoupDecoder(IHtmlDecoder):
     def __init__(self):
         self.Components: list[IWebElementDriver] = []
 

@@ -1,5 +1,6 @@
 from functools import partial
 from feature.services.file_manager import FileManager
+from feature.web_driver.bs4.bs4_decoder import BeautifulSoupDecoder
 from feature_interfaces.enums.settings_enum import ConfigEnum, FunctionEnum
 from feature_interfaces.protocols.config_protocol import (
     ConfigServiceProtocol,
@@ -39,7 +40,8 @@ def build_container():
 def build_factories(container: Container):
     container.register(
         IHtmlDecoder,
-        lambda: HtmlDecoder(),
+        # HtmlDecoder,
+        BeautifulSoupDecoder,
     )
     container.register(
         IHttpService,
