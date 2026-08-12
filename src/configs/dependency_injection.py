@@ -6,6 +6,7 @@ from feature_interfaces.protocols.config_protocol import (
     LoggerProtocol,
 )
 from feature_interfaces.services.http_service import IHttpService
+from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
 from feature_interfaces.services.webdav_service import WebDAVService
 from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
 from feature_interfaces.services.pdf_creator import IPdfCreator
@@ -21,6 +22,7 @@ import handler.manga_downloader_handler as manga_downloader_handler
 import handler.pdf_creator_handler as pdf_creator_handler
 import handler.webdav_handler as webdav_handler
 
+from feature.web_driver.html_parser.html_decoder import HtmlDecoder
 from infrastructure.http_service import HttpService
 from infrastructure.pdf_generator import PdfCreator
 from configs.config_manager import ConfigParserService, EnvironConfig
@@ -36,9 +38,14 @@ def build_container():
 
 def build_factories(container: Container):
     container.register(
+        IHtmlDecoder,
+        lambda: HtmlDecoder(),
+    )
+    container.register(
         IHttpService,
         lambda: HttpService(
-            container.resolve_factory(LoggerProtocol, HttpService.__name__)
+            container.resolve_factory(LoggerProtocol, HttpService.__name__),
+            container.resolve(IHtmlDecoder),
         ),
     )
     container.register(ConfigServiceProtocol, _env_service_factory, is_singleton=True)
