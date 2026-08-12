@@ -4,42 +4,45 @@ from feature_interfaces.web_drivers.enums import CommonTags as COMMON_TAGS
 from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
 
-class EMangaIndex(BaseMangaIndex,IMangaIndex):
+
+class EMangaIndex(BaseMangaIndex, IMangaIndex):
     @staticmethod
     def get_max_pages_in_index() -> int:
         return 20
 
     def get_manga_name(self) -> str:
-        name_element = self.DomReader.get_by_attrs(COMMON_ATTRS.ID, "gn")[0]
+        name_element = self.DomReader.query_selector("#gn")
+        if name_element is None:
+            return ""
         manga_name = name_element.get_value()
-        ## fix Manga name
         return manga_name
 
     def _get_index_page(self, index_page: int) -> "EMangaIndex":
         self._logger.info("Getting Index page# [%s]", index_page)
         return self.Strategy.get_index_page_async(index_page)
 
-    def get_manga_page_async(self, page:int = 0) -> IMangaPage:
+    def get_manga_page_async(self, page: int = 0) -> IMangaPage:
         page = 1 if page < 1 else page
         max_page_count = self.get_max_pages_in_index()
         index_page = page // max_page_count
         index = self._get_index_page(index_page) if page > max_page_count else self
         real_page = page - (index_page * max_page_count)
-        pages = index.DomReader.get_by_attrs(COMMON_ATTRS.ID, "gdt")[0]\
-            .get_children_by_tag(COMMON_TAGS.ANCHOR)
+        pages = index.DomReader.query_selector_all("#gdt a")
         if real_page > len(pages):
             return None
-        page_to_search = pages[real_page-1]
+        page_to_search = pages[real_page - 1]
         page_children = page_to_search
 
         new_page = index.Strategy.get_page_from_url_async(
-        page_children.get_attr_value(COMMON_ATTRS.HREF))
+            page_children.get_attr_value(COMMON_ATTRS.HREF)
+        )
         return new_page
 
     def _get_manga_data_elements(self) -> list[IWebElementDriver]:
-        taglist = self.DomReader.get_by_attrs(COMMON_ATTRS.ID, "taglist")[0]
-        children = taglist.get_children_by_tag(COMMON_TAGS.TR)
-        return children
+        taglist = self.DomReader.query_selector("#taglist")
+        if taglist is None:
+            return []
+        return taglist.query_selector_all("tr")
 
     def get_manga_genders(self) -> list[str]:
         data_elements = self._get_manga_data_elements()

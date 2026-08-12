@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from bs4 import BeautifulSoup, Tag
 
+from feature.web_driver.query_selector import query_selector, query_selector_all
 from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
 from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
 from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
@@ -77,6 +78,12 @@ class SoupElement(IWebElementDriver):
             result.extend(child.get_children_by_tag(tag_name, attr, value))
         return result
 
+    def query_selector(self, selector: str) -> IWebElementDriver | None:
+        return query_selector(self.Children, selector)
+
+    def query_selector_all(self, selector: str) -> list[IWebElementDriver]:
+        return query_selector_all(self.Children, selector)
+
 
 class SoupDomElement(IWebReaderDriver):
     def __init__(self, components: list[IWebElementDriver]):
@@ -107,6 +114,12 @@ class SoupDomElement(IWebReaderDriver):
 
     def get_parent(self) -> IWebElementDriver | None:
         return None
+
+    def query_selector(self, selector: str) -> IWebElementDriver | None:
+        return query_selector(self.__components, selector)
+
+    def query_selector_all(self, selector: str) -> list[IWebElementDriver]:
+        return query_selector_all(self.__components, selector)
 
 
 class BeautifulSoupDecoder(IHtmlDecoder):
