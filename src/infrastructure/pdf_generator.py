@@ -1,9 +1,9 @@
 from fpdf import FPDF
 from feature.services.file_manager import FileManager
 from feature.image_converter.image_converter_interfaces import IImageEditorService
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.services.pdf_creator import IPdfCreator
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import FolderPath
+from contracts.services.pdf_creator import IPdfCreator
+from contracts.protocols.config_protocol import LoggerProtocol
 from tools.string_path_fix import FixStringsTools
 
 

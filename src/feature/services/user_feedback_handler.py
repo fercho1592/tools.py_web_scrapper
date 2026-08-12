@@ -1,4 +1,4 @@
-from feature_interfaces.services.user_feedback_handler import (
+from contracts.services.user_feedback_handler import (
     IUserFeedbackHandler,
     IProgressBar,
 )

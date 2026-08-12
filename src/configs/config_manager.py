@@ -26,8 +26,8 @@ def read_telegram_bot_config():
     }
 
 
-from feature_interfaces.protocols.config_protocol import ConfigServiceProtocol
-from feature_interfaces.enums.settings_enum import ConfigEnum
+from contracts.protocols.config_protocol import ConfigServiceProtocol
+from contracts.enums.settings_enum import ConfigEnum
 from os import environ
 
 class ConfigParserService(ConfigServiceProtocol):

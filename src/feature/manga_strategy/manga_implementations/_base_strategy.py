@@ -1,7 +1,7 @@
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
-from feature_interfaces.services.http_service import IHttpService
-from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
-from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
+from contracts.protocols.config_protocol import LoggerProtocol
+from contracts.services.http_service import IHttpService
+from contracts.strategies.i_manga_strategy import IMangaStrategy
+from contracts.web_drivers.i_web_reader_driver import IWebReaderDriver
 import configs.logger_factory as logger_factory
 from abc import ABC
 

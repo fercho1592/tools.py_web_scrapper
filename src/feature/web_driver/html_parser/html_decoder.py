@@ -1,8 +1,8 @@
 from html.parser import HTMLParser
 from feature.web_driver.html_parser.dom_reader import HtmlElement, DomElement
-from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
-from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
-from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
+from contracts.web_drivers.i_html_decoder import IHtmlDecoder
+from contracts.web_drivers.i_web_element_driver import IWebElementDriver
+from contracts.web_drivers.i_web_reader_driver import IWebReaderDriver
 
 
 class HtmlDecoder(HTMLParser, IHtmlDecoder):
@@ -17,8 +17,9 @@ class HtmlDecoder(HTMLParser, IHtmlDecoder):
         new_component = HtmlElement(tag, dictAttrs, last_component)
         if last_component is not None:
             last_component.add_children(new_component)
-
-        self.Components.append(new_component)
+        # Only append root components to the top-level components list.
+        if last_component is None:
+            self.Components.append(new_component)
         self.LastOpen.append(new_component)
 
     def handle_endtag(self, tag):

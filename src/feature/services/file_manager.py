@@ -1,5 +1,5 @@
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import FolderPath
+from contracts.protocols.config_protocol import LoggerProtocol
 from os import path, makedirs, listdir, remove
 from shutil import rmtree, move, Error
 

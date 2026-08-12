@@ -3,10 +3,10 @@ from __future__ import annotations
 from bs4 import BeautifulSoup, Tag
 
 from feature.web_driver.query_selector import query_selector, query_selector_all
-from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
-from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
-from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
-from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
+from contracts.web_drivers.enums import CommonAttrs, CommonTags
+from contracts.web_drivers.i_html_decoder import IHtmlDecoder
+from contracts.web_drivers.i_web_element_driver import IWebElementDriver
+from contracts.web_drivers.i_web_reader_driver import IWebReaderDriver
 
 
 def _normalize_attr_value(value: str | list[str] | None) -> str | None:
@@ -106,11 +106,18 @@ class SoupDomElement(IWebReaderDriver):
     def get_by_attrs(
         self, attr: CommonAttrs, valule: str | None = None
     ) -> list[IWebElementDriver]:
-        return [
-            component
-            for component in self.__components
-            if component.has_attr(attr, valule)
-        ]
+        result: list[IWebElementDriver] = []
+
+        def collect(node: IWebElementDriver):
+            if node.has_attr(attr, valule):
+                result.append(node)
+            for child in node.Children:
+                collect(child)
+
+        for component in self.__components:
+            collect(component)
+
+        return result
 
     def get_parent(self) -> IWebElementDriver | None:
         return None

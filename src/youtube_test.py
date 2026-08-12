@@ -1,6 +1,6 @@
 import yt_dlp
 from configs.queue_reader import read_video_queue, QueueItem
-from feature_interfaces.models.folders_struct import VideoFoldersStruct
+from contracts.models.folders_struct import VideoFoldersStruct
 
 
 def descargar_video(item: QueueItem):

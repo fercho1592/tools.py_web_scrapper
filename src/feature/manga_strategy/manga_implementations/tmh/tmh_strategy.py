@@ -1,6 +1,6 @@
-from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
-from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
-from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy, IMangaPage, IMangaIndex
+from contracts.web_drivers.enums import CommonAttrs as COMMON_ATTRS
+from contracts.web_drivers.i_web_reader_driver import IWebReaderDriver
+from contracts.strategies.i_manga_strategy import IMangaStrategy, IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseStrategy
 from feature.manga_strategy.manga_implementations.tmh.tmh_index import TmhMangaIndex
 from feature.manga_strategy.manga_implementations.tmh.tmh_page import TmhMangaPage

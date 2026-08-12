@@ -5,9 +5,9 @@ from feature.services.error_handler import ErrorLogFileHandler
 from feature.services.file_manager import FileManager
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.services.user_feedback_handler import UserFeedbackHandler
-from feature_interfaces.enums.settings_enum import FunctionEnum
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
-from feature_interfaces.models.folders_struct import MangaFoldersStruct
+from contracts.enums.settings_enum import FunctionEnum
+from contracts.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import MangaFoldersStruct
 
 from handler.image_converter_handler import ImageConverterCommand
 from handler.manga_downloader_handler import MangaDownloaderCommand

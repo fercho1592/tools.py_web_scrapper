@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-from feature_interfaces.models.folders_struct import FolderPath
+from contracts.models.folders_struct import FolderPath
 
 
 class IPdfCreator(ABC):

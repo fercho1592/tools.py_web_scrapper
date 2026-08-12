@@ -21,7 +21,7 @@ class ConfigEnum(Enum):
         return default.get(service_name)
 
     def __str__(self):
-        return self.value
+        return str(self.value)
 
 
 class FunctionEnum(Enum):

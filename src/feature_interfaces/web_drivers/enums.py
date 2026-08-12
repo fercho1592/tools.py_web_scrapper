@@ -24,6 +24,7 @@ class CommonTags(Enum):
     H1 = "h1"
     OPTION = "option"
     IMG = "img"
+    DIV = "div"
     I = "i"
     UL = "ul"
     LI = "li"

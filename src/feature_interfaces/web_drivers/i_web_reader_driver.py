@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
-from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
+from contracts.web_drivers.enums import CommonAttrs, CommonTags
+from contracts.web_drivers.i_web_element_driver import IWebElementDriver
 
 
 class IWebReaderDriver(ABC):

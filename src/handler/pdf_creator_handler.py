@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from wrappers.handler_decorators import log_ejecucion
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.services.pdf_creator import IPdfCreator
+from contracts.models.folders_struct import FolderPath
+from contracts.services.pdf_creator import IPdfCreator
 
 
 @dataclass

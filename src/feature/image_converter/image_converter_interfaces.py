@@ -1,4 +1,4 @@
-from feature_interfaces.models.folders_struct import FolderPath
+from contracts.models.folders_struct import FolderPath
 from abc import ABC, abstractmethod
 
 class IImageEditorService(ABC):

@@ -1,8 +1,8 @@
-from feature_interfaces.web_drivers.enums import CommonAttrs as COMMON_ATTRS
-from feature_interfaces.web_drivers.enums import CommonTags as COMMON_TAGS
-from feature_interfaces.strategies.i_manga_strategy import IMangaPage, IMangaIndex
+from contracts.web_drivers.enums import CommonAttrs as COMMON_ATTRS
+from contracts.web_drivers.enums import CommonTags as COMMON_TAGS
+from contracts.strategies.i_manga_strategy import IMangaPage, IMangaIndex
 from feature.manga_strategy.manga_implementations._base_strategy import BaseMangaIndex
-from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
+from contracts.web_drivers.i_web_element_driver import IWebElementDriver
 
 
 class TmhMangaIndex(BaseMangaIndex, IMangaIndex):

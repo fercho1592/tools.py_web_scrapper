@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from feature_interfaces.models.folders_struct import FolderPath
+from contracts.models.folders_struct import FolderPath
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.protocols.config_protocol import LoggerProtocol
 from wrappers.handler_decorators import log_ejecucion
 
 

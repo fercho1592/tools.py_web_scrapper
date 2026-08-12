@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from feature.services.file_manager import FileManager
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
-from feature_interfaces.services.webdav_service import WebDAVService
+from contracts.models.folders_struct import FolderPath
+from contracts.protocols.config_protocol import LoggerProtocol
+from contracts.services.webdav_service import WebDAVService
 from wrappers.handler_decorators import log_ejecucion
 
 

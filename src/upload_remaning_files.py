@@ -2,7 +2,7 @@ import asyncio
 import glob
 import os
 import configs.dependency_injection as IOT
-from feature_interfaces.models.folders_struct import MangaFoldersStruct
+from contracts.models.folders_struct import MangaFoldersStruct
 from handler.webdav_handler import WebDavHandler, WebDavCommand
 
 

@@ -1,7 +1,7 @@
 from feature.image_converter.image_converter_interfaces import IImageEditorService
 from feature.services.file_manager import FileManager
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import FolderPath
+from contracts.protocols.config_protocol import LoggerProtocol
 from PIL import Image
 
 #IMAGE_FORMAT = "JPEG"

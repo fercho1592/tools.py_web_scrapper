@@ -2,8 +2,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from feature_interfaces.web_drivers.enums import CommonAttrs
-from feature_interfaces.web_drivers.i_web_element_driver import IWebElementDriver
+from contracts.web_drivers.enums import CommonAttrs
+from contracts.web_drivers.i_web_element_driver import IWebElementDriver
 
 
 @dataclass
@@ -166,7 +166,17 @@ def query_selector_all(
     selector_parts = _parse_selector(selector)
     if not selector_parts:
         return []
-    return _query_selector_recursive(roots, selector_parts, 0)
+    results = _query_selector_recursive(roots, selector_parts, 0)
+    # Deduplicate results while preserving order (elements may match via
+    # multiple ancestor paths).
+    unique: list[IWebElementDriver] = []
+    seen = set()
+    for el in results:
+        if id(el) in seen:
+            continue
+        seen.add(id(el))
+        unique.append(el)
+    return unique
 
 
 def query_selector(

@@ -2,12 +2,12 @@
 
 import requests
 from exceptions.http_service_exception import HttpServiceException
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
-from feature_interfaces.services.http_service import IHttpService
-from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
+from contracts.protocols.config_protocol import LoggerProtocol
+from contracts.services.http_service import IHttpService
+from contracts.web_drivers.i_html_decoder import IHtmlDecoder
 from os import path
 
-from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
+from contracts.web_drivers.i_web_reader_driver import IWebReaderDriver
 
 DEFAULT_HEADERS = {
     "User-Agent": "Mozilla/5.0 \

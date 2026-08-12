@@ -1,7 +1,7 @@
 #import pytest
 from ..html_parser.dom_reader import HtmlElement
-from feature_interfaces.web_drivers.enums import CommonAttrs
-from feature_interfaces.web_drivers.enums import CommonTags
+from contracts.web_drivers.enums import CommonAttrs
+from contracts.web_drivers.enums import CommonTags
 
 ID_VALUE = "id-element"
 CLASS_VALUE = "class-value"

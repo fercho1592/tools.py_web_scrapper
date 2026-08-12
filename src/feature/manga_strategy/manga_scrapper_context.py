@@ -1,9 +1,9 @@
 from feature.services.file_manager import FileManager
 from feature.services.user_feedback_handler import ProgressBar
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.services.http_service import IHttpService
-from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import FolderPath
+from contracts.services.http_service import IHttpService
+from contracts.strategies.i_manga_strategy import IMangaStrategy
+from contracts.protocols.config_protocol import LoggerProtocol
 from tools.string_path_fix import FixStringsTools
 
 

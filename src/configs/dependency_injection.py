@@ -1,16 +1,16 @@
 from functools import partial
 from feature.services.file_manager import FileManager
 from feature.web_driver.bs4.bs4_decoder import BeautifulSoupDecoder
-from feature_interfaces.enums.settings_enum import ConfigEnum, FunctionEnum
-from feature_interfaces.protocols.config_protocol import (
+from contracts.enums.settings_enum import ConfigEnum, FunctionEnum
+from contracts.protocols.config_protocol import (
     ConfigServiceProtocol,
     LoggerProtocol,
 )
-from feature_interfaces.services.http_service import IHttpService
-from feature_interfaces.web_drivers.i_html_decoder import IHtmlDecoder
-from feature_interfaces.services.webdav_service import WebDAVService
-from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
-from feature_interfaces.services.pdf_creator import IPdfCreator
+from contracts.services.http_service import IHttpService
+from contracts.web_drivers.i_html_decoder import IHtmlDecoder
+from contracts.services.webdav_service import WebDAVService
+from contracts.strategies.i_manga_strategy import IMangaStrategy
+from contracts.services.pdf_creator import IPdfCreator
 
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 from feature.image_converter.pillow_image_converter import PillowImageConverter

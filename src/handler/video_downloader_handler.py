@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Protocol
-from feature_interfaces.models.folders_struct import VideoFoldersStruct
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import VideoFoldersStruct
+from contracts.protocols.config_protocol import LoggerProtocol
 
 class VideoDownloaderProtocol(Protocol):
     """Protocol for video downloading service"""

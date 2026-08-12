@@ -1,14 +1,17 @@
 import unittest
 
-from src.feature.container import Container
+from feature.container import Container
+
 
 class DummyService:
     def __init__(self):
         self.value = 42
 
+
 class AnotherService:
     def __init__(self, dep):
         self.dep = dep
+
 
 class TestContainer(unittest.TestCase):
     def setUp(self):
@@ -33,6 +36,7 @@ class TestContainer(unittest.TestCase):
     def test_register_factory_and_resolve(self):
         def factory(dep):
             return AnotherService(dep)
+
         self.container.register(DummyService, DummyService)
         self.container.register_factory(AnotherService, factory)
         # Simulate manual dependency resolution
@@ -50,6 +54,7 @@ class TestContainer(unittest.TestCase):
         self.container.register(DummyService, lambda: DummyService())
         instance = self.container.resolve(DummyService)
         self.assertIsInstance(instance, DummyService)
+
 
 if __name__ == "__main__":
     unittest.main()

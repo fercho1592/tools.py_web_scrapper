@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Protocol
-from feature_interfaces.models.folders_struct import VideoFoldersStruct
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
-from feature_interfaces.web_drivers.i_web_reader_driver import IWebReaderDriver
-from feature_interfaces.web_drivers.enums import CommonTags, CommonAttrs
+from contracts.models.folders_struct import VideoFoldersStruct
+from contracts.protocols.config_protocol import LoggerProtocol
+from contracts.web_drivers.i_web_reader_driver import IWebReaderDriver
+from contracts.web_drivers.enums import CommonTags, CommonAttrs
 
 
 class VideoScrapperProtocol(Protocol):

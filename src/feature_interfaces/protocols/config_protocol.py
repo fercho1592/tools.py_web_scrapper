@@ -1,5 +1,5 @@
 from typing import Protocol
-from feature_interfaces.enums.settings_enum import ConfigEnum
+from contracts.enums.settings_enum import ConfigEnum
 
 
 class ConfigServiceProtocol(Protocol):

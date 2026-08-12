@@ -1,9 +1,9 @@
 '''Set up all manga implementations'''
 from typing import Tuple, Type
-from feature_interfaces.enums.settings_enum import ConfigEnum
-from feature_interfaces.protocols.config_protocol import ConfigServiceProtocol, LoggerProtocol
-from feature_interfaces.services.http_service import IHttpService
-from feature_interfaces.strategies.i_manga_strategy import IMangaStrategy
+from contracts.enums.settings_enum import ConfigEnum
+from contracts.protocols.config_protocol import ConfigServiceProtocol, LoggerProtocol
+from contracts.services.http_service import IHttpService
+from contracts.strategies.i_manga_strategy import IMangaStrategy
 from feature.manga_strategy.manga_implementations.tmh import tmh_strategy
 from feature.manga_strategy.manga_implementations.e_web import e_web_strategy
 from feature.container import Container

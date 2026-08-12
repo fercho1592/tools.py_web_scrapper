@@ -1,5 +1,5 @@
 from feature.web_driver.bs4.bs4_decoder import BeautifulSoupDecoder
-from feature_interfaces.web_drivers.enums import CommonAttrs, CommonTags
+from contracts.web_drivers.enums import CommonAttrs, CommonTags
 
 HTML = """
 <html>

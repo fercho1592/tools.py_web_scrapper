@@ -1,6 +1,6 @@
 from feature.services.file_manager import FileManager
-from feature_interfaces.models.folders_struct import FolderPath, WORKING_FOLDER_MANGA
-from feature_interfaces.services.error_handler import IErrorHandler
+from contracts.models.folders_struct import FolderPath, WORKING_FOLDER_MANGA
+from contracts.services.error_handler import IErrorHandler
 from io import SEEK_END
 from os import path
 

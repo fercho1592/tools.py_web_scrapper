@@ -1,7 +1,7 @@
 from webdav4.client import Client
 import os
-from feature_interfaces.models.folders_struct import FolderPath
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.models.folders_struct import FolderPath
+from contracts.protocols.config_protocol import LoggerProtocol
 
 
 class WebDAVService:

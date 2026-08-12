@@ -2,7 +2,7 @@ import re
 import time
 from configs import dependency_injection as IOT
 from configs.queue_reader import QueueItem
-from feature_interfaces.protocols.config_protocol import LoggerProtocol
+from contracts.protocols.config_protocol import LoggerProtocol
 from feature.manga_strategy.manga_scrapper_context import MangaScraper
 
 

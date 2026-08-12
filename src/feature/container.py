@@ -1,5 +1,5 @@
 from typing import Callable, Any
-from feature_interfaces.enums.settings_enum import FunctionEnum
+from contracts.enums.settings_enum import FunctionEnum
 
 
 class Container:
