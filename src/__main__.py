@@ -1,18 +1,18 @@
 import asyncio
-import configs.dependency_injection as IOT
-from configs.queue_reader import read_queue
-from feature.services.error_handler import ErrorLogFileHandler
-from feature.services.file_manager import FileManager
-from feature.manga_strategy.manga_scrapper_context import MangaScraper
-from feature.services.user_feedback_handler import UserFeedbackHandler
+import core.config.dependency_injection as IOT
+from core.config.queue_reader import read_queue
+from core.services.error_handler import ErrorLogFileHandler
+from core.services.file_manager import FileManager
+from manga.manga_scrapper_context import MangaScraper
+from core.services.user_feedback_handler import UserFeedbackHandler
 from contracts.enums.settings_enum import FunctionEnum
 from contracts.protocols.config_protocol import LoggerProtocol
 from contracts.models.folders_struct import MangaFoldersStruct
 
-from handler.image_converter_handler import ImageConverterCommand
-from handler.manga_downloader_handler import MangaDownloaderCommand
-from handler.pdf_creator_handler import PDFCreatorCommand
-from handler.webdav_handler import WebDavCommand
+from app.handlers.image_converter_handler import ImageConverterCommand
+from app.handlers.manga_downloader_handler import MangaDownloaderCommand
+from app.handlers.pdf_creator_handler import PDFCreatorCommand
+from app.handlers.webdav_handler import WebDavCommand
 
 container = IOT.build_container()
 _logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
@@ -113,9 +113,7 @@ async def main():
 
         try:
             uiHandler.ShowMessage("Uploading PDF to Webdav Service")
-            await upload_to_webdav(
-                mangaFolder, item.PdfName, mangaFolder
-            )
+            await upload_to_webdav(mangaFolder, item.PdfName, mangaFolder)
         except Exception as ex:
             _logger.error("Error uploading file to WebDAV: %s", ex)
             continue

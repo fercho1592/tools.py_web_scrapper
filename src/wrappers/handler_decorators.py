@@ -1,6 +1,6 @@
 import functools
 import inspect
-from configs.logger_factory import get_logger
+from core.config.logger_factory import get_logger
 
 
 def log_ejecucion(func):

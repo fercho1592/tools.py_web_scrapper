@@ -1,15 +1,15 @@
-from configs.config_manager import read_azure_service_bus_config
+from core.config.config_manager import read_azure_service_bus_config
 
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
+
 
 async def run_trigger():
     az_settings = read_azure_service_bus_config()
 
     async with ServiceBusClient.from_connection_string(
-        conn_str= az_settings["connection_string"],
-        logging_enable=True
-        ) as servicebus_client:
+        conn_str=az_settings["connection_string"], logging_enable=True
+    ) as servicebus_client:
 
         async with servicebus_client:
             receiver = servicebus_client.get_queue_receiver(
@@ -18,7 +18,7 @@ async def run_trigger():
             async with receiver:
                 received_msgs = await receiver.receive_messages(
                     max_wait_time=5, max_message_count=20
-                    )
+                )
                 for msg in received_msgs:
                     print("Received: " + str(msg))
                     # complete the message so that the message is removed from the queue

@@ -1,9 +1,9 @@
 import re
 import time
-from configs import dependency_injection as IOT
-from configs.queue_reader import QueueItem
+import core.config.dependency_injection as IOT
+from core.config.queue_reader import QueueItem
 from contracts.protocols.config_protocol import LoggerProtocol
-from feature.manga_strategy.manga_scrapper_context import MangaScraper
+from manga.manga_scrapper_context import MangaScraper
 
 
 def main() -> None:

@@ -1,6 +1,6 @@
 import unittest
 
-from feature.container import Container
+from core.container import Container
 
 
 class DummyService:

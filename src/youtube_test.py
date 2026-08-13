@@ -1,5 +1,5 @@
 import yt_dlp
-from configs.queue_reader import read_video_queue, QueueItem
+from core.config.queue_reader import read_video_queue, QueueItem
 from contracts.models.folders_struct import VideoFoldersStruct
 
 

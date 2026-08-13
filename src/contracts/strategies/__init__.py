@@ -1,7 +1,5 @@
-"""Strategies contract wrappers."""
+"""Strategies contracts package."""
 
-from contracts.strategies import i_manga_strategy as i_manga_strategy
+from . import i_manga_strategy
 
-__all__ = [
-    "i_manga_strategy",
-]
+__all__ = ["i_manga_strategy"]
