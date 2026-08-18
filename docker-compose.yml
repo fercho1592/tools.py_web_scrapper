@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  download-worker:
+    build:
+      context: .
+      dockerfile: DOCKERFILE
+    container_name: manga-download-worker
+    env_file:
+      - .env
+    command: ["--queue", "download"]
+
+  pdf-worker:
+    build:
+      context: .
+      dockerfile: DOCKERFILE
+    container_name: manga-pdf-worker
+    env_file:
+      - .env
+    command: ["--queue", "pdf"]
+
+  webdav-worker:
+    build:
+      context: .
+      dockerfile: DOCKERFILE
+    container_name: manga-webdav-worker
+    env_file:
+      - .env
+    command: ["--queue", "webdav"]
