@@ -4,8 +4,13 @@ import services.image_converter_service as image_converter_handler
 import services.manga_downloader_service as manga_downloader_handler
 import services.pdf_creator_service as pdf_creator_handler
 import services.webdav_service as webdav_handler
+from app.handlers.pdf_creator_queue_handler import PDFCreateQueueHandler
+from app.handlers.queue_download_handler import DownloadQueueHandler
+from app.handlers.webdav_queue_handler import WebDavQueueHandler
+from contracts.enums.queue_enum import QueueNameEnum
 from contracts.enums.settings_enum import ConfigEnum, FunctionEnum
 from contracts.protocols.config_protocol import ConfigServiceProtocol, LoggerProtocol
+from contracts.services.user_feedback_handler import IUserFeedbackHandler
 from contracts.services.http_service import IHttpService
 from contracts.services.pdf_creator import IPdfCreator
 from contracts.services.webdav_service import WebDAVService
@@ -15,6 +20,7 @@ from core.config.config_manager import ConfigParserService, EnvironConfig
 from core.config.logger_factory import get_logger
 from core.container import Container
 from core.services.file_manager import FileManager
+from core.services.user_feedback_handler import UserFeedbackHandler
 from image.converter.image_converter_interfaces import IImageEditorService
 from image.converter.pillow_image_converter import PillowImageConverter
 from infrastructure.http_service import HttpService
@@ -51,6 +57,11 @@ def build_factories(container: Container):
         ),
     )
     container.register(
+        IUserFeedbackHandler,
+        lambda: UserFeedbackHandler(),
+        is_singleton=True,
+    )
+    container.register(
         IPdfCreator,
         lambda: PdfCreator(
             container.resolve(IImageEditorService),
@@ -85,6 +96,56 @@ def build_factories(container: Container):
             container.resolve(ConfigServiceProtocol).get_config_value(
                 ConfigEnum.E_WEBDAV_PASSWORD
             ),
+        ),
+    )
+    container.register_factory(
+        DownloadQueueHandler,
+        lambda: DownloadQueueHandler(
+            queue_name=QueueNameEnum.DOWNLOAD.value,
+            next_queue=QueueNameEnum.PDF.value,
+            file_manager=FileManager(
+                container.resolve_factory(LoggerProtocol, FileManager.__name__)
+            ),
+            logger=container.resolve_factory(
+                LoggerProtocol, DownloadQueueHandler.__name__
+            ),
+            error_handler=None,
+            ui_handler=container.resolve(IUserFeedbackHandler),
+            fn_manga_downloader_handler=container.resolve_function(
+                FunctionEnum.MANGA_DOWNLOADER
+            ),
+        ),
+    )
+    container.register_factory(
+        PDFCreateQueueHandler,
+        lambda: PDFCreateQueueHandler(
+            queue_name=QueueNameEnum.PDF.value,
+            next_queue=QueueNameEnum.WEBDAV.value,
+            file_manager=FileManager(
+                container.resolve_factory(LoggerProtocol, FileManager.__name__)
+            ),
+            logger=container.resolve_factory(
+                LoggerProtocol, PDFCreateQueueHandler.__name__
+            ),
+            error_handler=None,
+            ui_handler=container.resolve(IUserFeedbackHandler),
+            fn_pdf_creator_handler=container.resolve_function(FunctionEnum.PDF_CREATOR),
+        ),
+    )
+    container.register_factory(
+        WebDavQueueHandler,
+        lambda: WebDavQueueHandler(
+            queue_name=QueueNameEnum.WEBDAV.value,
+            next_queue="",
+            file_manager=FileManager(
+                container.resolve_factory(LoggerProtocol, FileManager.__name__)
+            ),
+            logger=container.resolve_factory(
+                LoggerProtocol, WebDavQueueHandler.__name__
+            ),
+            error_handler=None,
+            ui_handler=container.resolve(IUserFeedbackHandler),
+            fn_webdav_handler=container.resolve_function(FunctionEnum.WEBDAV),
         ),
     )
 

@@ -2,11 +2,12 @@ import asyncio
 from dataclasses import dataclass
 from threading import Thread
 
-from contracts.models.folders_struct import FolderPath
+from contracts.models.folders_struct import FolderPath, MangaFoldersStruct
 from contracts.protocols.queue_handler_protocol import (
     QueueHandlerProtocol,
     QueueMessage,
 )
+from core.services.error_handler import ErrorLogFileHandler
 
 
 @dataclass
@@ -40,6 +41,13 @@ class PDFCreateQueueHandler(QueueHandlerProtocol[PDFCreateQueueCommand]):
     def on_message(self, command: QueueMessage[PDFCreateQueueCommand]):
         def process_pdf_creation():
             pdf_command = command.messageCommand
+            folders = MangaFoldersStruct(pdf_command.pdf_name)
+            error_handler = ErrorLogFileHandler(
+                pdf_command.pdf_name,
+                folders.error_log_folder,
+            )
+            self.error_handler = error_handler
+
             try:
                 image_folder = pdf_command.image_folder
                 pdf_folder = pdf_command.pdf_folder

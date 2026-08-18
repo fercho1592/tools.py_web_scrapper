@@ -2,11 +2,12 @@ import asyncio
 from dataclasses import dataclass
 from threading import Thread
 
-from contracts.models.folders_struct import FolderPath
+from contracts.models.folders_struct import FolderPath, MangaFoldersStruct
 from contracts.protocols.queue_handler_protocol import (
     QueueHandlerProtocol,
     QueueMessage,
 )
+from core.services.error_handler import ErrorLogFileHandler
 
 
 @dataclass
@@ -39,6 +40,13 @@ class WebDavQueueHandler(QueueHandlerProtocol[WebDavQueueCommand]):
     def on_message(self, command: QueueMessage[WebDavQueueCommand]):
         def process_upload():
             webdav_command = command.messageCommand
+            folders = MangaFoldersStruct(webdav_command.manga_name)
+            error_handler = ErrorLogFileHandler(
+                webdav_command.manga_name,
+                folders.error_log_folder,
+            )
+            self.error_handler = error_handler
+
             try:
                 self.ui_handler.ShowMessage("Uploading PDF to Webdav Service")
 

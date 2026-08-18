@@ -7,6 +7,7 @@ from contracts.protocols.queue_handler_protocol import (
     QueueHandlerProtocol,
     QueueMessage,
 )
+from core.services.error_handler import ErrorLogFileHandler
 
 
 @dataclass
@@ -39,6 +40,14 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
         def process_download():
             download_command = command.messageCommand
             print(f"Processing download for {download_command.manga_url}")
+
+            folders = MangaFoldersStruct(download_command.download_folder)
+            error_handler = ErrorLogFileHandler(
+                download_command.manga_url,
+                folders.error_log_folder,
+            )
+            self.error_handler = error_handler
+
             try:
                 download_folder = download_command.download_folder
                 if isinstance(download_folder, str):
@@ -70,5 +79,5 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
 
         thread = Thread(target=process_download)
         thread.start()
-        
+
         return thread
