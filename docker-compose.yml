@@ -8,6 +8,11 @@ services:
     container_name: manga-download-worker
     env_file:
       - .env
+    environment:
+      DOWNLOAD_FOLDER: /downloads
+      VIDEO_DOWNLOAD_FOLDER: /downloads/videos
+    volumes:
+      - ./downloads:/downloads
     command: ["--queue", "download"]
 
   pdf-worker:
@@ -17,6 +22,11 @@ services:
     container_name: manga-pdf-worker
     env_file:
       - .env
+    environment:
+      DOWNLOAD_FOLDER: /downloads
+      VIDEO_DOWNLOAD_FOLDER: /downloads/videos
+    volumes:
+      - ./downloads:/downloads
     command: ["--queue", "pdf"]
 
   webdav-worker:
@@ -26,4 +36,9 @@ services:
     container_name: manga-webdav-worker
     env_file:
       - .env
+    environment:
+      DOWNLOAD_FOLDER: /downloads
+      VIDEO_DOWNLOAD_FOLDER: /downloads/videos
+    volumes:
+      - ./downloads:/downloads
     command: ["--queue", "webdav"]

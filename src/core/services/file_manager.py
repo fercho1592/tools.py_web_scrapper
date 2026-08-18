@@ -1,9 +1,10 @@
 from contracts.models.folders_struct import FolderPath
 from contracts.protocols.config_protocol import LoggerProtocol
-from os import path, makedirs, listdir, remove
+from os import environ, makedirs, listdir, path, remove
 from shutil import rmtree, move, Error
 
-DOWNLOAD_FOLDER = path.normpath(path.expanduser("~/Desktop"))
+DEFAULT_DOWNLOAD_FOLDER = path.normpath(path.expanduser("~/Desktop"))
+DOWNLOAD_FOLDER = environ.get("DOWNLOAD_FOLDER", DEFAULT_DOWNLOAD_FOLDER)
 
 allow_delete = True
 

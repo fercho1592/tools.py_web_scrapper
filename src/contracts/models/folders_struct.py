@@ -2,8 +2,26 @@ from dataclasses import dataclass
 from os import path
 import os
 
-WORKING_FOLDER_MANGA = path.normpath(path.expanduser("~/Desktop")) + "/Manga_downloads"
-WORKING_FOLDER_VIDEO = path.normpath(path.expanduser("~/Desktop")) + "/Video_downloads"
+
+def get_env_path(env_name: str, fallback: str) -> str:
+    configured_value = os.environ.get(env_name)
+    if configured_value and configured_value.strip():
+        return path.normpath(configured_value.strip())
+    return fallback
+
+
+if os.path.exists("/.dockerenv"):
+    WORKING_FOLDER_MANGA = get_env_path("DOWNLOAD_FOLDER", "/downloads")
+    WORKING_FOLDER_VIDEO = get_env_path("VIDEO_DOWNLOAD_FOLDER", "/downloads/videos")
+else:
+    WORKING_FOLDER_MANGA = get_env_path(
+        "DOWNLOAD_FOLDER",
+        path.normpath(path.expanduser("~/Desktop")) + "/Manga_downloads",
+    )
+    WORKING_FOLDER_VIDEO = get_env_path(
+        "VIDEO_DOWNLOAD_FOLDER",
+        path.normpath(path.expanduser("~/Desktop")) + "/Video_downloads",
+    )
 
 
 @dataclass

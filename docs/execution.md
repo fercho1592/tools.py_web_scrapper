@@ -1,37 +1,37 @@
 # Execution Guide
 
-This project supports two runtime modes:
+The application entrypoint is the runner under `src/` and supports three execution modes:
 
-- waterfall worker: runs the sequential processing flow directly
-- queue listener: listens to a RabbitMQ queue and handles one message at a time
+- waterfall flow: default when no arguments are passed
+- queue listener: `--queue download|pdf|webdav`
+- prepare-links workflow: `--prepare-links <file>`
 
-## Local entrypoint
+## Local execution
 
-The app entry point is the package runner in `src`:
+Run the default workflow:
 
     python src
 
-This starts the waterfall workflow by default.
-
-To start a queue listener, pass the queue name:
+Start a queue worker:
 
     python src --queue download
     python src --queue pdf
     python src --queue webdav
 
+Prepare a list of manga links from a file:
+
+    python src --prepare-links ./links.txt
+
+This creates a queue-ready file for later review and queue insertion.
+
 ## Docker execution
 
-The Docker image is built from the project root and uses the same app entrypoint:
+The Docker image uses the same entrypoint and arguments:
 
-    python src
-
-Because the entrypoint accepts CLI arguments, the container can run any queue worker by overriding the command:
-
+    docker run --rm <image>
     docker run --rm <image> --queue download
     docker run --rm <image> --queue pdf
     docker run --rm <image> --queue webdav
-
-This means the same image can launch the different queue listeners, but the runtime is still the app itself, not the helper scripts under `scripts/` or `scripts_helper/`.
 
 ## Compose deployment
 
@@ -39,9 +39,17 @@ The repo includes a Compose file that starts one worker per queue:
 
     docker compose up --build
 
-This creates multiple containers that each listen to a different queue and connect to the configured RabbitMQ broker from `.env`.
+Each service loads the values from `.env` through `env_file` and runs the correct queue worker command.
+
+## Configuration
+
+The project reads runtime configuration from `.env`. Copy `.env.example` before running the app:
+
+    cp .env.example .env
+
+This is the current source of connection and secret values; older `config.ini` settings are not the canonical runtime configuration.
 
 ## Notes
 
-- The Docker image is intended to run the application runtime.
-- Scripts in `scripts/` and `scripts_helper/` are maintenance utilities and are not part of the default app container lifecycle.
+- The Docker image is intended to run the app runtime, not helper scripts.
+- Maintenance utilities remain in `scripts/` and `scripts_helper/` and are not part of the default runtime lifecycle.

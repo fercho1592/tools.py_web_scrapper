@@ -1,31 +1,32 @@
 # Project documentation
 
-This folder stores project documentation for human developers and AI agents.
+This folder stores the project’s runtime and architecture notes for developers and automation.
 
 ## Purpose
 
-- Keep architecture and service structure notes in one place.
-- Describe the responsibilities of each service and queue handler.
-- Document how the app is executed locally and inside Docker.
-- Help future AI agents understand the project shape without reading all source files.
+- Document the current runtime entrypoints and worker layout.
+- Keep architecture and service responsibility notes in one place.
+- Explain the queue-based download flow and the prepare-links workflow.
+- Help future contributors and AI agents understand the project without reading every source file.
 
 ## Contents
 
-- `architecture.md`: project architecture and responsibilities
-- `services.md`: service inventory and usage
-- `queue-handlers.md`: queue-based handlers and message flow
-- `manual-tools.md`: one-off/manual scripts moved out of the main app flow
-- `execution.md`: local and Docker execution modes, entrypoints, and queue workers
+- `architecture.md`: architectural boundaries and message flow
+- `services.md`: service inventory and responsibilities
+- `queue-handlers.md`: queue handlers and their message lifecycle
+- `manual-tools.md`: maintenance scripts and manual utilities
+- `execution.md`: local, Docker, and queue runtime instructions
 
-## Execution summary
+## Runtime summary
 
-The application runtime is split into two main modes:
+The current CLI supports three execution modes:
 
-- waterfall worker: runs the sequential process flow with no queue argument
-- queue listener: runs a RabbitMQ worker for a specific queue (`download`, `pdf`, or `webdav`)
+- waterfall flow: default startup with no arguments
+- queue listener: `--queue download|pdf|webdav`
+- prepare-links workflow: `--prepare-links <file>`
 
 ## Recommended convention
 
-- Prefer short Markdown files focused on one topic.
-- Add links between documents when the subject spans multiple areas.
-- Keep the docs aligned with the current folder structure in `src/`.
+- Keep each document focused on one topic.
+- Prefer short, practical examples over long narrative sections.
+- Update docs whenever runtime flags or configuration names change.
