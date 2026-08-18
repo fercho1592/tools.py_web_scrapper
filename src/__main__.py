@@ -9,10 +9,10 @@ from contracts.enums.settings_enum import FunctionEnum
 from contracts.protocols.config_protocol import LoggerProtocol
 from contracts.models.folders_struct import MangaFoldersStruct
 
-from app.handlers.image_converter_handler import ImageConverterCommand
-from app.handlers.manga_downloader_handler import MangaDownloaderCommand
-from app.handlers.pdf_creator_handler import PDFCreatorCommand
-from app.handlers.webdav_handler import WebDavCommand
+from services.image_converter_service import ImageConverterCommand
+from services.manga_downloader_service import MangaDownloaderCommand
+from services.pdf_creator_service import PDFCreatorCommand
+from services.webdav_service import WebDavCommand
 
 container = IOT.build_container()
 _logger: LoggerProtocol = container.resolve_factory(LoggerProtocol, __name__)
@@ -47,30 +47,6 @@ async def main():
         #         item.MangaUrl,
         #     )
         #     continue
-
-        try:
-            # getting las page downloaded for this manga
-            last_page = fileManager.get_last_downloaded_page(
-                mangaFolder.download_folder
-            )
-
-            uiHandler.ShowMessage(
-                f"Start download of {item.MangaUrl} in [{item.FolderName}] from page [{last_page}]"
-            )
-            await fn_manga_downloader_handler(
-                MangaDownloaderCommand(
-                    scrapper=scrapper,
-                    pageNumber=last_page,
-                    folderPath=mangaFolder.download_folder,
-                )
-            )
-
-            uiHandler.ShowMessage("End Manga Download")
-            _logger.info("End manga download for [%s]", item.MangaUrl)
-        except Exception as ex:
-            _logger.error("Download incomplete for [%s]", item.MangaUrl)
-            errorHandler.SaveDownloadError("Error during manga download", ex)
-            continue
 
         try:
             uiHandler.ShowMessage("Starting image convertion")

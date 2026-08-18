@@ -1,9 +1,9 @@
 from functools import partial
 
-import app.handlers.image_converter_handler as image_converter_handler
-import app.handlers.manga_downloader_handler as manga_downloader_handler
-import app.handlers.pdf_creator_handler as pdf_creator_handler
-import app.handlers.webdav_handler as webdav_handler
+import services.image_converter_service as image_converter_handler
+import services.manga_downloader_service as manga_downloader_handler
+import services.pdf_creator_service as pdf_creator_handler
+import services.webdav_service as webdav_handler
 from contracts.enums.settings_enum import ConfigEnum, FunctionEnum
 from contracts.protocols.config_protocol import ConfigServiceProtocol, LoggerProtocol
 from contracts.services.http_service import IHttpService

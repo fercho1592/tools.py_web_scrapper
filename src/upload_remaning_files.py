@@ -1,14 +1,15 @@
 import asyncio
 import glob
 import os
+
 import core.config.dependency_injection as IOT
 from contracts.models.folders_struct import MangaFoldersStruct
-from app.handlers.webdav_handler import WebDavHandler, WebDavCommand
+from services.webdav_service import WebDavCommand, handle as handle_webdav
 
 
 async def main():
     container = IOT.build_container()
-    webdav_handler: WebDavHandler = container.resolve(WebDavHandler)
+    fn_webdav_handler = container.resolve_function("WEBDAV")
     pdf_files = get_all_pdfs_files()
 
     for pdf_file_path in pdf_files:
@@ -23,7 +24,7 @@ async def main():
         webdav_path = manga_folders.dav_folder
 
         try:
-            await webdav_handler.handle(
+            await fn_webdav_handler(
                 WebDavCommand(
                     manga_name=pdf_name,
                     pdf_path=pdf_file_path,
