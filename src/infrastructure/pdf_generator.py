@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fpdf import FPDF
 from core.services.file_manager import FileManager
 from image.converter.image_converter_interfaces import IImageEditorService
@@ -5,6 +7,9 @@ from contracts.models.folders_struct import FolderPath
 from contracts.services.pdf_creator import IPdfCreator
 from contracts.protocols.config_protocol import LoggerProtocol
 from utils.string_path_fix import FixStringsTools
+
+RESOURCES_DIR = Path(__file__).resolve().parents[1] / "resources"
+FONT_FILE = RESOURCES_DIR / "Swansea-q3pd.ttf"
 
 
 class PdfCreator(IPdfCreator):
@@ -50,7 +55,9 @@ class PdfCreator(IPdfCreator):
 
     def init_pdf_creator(self) -> FPDF:
         pdf = FPDF(unit="pt")
-        pdf.add_font("Swansea", "", "Swansea-q3pd.ttf")
+        if not FONT_FILE.exists():
+            raise FileNotFoundError(f"Font file not found: {FONT_FILE}")
+        pdf.add_font("Swansea", "", str(FONT_FILE))
         pdf.set_font("Swansea", "", 10)
 
         return pdf
