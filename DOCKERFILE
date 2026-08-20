@@ -13,6 +13,8 @@ COPY . .
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app/src
+ENV DOWNLOAD_FOLDER=/downloads
+ENV VIDEO_DOWNLOAD_FOLDER=/downloads/videos
+ENV GENERAL_LOG_LEVEL=info
 
 ENTRYPOINT ["python", "src"]
-CMD ["--queue", "download"]
