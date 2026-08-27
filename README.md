@@ -10,7 +10,7 @@ This project downloads and processes manga content through a queue-based runtime
 
 Install Python dependencies:
 
-    pip3 install -r Requirements.txt
+    pip3 install --trusted-host files.pythonhosted.org --trusted-host pypi.org --trusted-host pypi.python.org -r Requirements.txt
 
 Create a local environment file from the example:
 
