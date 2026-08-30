@@ -3,6 +3,7 @@ from enum import Enum
 
 class QueueNameEnum(str, Enum):
     DOWNLOAD = "download"
+    SPLIT_FOLDERS = "split_folders"
     PDF = "pdf"
     WEBDAV = "webdav"
 

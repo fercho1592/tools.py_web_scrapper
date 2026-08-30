@@ -1,6 +1,7 @@
 import argparse
 import re
 import time
+import unicodedata
 from pathlib import Path
 
 import core.config.dependency_injection as IOT
@@ -28,7 +29,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(
-    source_file: str = "links.txt", output_file: str = "temp-download-queue.txt"
+    source_file: str = "links.txt",
+    output_file: str = "temp-download-queue.txt",
 ) -> None:
     path = Path(source_file)
     if not path.exists():
@@ -80,12 +82,26 @@ def main(
     logger.info("Prepared %s queue entries in %s", len(queue_list), output_path)
 
 
+def normalize_segment(text: str) -> str:
+    text = unicodedata.normalize("NFKD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
+    text = re.sub(r"[<>:\"/\\|?*]", "-", text)
+    text = re.sub(r"[\x00-\x1f]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"-+", "-", text)
+    return text.strip(".- ")
+
+
 def create_path(manga_data: dict) -> str:
     regex = re.compile(r"\([^)]*\)|\[[^\]]*\]")
     pdf_name = regex.sub("", manga_data.get("name")).strip()
     artist = manga_data.get("artist", None)
     groups = manga_data.get("groups", "None")
     artist = artist if artist else groups
+
+    artist = normalize_segment(str(artist)) or "UNKNOWN"
+    pdf_name = normalize_segment(str(pdf_name)) or "UNTITLED"
+
     result_path = f"[{artist}]/{pdf_name}"
     result_path = (
         str(result_path)

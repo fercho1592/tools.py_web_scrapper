@@ -6,6 +6,7 @@ import pika
 
 from app.handlers.pdf_creator_queue_handler import PDFCreateQueueHandler
 from app.handlers.queue_download_handler import DownloadQueueHandler
+from app.handlers.split_folders_queue_handler import SplitFoldersQueueHandler
 from app.handlers.webdav_queue_handler import WebDavQueueHandler
 from contracts.enums.queue_enum import QueueNameEnum
 from core.config.dependency_injection import build_container
@@ -56,6 +57,7 @@ class QueueMessageManager:
 
 QUEUE_HANDLER_MAP = {
     QueueNameEnum.DOWNLOAD.value: DownloadQueueHandler,
+    QueueNameEnum.SPLIT_FOLDERS.value: SplitFoldersQueueHandler,
     QueueNameEnum.PDF.value: PDFCreateQueueHandler,
     QueueNameEnum.WEBDAV.value: WebDavQueueHandler,
 }

@@ -6,6 +6,7 @@ import services.pdf_creator_service as pdf_creator_handler
 import services.webdav_service as webdav_handler
 from app.handlers.pdf_creator_queue_handler import PDFCreateQueueHandler
 from app.handlers.queue_download_handler import DownloadQueueHandler
+from app.handlers.split_folders_queue_handler import SplitFoldersQueueHandler
 from app.handlers.webdav_queue_handler import WebDavQueueHandler
 from contracts.enums.queue_enum import QueueNameEnum
 from contracts.enums.settings_enum import ConfigEnum, FunctionEnum
@@ -114,6 +115,21 @@ def build_factories(container: Container):
             fn_manga_downloader_handler=container.resolve_function(
                 FunctionEnum.MANGA_DOWNLOADER
             ),
+        ),
+    )
+    container.register_factory(
+        SplitFoldersQueueHandler,
+        lambda: SplitFoldersQueueHandler(
+            queue_name=QueueNameEnum.SPLIT_FOLDERS.value,
+            next_queue=QueueNameEnum.PDF.value,
+            file_manager=FileManager(
+                container.resolve_factory(LoggerProtocol, FileManager.__name__)
+            ),
+            logger=container.resolve_factory(
+                LoggerProtocol, SplitFoldersQueueHandler.__name__
+            ),
+            error_handler=None,
+            ui_handler=container.resolve(IUserFeedbackHandler),
         ),
     )
     container.register_factory(

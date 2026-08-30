@@ -2,6 +2,11 @@ import asyncio
 from dataclasses import dataclass
 from threading import Thread
 
+from app.handlers.split_folders_queue_handler import (
+    MAX_IMAGES_PER_SPLIT_QUEUE,
+    SplitFoldersQueueHandler,
+)
+from contracts.enums.queue_enum import QueueNameEnum
 from contracts.models.folders_struct import MangaFoldersStruct
 from contracts.protocols.queue_handler_protocol import (
     QueueHandlerProtocol,
@@ -15,7 +20,8 @@ class DownloadQueueCommand:
     manga_url: str
     download_folder: str
     queue_name: str
-    next_queue: str
+    next_queue: str = QueueNameEnum.PDF.value
+    chapters: list[tuple[str, int, int]] | None = None
 
 
 class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
@@ -35,6 +41,15 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
         self.ui_handler = ui_handler
         self.fn_manga_downloader_handler = fn_manga_downloader_handler
         super().__init__(queue_name, next_queue)
+
+    @staticmethod
+    def resolve_next_queue(
+        command: DownloadQueueCommand,
+        image_count: int,
+    ) -> str:
+        if image_count > MAX_IMAGES_PER_SPLIT_QUEUE:
+            return QueueNameEnum.SPLIT_FOLDERS.value
+        return command.next_queue or QueueNameEnum.PDF.value
 
     def on_message(self, command: QueueMessage[DownloadQueueCommand]):
         def process_download():
@@ -64,6 +79,24 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
                     result = self.fn_manga_downloader_handler(download_command)
                     if asyncio.iscoroutine(result):
                         asyncio.run(result)
+
+                image_count = len(self.file_manager.GetImagesInFolder(download_folder))
+                next_queue = self.resolve_next_queue(download_command, image_count)
+                if next_queue == QueueNameEnum.SPLIT_FOLDERS.value:
+                    chapters = (
+                        download_command.chapters
+                        or SplitFoldersQueueHandler.build_default_chapters(
+                            image_count,
+                            max_images_per_split=MAX_IMAGES_PER_SPLIT_QUEUE,
+                        )
+                    )
+                    download_command.chapters = chapters
+                    download_command.next_queue = next_queue
+                    self.ui_handler.ShowMessage(
+                        "Large download detected. Routing to split folders queue."
+                    )
+                else:
+                    download_command.next_queue = next_queue
 
                 self.ui_handler.ShowMessage("End Manga Download")
                 self.logger.info(
