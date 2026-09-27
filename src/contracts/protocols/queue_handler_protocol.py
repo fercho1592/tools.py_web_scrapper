@@ -1,14 +1,17 @@
 from dataclasses import dataclass
 from threading import Thread
-from typing import Protocol
+from typing import Any, Protocol
 
 
 @dataclass
 class QueueMessage[TCommand]:
     id: str
     queue_name: str
-    messageCommand: TCommand
+    messageCommand: dict[str, Any]
     errorLog: list[str]
+
+    def to_command(self, command_class: type[TCommand]) -> TCommand:
+        return command_class(**self.messageCommand)
 
 
 class QueueHandlerProtocol[TCommand](Protocol):
@@ -16,5 +19,5 @@ class QueueHandlerProtocol[TCommand](Protocol):
         self.queue_name = queue_name
         self.next_queue = next_queue
 
-    def on_message(self, command: QueueMessage[TCommand]) -> Thread:
+    def on_message(self, payload: dict[str, Any]) -> Thread:
         pass

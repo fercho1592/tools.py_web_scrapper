@@ -8,6 +8,7 @@ from contracts.protocols.queue_handler_protocol import (
     QueueMessage,
 )
 from core.services.error_handler import ErrorLogFileHandler
+from services.webdav_service import WebDavCommand
 
 
 @dataclass
@@ -37,9 +38,11 @@ class WebDavQueueHandler(QueueHandlerProtocol[WebDavQueueCommand]):
         self.fn_webdav_handler = fn_webdav_handler
         super().__init__(queue_name, next_queue)
 
-    def on_message(self, command: QueueMessage[WebDavQueueCommand]):
+    def on_message(self, payload: dict):
+        queue_message = QueueMessage[WebDavQueueCommand](**payload)
+        webdav_command = queue_message.to_command(WebDavQueueCommand)
+
         def process_upload():
-            webdav_command = command.messageCommand
             folders = MangaFoldersStruct(webdav_command.manga_name)
             error_handler = ErrorLogFileHandler(
                 webdav_command.manga_name,
@@ -56,7 +59,12 @@ class WebDavQueueHandler(QueueHandlerProtocol[WebDavQueueCommand]):
                     raise TypeError("dav_path must be a FolderPath instance")
 
                 if self.fn_webdav_handler is not None:
-                    result = self.fn_webdav_handler(webdav_command)
+                    upload_command = WebDavCommand(
+                        manga_name=webdav_command.manga_name,
+                        pdf_path=webdav_command.pdf_path,
+                        dav_path=webdav_command.dav_path,
+                    )
+                    result = self.fn_webdav_handler(upload_command)
                     if asyncio.iscoroutine(result):
                         asyncio.run(result)
 

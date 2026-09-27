@@ -164,3 +164,4 @@ config.ini
 **/.DS_Store
 **/*.txt
 .env
+~/Desktop/*

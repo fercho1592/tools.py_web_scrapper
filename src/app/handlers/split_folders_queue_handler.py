@@ -57,9 +57,11 @@ class SplitFoldersQueueHandler(QueueHandlerProtocol[SplitFoldersQueueCommand]):
 
         return chapters
 
-    def on_message(self, command: QueueMessage[SplitFoldersQueueCommand]):
+    def on_message(self, payload: dict):
+        queue_message = QueueMessage[SplitFoldersQueueCommand](**payload)
+        split_command = queue_message.to_command(SplitFoldersQueueCommand)
+
         def process_split():
-            split_command = command.messageCommand
             folder_structure = MangaFoldersStruct(split_command.download_folder)
             base_folder = folder_structure.download_folder
 

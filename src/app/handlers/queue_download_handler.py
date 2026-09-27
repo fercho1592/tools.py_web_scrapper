@@ -1,6 +1,7 @@
 import asyncio
 from dataclasses import dataclass
 from threading import Thread
+from typing import Any
 
 from app.handlers.split_folders_queue_handler import (
     MAX_IMAGES_PER_SPLIT_QUEUE,
@@ -13,6 +14,7 @@ from contracts.protocols.queue_handler_protocol import (
     QueueMessage,
 )
 from core.services.error_handler import ErrorLogFileHandler
+from services.manga_downloader_service import MangaDownloaderCommand
 
 
 @dataclass
@@ -34,12 +36,14 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
         error_handler,
         ui_handler,
         fn_manga_downloader_handler,
+        manga_scrapper_factory,
     ):
         self.file_manager = file_manager
         self.logger = logger
         self.error_handler = error_handler
         self.ui_handler = ui_handler
         self.fn_manga_downloader_handler = fn_manga_downloader_handler
+        self.manga_scrapper_factory = manga_scrapper_factory
         super().__init__(queue_name, next_queue)
 
     @staticmethod
@@ -51,9 +55,11 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
             return QueueNameEnum.SPLIT_FOLDERS.value
         return command.next_queue or QueueNameEnum.PDF.value
 
-    def on_message(self, command: QueueMessage[DownloadQueueCommand]):
+    def on_message(self, payload: dict[str, Any]):
+        queue_message = QueueMessage[DownloadQueueCommand](**payload)
+
         def process_download():
-            download_command = command.messageCommand
+            download_command = queue_message.to_command(DownloadQueueCommand)
             print(f"Processing download for {download_command.manga_url}")
 
             folders = MangaFoldersStruct(download_command.download_folder)
@@ -76,7 +82,14 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
                 )
 
                 if self.fn_manga_downloader_handler is not None:
-                    result = self.fn_manga_downloader_handler(download_command)
+                    manga_command = MangaDownloaderCommand(
+                        scrapper=self.manga_scrapper_factory(
+                            download_command.manga_url
+                        ),
+                        pageNumber=last_page,
+                        folderPath=download_folder,
+                    )
+                    result = self.fn_manga_downloader_handler(manga_command)
                     if asyncio.iscoroutine(result):
                         asyncio.run(result)
 

@@ -28,15 +28,15 @@ The application entrypoint is the package runner under `src/`:
 
 Running the app without arguments starts the waterfall flow:
 
-    python src
+    python3 src
 
 ### Queue listener
 
 Start a specific queue worker:
 
-    python src --queue download
-    python src --queue pdf
-    python src --queue webdav
+    python3 src --queue download
+    python3 src --queue pdf
+    python3 src --queue webdav
 
 ### Prepare links workflow
 

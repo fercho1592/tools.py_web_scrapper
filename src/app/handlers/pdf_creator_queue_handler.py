@@ -8,6 +8,7 @@ from contracts.protocols.queue_handler_protocol import (
     QueueMessage,
 )
 from core.services.error_handler import ErrorLogFileHandler
+from services.pdf_creator_service import PDFCreatorCommand
 
 
 @dataclass
@@ -38,9 +39,11 @@ class PDFCreateQueueHandler(QueueHandlerProtocol[PDFCreateQueueCommand]):
         self.fn_pdf_creator_handler = fn_pdf_creator_handler
         super().__init__(queue_name, next_queue)
 
-    def on_message(self, command: QueueMessage[PDFCreateQueueCommand]):
+    def on_message(self, payload: dict):
+        queue_message = QueueMessage[PDFCreateQueueCommand](**payload)
+        pdf_command = queue_message.to_command(PDFCreateQueueCommand)
+
         def process_pdf_creation():
-            pdf_command = command.messageCommand
             folders = MangaFoldersStruct(pdf_command.pdf_name)
             error_handler = ErrorLogFileHandler(
                 pdf_command.pdf_name,
@@ -58,7 +61,13 @@ class PDFCreateQueueHandler(QueueHandlerProtocol[PDFCreateQueueCommand]):
                     raise TypeError("pdf_folder must be a FolderPath instance")
 
                 self.ui_handler.ShowMessage("Creating Pdf")
-                result = self.fn_pdf_creator_handler(pdf_command)
+                creator_command = PDFCreatorCommand(
+                    image_folder=pdf_command.image_folder,
+                    pdf_folder=pdf_command.pdf_folder,
+                    pdf_name=pdf_command.pdf_name,
+                    manga_data=pdf_command.manga_data,
+                )
+                result = self.fn_pdf_creator_handler(creator_command)
                 if asyncio.iscoroutine(result):
                     asyncio.run(result)
 

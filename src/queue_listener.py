@@ -1,6 +1,8 @@
 import argparse
 import json
 import os
+from functools import partial
+from threading import Thread
 
 import pika
 
@@ -10,6 +12,14 @@ from app.handlers.split_folders_queue_handler import SplitFoldersQueueHandler
 from app.handlers.webdav_queue_handler import WebDavQueueHandler
 from contracts.enums.queue_enum import QueueNameEnum
 from core.config.dependency_injection import build_container
+
+DEFAULT_QUEUE_MAX_THREADS = 1
+QUEUE_MAX_THREADS = {
+    QueueNameEnum.DOWNLOAD.value: 1,
+    QueueNameEnum.SPLIT_FOLDERS.value: 1,
+    QueueNameEnum.PDF.value: 1,
+    QueueNameEnum.WEBDAV.value: 1,
+}
 
 
 class QueueMessageManager:
@@ -35,24 +45,50 @@ class QueueMessageManager:
         if self.channel is None:
             raise RuntimeError("Queue connection not initialized.")
 
+        max_threads = max(
+            1,
+            QUEUE_MAX_THREADS.get(self.queue_name, DEFAULT_QUEUE_MAX_THREADS),
+        )
+
         def callback(ch, method, properties, body):
             try:
+                del properties
                 payload = json.loads(body.decode("utf-8"))
                 message = (
                     payload.get("message") if isinstance(payload, dict) else payload
                 )
                 if message is None:
                     message = payload
-                handler.on_message(message)
-                ch.basic_ack(delivery_tag=method.delivery_tag)
+
+                result = handler.on_message(message)
+                if isinstance(result, Thread):
+                    # Ack after worker completion so prefetch_count enforces
+                    # max concurrent messages per queue.
+                    self._ack_after_thread(result, ch, method.delivery_tag)
+                else:
+                    ch.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as exc:  # pragma: no cover - queue error handling
                 print(f"Error processing message for queue '{self.queue_name}': {exc}")
                 ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
-        self.channel.basic_qos(prefetch_count=1)
+        self.channel.basic_qos(prefetch_count=max_threads)
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback)
-        print(f"[QueueListener] Listening on queue: {self.queue_name}")
+        print(
+            f"[QueueListener] Listening on queue: {self.queue_name} "
+            f"(max_threads={max_threads})"
+        )
         self.channel.start_consuming()
+
+    def _ack_after_thread(self, worker: Thread, channel, delivery_tag: int) -> None:
+        def wait_and_ack() -> None:
+            worker.join()
+            if self.connection is None:
+                return
+
+            ack_call = partial(channel.basic_ack, delivery_tag=delivery_tag)
+            self.connection.add_callback_threadsafe(ack_call)
+
+        Thread(target=wait_and_ack, daemon=True).start()
 
 
 QUEUE_HANDLER_MAP = {

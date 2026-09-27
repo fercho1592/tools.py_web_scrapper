@@ -115,6 +115,9 @@ def build_factories(container: Container):
             fn_manga_downloader_handler=container.resolve_function(
                 FunctionEnum.MANGA_DOWNLOADER
             ),
+            manga_scrapper_factory=lambda url: container.resolve_factory(
+                MangaScraper, url
+            ),
         ),
     )
     container.register_factory(
