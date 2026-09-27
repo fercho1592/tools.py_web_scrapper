@@ -1,8 +1,11 @@
 import argparse
 import json
 import os
+import traceback
 from functools import partial
 from threading import Thread
+from time import time
+from typing import Any
 
 import pika
 
@@ -14,6 +17,7 @@ from contracts.enums.queue_enum import QueueNameEnum
 from core.config.dependency_injection import build_container
 
 DEFAULT_QUEUE_MAX_THREADS = 1
+ERROR_QUEUE_NAME = QueueNameEnum.ERRORS.value
 QUEUE_MAX_THREADS = {
     QueueNameEnum.DOWNLOAD.value: 1,
     QueueNameEnum.SPLIT_FOLDERS.value: 1,
@@ -39,7 +43,66 @@ class QueueMessageManager:
         self.connection = pika.BlockingConnection(pika.URLParameters(rabbitmq_url))
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue=self.queue_name, durable=True)
+        self.channel.queue_declare(queue=ERROR_QUEUE_NAME, durable=True)
         return self
+
+    def _publish_error(
+        self,
+        message: Any,
+        error: Exception,
+        *,
+        traceback_info: str,
+    ):
+        if self.channel is None:
+            return
+
+        error_payload = {
+            "origin_queue": self.queue_name,
+            "message": message,
+            "error": str(error),
+            "traceback": traceback_info,
+            "timestamp": time(),
+        }
+
+        self.channel.basic_publish(
+            exchange="",
+            routing_key=ERROR_QUEUE_NAME,
+            body=json.dumps(error_payload).encode("utf-8"),
+            properties=pika.BasicProperties(delivery_mode=2),
+        )
+
+    def _handle_worker_failure(
+        self, channel, delivery_tag: int, message: Any, error: Any
+    ):
+        if self.connection is None:
+            return
+
+        def nack_with_error_publish() -> None:
+            failure = (
+                error
+                if isinstance(error, Exception)
+                else RuntimeError(str(error) if error is not None else "Worker failed")
+            )
+
+            try:
+                traceback_info = ""
+                if isinstance(error, dict):
+                    traceback_info = str(error.get("traceback", ""))
+                self._publish_error(message, failure, traceback_info=traceback_info)
+            except (
+                TypeError,
+                ValueError,
+                RuntimeError,
+                OSError,
+                pika.exceptions.AMQPError,
+            ) as publish_error:  # pragma: no cover - queue error fallback
+                print(
+                    f"Error publishing failed worker message for queue "
+                    f"'{self.queue_name}': {publish_error}"
+                )
+            channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
+
+        self.connection.add_callback_threadsafe(nack_with_error_publish)
 
     def listen(self, handler):
         if self.channel is None:
@@ -51,6 +114,8 @@ class QueueMessageManager:
         )
 
         def callback(ch, method, properties, body):
+            payload: Any = None
+            message: Any = body.decode("utf-8", errors="replace")
             try:
                 del properties
                 payload = json.loads(body.decode("utf-8"))
@@ -64,11 +129,44 @@ class QueueMessageManager:
                 if isinstance(result, Thread):
                     # Ack after worker completion so prefetch_count enforces
                     # max concurrent messages per queue.
-                    self._ack_after_thread(result, ch, method.delivery_tag)
+                    self._ack_after_thread(
+                        result,
+                        ch,
+                        method.delivery_tag,
+                        message,
+                    )
                 else:
                     ch.basic_ack(delivery_tag=method.delivery_tag)
-            except Exception as exc:  # pragma: no cover - queue error handling
+            except (
+                json.JSONDecodeError,
+                UnicodeDecodeError,
+                TypeError,
+                ValueError,
+                KeyError,
+                AttributeError,
+                RuntimeError,
+                OSError,
+                pika.exceptions.AMQPError,
+            ) as exc:  # pragma: no cover - queue error handling
                 print(f"Error processing message for queue '{self.queue_name}': {exc}")
+                try:
+                    message_to_send = payload if payload is not None else message
+                    self._publish_error(
+                        message_to_send,
+                        exc,
+                        traceback_info=traceback.format_exc(),
+                    )
+                except (
+                    TypeError,
+                    ValueError,
+                    RuntimeError,
+                    OSError,
+                    pika.exceptions.AMQPError,
+                ) as publish_error:  # pragma: no cover - queue error fallback
+                    print(
+                        f"Error publishing failed message for queue "
+                        f"'{self.queue_name}': {publish_error}"
+                    )
                 ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
         self.channel.basic_qos(prefetch_count=max_threads)
@@ -79,10 +177,26 @@ class QueueMessageManager:
         )
         self.channel.start_consuming()
 
-    def _ack_after_thread(self, worker: Thread, channel, delivery_tag: int) -> None:
+    def _ack_after_thread(
+        self,
+        worker: Thread,
+        channel,
+        delivery_tag: int,
+        message: Any,
+    ) -> None:
         def wait_and_ack() -> None:
             worker.join()
             if self.connection is None:
+                return
+
+            worker_error = getattr(worker, "_queue_error", None)
+            if worker_error is not None:
+                self._handle_worker_failure(
+                    channel,
+                    delivery_tag,
+                    message,
+                    worker_error,
+                )
                 return
 
             ack_call = partial(channel.basic_ack, delivery_tag=delivery_tag)

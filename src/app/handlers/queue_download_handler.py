@@ -1,6 +1,7 @@
 import asyncio
 from dataclasses import dataclass
-from threading import Thread
+from threading import Thread, current_thread
+import traceback
 from typing import Any
 
 from app.handlers.split_folders_queue_handler import (
@@ -115,11 +116,28 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
                 self.logger.info(
                     "End manga download for [%s]", download_command.manga_url
                 )
-            except Exception as ex:
+            except (
+                TypeError,
+                ValueError,
+                KeyError,
+                AttributeError,
+                RuntimeError,
+                OSError,
+            ) as ex:
                 self.logger.error(
                     "Download incomplete for [%s]", download_command.manga_url
                 )
                 self.error_handler.SaveDownloadError("Error during manga download", ex)
+                setattr(
+                    current_thread(),
+                    "_queue_error",
+                    {
+                        "error": str(ex),
+                        "traceback": traceback.format_exc(),
+                        "manga_url": download_command.manga_url,
+                        "payload": payload,
+                    },
+                )
 
             print(f"Finished processing download for {download_command.manga_url}")
 

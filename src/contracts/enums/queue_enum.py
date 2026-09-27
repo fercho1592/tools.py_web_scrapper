@@ -6,6 +6,7 @@ class QueueNameEnum(str, Enum):
     SPLIT_FOLDERS = "split_folders"
     PDF = "pdf"
     WEBDAV = "webdav"
+    ERRORS = "errors"
 
     @classmethod
     def from_value(cls, value: str) -> "QueueNameEnum":
