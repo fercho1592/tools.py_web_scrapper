@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 from app.handlers.queue_download_handler import (
     DownloadQueueCommand,
     DownloadQueueHandler,
@@ -48,3 +50,59 @@ class TestSplitQueueLogic:
             ("chapter_1", 1, 200),
             ("chapter_2", 201, 350),
         ]
+
+    def test_download_handler_publishes_to_next_queue_after_success(self):
+        file_manager = MagicMock()
+        file_manager.get_last_downloaded_page.return_value = 1
+        file_manager.GetImagesInFolder.return_value = ["page_1.jpg", "page_2.jpg"]
+
+        logger = MagicMock()
+        ui_handler = MagicMock()
+        published = []
+
+        def fake_publish(queue_name, payload):
+            published.append((queue_name, payload))
+
+        handler = DownloadQueueHandler(
+            queue_name=QueueNameEnum.DOWNLOAD.value,
+            next_queue=QueueNameEnum.PDF.value,
+            file_manager=file_manager,
+            logger=logger,
+            error_handler=None,
+            ui_handler=ui_handler,
+            fn_manga_downloader_handler=lambda command: None,
+            manga_scrapper_factory=lambda url: object(),
+        )
+        handler.publish_to_next_queue = fake_publish
+
+        payload = {
+            "id": "download-1",
+            "queue_name": QueueNameEnum.DOWNLOAD.value,
+            "messageCommand": {
+                "manga_url": "https://example.com/manga",
+                "download_folder": "/tmp/manga",
+                "queue_name": QueueNameEnum.DOWNLOAD.value,
+                "next_queue": QueueNameEnum.PDF.value,
+                "chapters": None,
+            },
+            "errorLog": [],
+        }
+
+        thread = handler.on_message(payload)
+        thread.join()
+
+        expected = {
+            "id": "download-1",
+            "queue_name": QueueNameEnum.PDF.value,
+            "messageCommand": {
+                "manga_url": "https://example.com/manga",
+                "download_folder": "/tmp/manga",
+                "queue_name": QueueNameEnum.PDF.value,
+                "next_queue": QueueNameEnum.PDF.value,
+                "chapters": None,
+            },
+            "errorLog": [],
+        }
+
+        assert getattr(thread, "_next_queue_message", None) == expected
+        assert published == []

@@ -46,6 +46,21 @@ class QueueMessageManager:
         self.channel.queue_declare(queue=ERROR_QUEUE_NAME, durable=True)
         return self
 
+    def _publish_message(self, queue_name: str, payload: Any) -> None:
+        if self.channel is None:
+            return
+
+        self.channel.queue_declare(queue=queue_name, durable=True)
+        self.channel.basic_publish(
+            exchange="",
+            routing_key=queue_name,
+            body=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            properties=pika.BasicProperties(
+                delivery_mode=2,
+                content_type="application/json",
+            ),
+        )
+
     def _publish_error(
         self,
         message: Any,
@@ -64,12 +79,7 @@ class QueueMessageManager:
             "timestamp": time(),
         }
 
-        self.channel.basic_publish(
-            exchange="",
-            routing_key=ERROR_QUEUE_NAME,
-            body=json.dumps(error_payload).encode("utf-8"),
-            properties=pika.BasicProperties(delivery_mode=2),
-        )
+        self._publish_message(ERROR_QUEUE_NAME, error_payload)
 
     def _handle_worker_failure(
         self, channel, delivery_tag: int, message: Any, error: Any
@@ -198,6 +208,12 @@ class QueueMessageManager:
                     worker_error,
                 )
                 return
+
+            next_queue_message = getattr(worker, "_next_queue_message", None)
+            if next_queue_message is not None:
+                next_queue_name = next_queue_message.get("queue_name")
+                if next_queue_name:
+                    self._publish_message(next_queue_name, next_queue_message)
 
             ack_call = partial(channel.basic_ack, delivery_tag=delivery_tag)
             self.connection.add_callback_threadsafe(ack_call)

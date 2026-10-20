@@ -56,6 +56,36 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
             return QueueNameEnum.SPLIT_FOLDERS.value
         return command.next_queue or QueueNameEnum.PDF.value
 
+    def build_next_queue_message(
+        self,
+        original_payload: dict[str, Any],
+        command: DownloadQueueCommand,
+    ) -> dict[str, Any] | None:
+        if not command.next_queue:
+            return None
+
+        original_message = (
+            original_payload.get("messageCommand", {})
+            if isinstance(original_payload, dict)
+            else {}
+        )
+        if not isinstance(original_message, dict):
+            original_message = {}
+
+        next_message = {
+            **original_message,
+            "queue_name": command.next_queue,
+            "next_queue": command.next_queue,
+            "chapters": command.chapters,
+        }
+
+        return {
+            "id": original_payload.get("id", ""),
+            "queue_name": command.next_queue,
+            "messageCommand": next_message,
+            "errorLog": list(original_payload.get("errorLog", [])),
+        }
+
     def on_message(self, payload: dict[str, Any]):
         queue_message = QueueMessage[DownloadQueueCommand](**payload)
 
@@ -111,6 +141,13 @@ class DownloadQueueHandler(QueueHandlerProtocol[DownloadQueueCommand]):
                     )
                 else:
                     download_command.next_queue = next_queue
+
+                next_queue_message = self.build_next_queue_message(
+                    payload,
+                    download_command,
+                )
+                if next_queue_message is not None:
+                    setattr(current_thread(), "_next_queue_message", next_queue_message)
 
                 self.ui_handler.ShowMessage("End Manga Download")
                 self.logger.info(

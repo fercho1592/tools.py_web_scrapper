@@ -1,7 +1,10 @@
 import asyncio
+import traceback
 from dataclasses import dataclass
-from threading import Thread
+from threading import Thread, current_thread
+from typing import Any
 
+from contracts.enums.queue_enum import QueueNameEnum
 from contracts.models.folders_struct import FolderPath, MangaFoldersStruct
 from contracts.protocols.queue_handler_protocol import (
     QueueHandlerProtocol,
@@ -39,6 +42,35 @@ class PDFCreateQueueHandler(QueueHandlerProtocol[PDFCreateQueueCommand]):
         self.fn_pdf_creator_handler = fn_pdf_creator_handler
         super().__init__(queue_name, next_queue)
 
+    def build_next_queue_message(
+        self,
+        original_payload: dict[str, Any],
+        command: PDFCreateQueueCommand,
+    ) -> dict[str, Any] | None:
+        if not command.next_queue:
+            return None
+
+        original_message = (
+            original_payload.get("messageCommand", {})
+            if isinstance(original_payload, dict)
+            else {}
+        )
+        if not isinstance(original_message, dict):
+            original_message = {}
+
+        next_message = {
+            **original_message,
+            "queue_name": command.next_queue,
+            "next_queue": command.next_queue,
+        }
+
+        return {
+            "id": original_payload.get("id", ""),
+            "queue_name": command.next_queue,
+            "messageCommand": next_message,
+            "errorLog": list(original_payload.get("errorLog", [])),
+        }
+
     def on_message(self, payload: dict):
         queue_message = QueueMessage[PDFCreateQueueCommand](**payload)
         pdf_command = queue_message.to_command(PDFCreateQueueCommand)
@@ -71,6 +103,11 @@ class PDFCreateQueueHandler(QueueHandlerProtocol[PDFCreateQueueCommand]):
                 if asyncio.iscoroutine(result):
                     asyncio.run(result)
 
+                pdf_command.next_queue = QueueNameEnum.WEBDAV.value
+                next_queue_message = self.build_next_queue_message(payload, pdf_command)
+                if next_queue_message is not None:
+                    setattr(current_thread(), "_next_queue_message", next_queue_message)
+
                 self.ui_handler.ShowMessage("Deleting Convert Folder")
                 self.file_manager.DeleteAll(image_folder)
 
@@ -91,6 +128,16 @@ class PDFCreateQueueHandler(QueueHandlerProtocol[PDFCreateQueueCommand]):
                 self.error_handler.SaveMessageError(
                     "Error on PDF conversion",
                     ex,
+                )
+                setattr(
+                    current_thread(),
+                    "_queue_error",
+                    {
+                        "error": str(ex),
+                        "traceback": traceback.format_exc(),
+                        "manga_url": pdf_command.pdf_name,
+                        "payload": payload,
+                    },
                 )
 
         thread = Thread(target=process_pdf_creation)

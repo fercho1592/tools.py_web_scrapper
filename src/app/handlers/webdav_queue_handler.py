@@ -1,6 +1,8 @@
 import asyncio
+import traceback
 from dataclasses import dataclass
-from threading import Thread
+from threading import Thread, current_thread
+from typing import Any
 
 from contracts.models.folders_struct import FolderPath, MangaFoldersStruct
 from contracts.protocols.queue_handler_protocol import (
@@ -38,6 +40,35 @@ class WebDavQueueHandler(QueueHandlerProtocol[WebDavQueueCommand]):
         self.fn_webdav_handler = fn_webdav_handler
         super().__init__(queue_name, next_queue)
 
+    def build_next_queue_message(
+        self,
+        original_payload: dict[str, Any],
+        command: WebDavQueueCommand,
+    ) -> dict[str, Any] | None:
+        if not command.next_queue:
+            return None
+
+        original_message = (
+            original_payload.get("messageCommand", {})
+            if isinstance(original_payload, dict)
+            else {}
+        )
+        if not isinstance(original_message, dict):
+            original_message = {}
+
+        next_message = {
+            **original_message,
+            "queue_name": command.next_queue,
+            "next_queue": command.next_queue,
+        }
+
+        return {
+            "id": original_payload.get("id", ""),
+            "queue_name": command.next_queue,
+            "messageCommand": next_message,
+            "errorLog": list(original_payload.get("errorLog", [])),
+        }
+
     def on_message(self, payload: dict):
         queue_message = QueueMessage[WebDavQueueCommand](**payload)
         webdav_command = queue_message.to_command(WebDavQueueCommand)
@@ -68,6 +99,12 @@ class WebDavQueueHandler(QueueHandlerProtocol[WebDavQueueCommand]):
                     if asyncio.iscoroutine(result):
                         asyncio.run(result)
 
+                next_queue_message = self.build_next_queue_message(
+                    payload, webdav_command
+                )
+                if next_queue_message is not None:
+                    setattr(current_thread(), "_next_queue_message", next_queue_message)
+
                 self.ui_handler.ShowMessage(
                     f"PDF uploaded to WebDAV: {webdav_command.manga_name}"
                 )
@@ -84,6 +121,16 @@ class WebDavQueueHandler(QueueHandlerProtocol[WebDavQueueCommand]):
                 self.error_handler.SaveMessageError(
                     "Error uploading file to WebDAV",
                     ex,
+                )
+                setattr(
+                    current_thread(),
+                    "_queue_error",
+                    {
+                        "error": str(ex),
+                        "traceback": traceback.format_exc(),
+                        "manga_url": webdav_command.manga_name,
+                        "payload": payload,
+                    },
                 )
 
         thread = Thread(target=process_upload)

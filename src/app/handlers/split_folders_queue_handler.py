@@ -1,6 +1,8 @@
 import os
+import traceback
 from dataclasses import dataclass
-from threading import Thread
+from threading import Thread, current_thread
+from typing import Any
 
 from contracts.enums.queue_enum import QueueNameEnum
 from contracts.models.folders_struct import MangaFoldersStruct
@@ -57,6 +59,36 @@ class SplitFoldersQueueHandler(QueueHandlerProtocol[SplitFoldersQueueCommand]):
 
         return chapters
 
+    def build_next_queue_message(
+        self,
+        original_payload: dict[str, Any],
+        command: SplitFoldersQueueCommand,
+    ) -> dict[str, Any] | None:
+        if not command.next_queue:
+            return None
+
+        original_message = (
+            original_payload.get("messageCommand", {})
+            if isinstance(original_payload, dict)
+            else {}
+        )
+        if not isinstance(original_message, dict):
+            original_message = {}
+
+        next_message = {
+            **original_message,
+            "queue_name": command.next_queue,
+            "next_queue": command.next_queue,
+            "chapters": command.chapters,
+        }
+
+        return {
+            "id": original_payload.get("id", ""),
+            "queue_name": command.next_queue,
+            "messageCommand": next_message,
+            "errorLog": list(original_payload.get("errorLog", [])),
+        }
+
     def on_message(self, payload: dict):
         queue_message = QueueMessage[SplitFoldersQueueCommand](**payload)
         split_command = queue_message.to_command(SplitFoldersQueueCommand)
@@ -93,6 +125,14 @@ class SplitFoldersQueueHandler(QueueHandlerProtocol[SplitFoldersQueueCommand]):
                             continue
                         os.replace(source_path, target_path)
 
+                split_command.chapters = chapters
+                split_command.next_queue = QueueNameEnum.PDF.value
+                next_queue_message = self.build_next_queue_message(
+                    payload, split_command
+                )
+                if next_queue_message is not None:
+                    setattr(current_thread(), "_next_queue_message", next_queue_message)
+
                 self.ui_handler.ShowMessage(
                     f"Split folders created for [{split_command.manga_url}]"
                 )
@@ -111,6 +151,16 @@ class SplitFoldersQueueHandler(QueueHandlerProtocol[SplitFoldersQueueCommand]):
                         "Error creating split folders",
                         exc,
                     )
+                setattr(
+                    current_thread(),
+                    "_queue_error",
+                    {
+                        "error": str(exc),
+                        "traceback": traceback.format_exc(),
+                        "manga_url": split_command.manga_url,
+                        "payload": payload,
+                    },
+                )
 
         thread = Thread(target=process_split)
         thread.start()
